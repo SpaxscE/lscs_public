@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	"$basetexture" "lscs/nanosword/armor"
+"$halflambert" "1" "$nocull" "1" "$additive" "1"
+"Proxies"
+   {
+      "AnimatedTexture"
+      {
+         "animatedtexturevar" "$basetexture"
+         "animatedtextureframenumvar" "$frame"
+         "animatedtextureframerate" "30"
+      }
+   }
+}

@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "lscs/effects/lightsaber_glow"
+	"$additive" "1"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+}

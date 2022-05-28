@@ -1,7 +1,18 @@
 include( "shared.lua" )
+include("sh_combo.lua")
 
 SWEP.Slot = 0
 SWEP.SlotPos = 0
+
+function SWEP:DoDrawCrosshair( x, y )
+	--surface.SetDrawColor( 0, 250, 255, 255 )
+	--surface.DrawOutlinedRect( x - 32, y - 32, 64, 64 )
+	return true
+end
+
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+	draw.SimpleText( "n", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
+end
 
 function SWEP:DrawWorldModelTranslucent( flags )
 	local Hilt1 = self:GethiltLH()
@@ -25,16 +36,6 @@ function SWEP:DrawWorldModel( flags )
 	if IsValid( Hilt2 ) then
 		Hilt2:DrawEquipped( flags )
 	end
-end
-
-function SWEP:DoDrawCrosshair( x, y )
-	--surface.SetDrawColor( 0, 250, 255, 255 )
-	--surface.DrawOutlinedRect( x - 32, y - 32, 64, 64 )
-	return true
-end
-
-function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-	draw.SimpleText( "n", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
@@ -77,9 +78,9 @@ end
 function SWEP:OnRemove()
 end
 
-
 function SWEP:Reload()
 end
 
 function SWEP:Think()
+	self:ComboThink()
 end

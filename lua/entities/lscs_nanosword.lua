@@ -9,17 +9,20 @@ ENT.Category = "[LSCS]"
 ENT.Spawnable       = true
 ENT.AdminSpawnable  = false
 
-ENT.MDL = "models/weapons/w_nanosword_hd.mdl"
+ENT.MDL = "models/lscs/weapons/nanosword.mdl"
 ENT.MDL_INFO = {
 	["RH"] = {
 		bone = "ValveBiped.Bip01_R_Hand",
-		pos = Vector(7, -2.5, 0),
-		ang = Angle(85, 15, 90),
+		pos = Vector(4.25, -1.5, -1),
+		ang = Angle(172, 0, 10),
 	},
 	["LH"] = {
 		bone = "ValveBiped.Bip01_L_Hand",
-		pos = Vector(6, 1.5, -1.5),
-		ang = Angle(-60, 15, -90),
+		pos = Vector(4.25, -1.5, 1),
+		ang = Angle(8, 0, -10),
 	},
 }
 
+ENT.BladeLength = 30
+
+ENT.SwingSound = "saber_hup"

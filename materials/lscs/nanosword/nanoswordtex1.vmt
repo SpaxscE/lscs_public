@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "lscs/nanosword/nanoswordtex1"
+	
+"$halflambert" "1" "$nocull" "1"  "$alphatest" "1" }

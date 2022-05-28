@@ -2,7 +2,7 @@
 local meta = FindMetaTable( "Player" )
 
 function meta:lscsGetCombo()
-	local combo = "default"
+	local combo = "standard"
 
 	if LSCS[ combo ] then
 		return LSCS[ combo ]
