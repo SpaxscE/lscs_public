@@ -25,7 +25,7 @@ function EFFECT:Init( data )
 	
 	self.mat = Material( "sprites/light_glow02_add" )
 	
-	self.LifeTime = 1
+	self.LifeTime = 0.6
 	self.DieTime = CurTime() + self.LifeTime
 
 	local Col = self.Col

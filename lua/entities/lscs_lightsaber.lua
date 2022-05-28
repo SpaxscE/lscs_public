@@ -28,6 +28,7 @@ ENT.BladeLength = 45
 ENT.SwingSound = "saber_hup"
 ENT.TurnOnSound = "saber_turnon"
 ENT.TurnOffSound = "saber_turnoff"
+ENT.IdleSound = "saber/saberhum4.wav"
 
 sound.Add( {
 	name = "saber_hup",
@@ -98,21 +99,6 @@ sound.Add( {
 } )
 
 sound.Add( {
-	name = "saber_hum",
-	channel = CHAN_STATIC,
-	volume = 0.3,
-	level = 100,
-	pitch = { 100, 100 },
-	sound = {
-		"saber/saberhum1.wav",
-		"saber/saberhum2.wav",
-		"saber/saberhum3.wav",
-		"saber/saberhum4.wav",
-		"saber/saberhum5.wav",
-	}
-} )
-
-sound.Add( {
 	name = "saber_hit",
 	channel = CHAN_STATIC,
 	volume = 0.8,
@@ -122,6 +108,21 @@ sound.Add( {
 		"saber/saberhit1.mp3",
 		"saber/saberhit2.mp3",
 		"saber/saberhit3.mp3",
+	}
+} )
+
+sound.Add( {
+	name = "saber_lighthit",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 100,
+	pitch = { 95, 105 },
+	sound = {
+		"saber/lighthit1.wav",
+		"saber/lighthit2.wav",
+		"saber/lighthit3.wav",
+		"saber/lighthit4.wav",
+		"saber/lighthit5.wav",
 	}
 } )
 
@@ -158,22 +159,47 @@ sound.Add( {
 if CLIENT then
 	ENT.BladeElements = {}
 
-	function ENT:DoIdleImpactEffects( trace )
+	function ENT:ObjectImpactEffects( pos, dir )
 		local effectdata = EffectData()
-			effectdata:SetOrigin( trace.HitPos )
+			effectdata:SetOrigin( pos )
 		util.Effect( "saber_hit_generic", effectdata, true, true )
 	end
 
-	function ENT:GetMaxBeamElements()
-		if IsValid( self:GetWeapon() ) then
-			return 200
+	function ENT:WallImpactEffects( pos, dir, playsound )
+		if playsound then
+			local effectdata = EffectData()
+				effectdata:SetOrigin( pos )
+				effectdata:SetNormal( dir )
+			util.Effect( "saber_hitwall", effectdata, true, true )
+
+			sound.Play(Sound( "saber_hitwall_spark" ), pos, 75)
 		else
-			return 50
+			local effectdata = EffectData()
+				effectdata:SetOrigin( pos )
+				effectdata:SetNormal( dir )
+			util.Effect( "saber_hitwall_cheap", effectdata, true, true )
+		end
+	end
+
+	function ENT:GetMaxBeamElements()
+		local wep = self:GetWeapon()
+		if IsValid( wep ) then
+			if wep:GetOwner() == LocalPlayer() then
+				return 200
+			else
+				return 35
+			end
+		else
+			return 25
 		end
 	end
 
 	function ENT:GetBladeLifeTime()
-		return 0.2
+		if IsValid( self:GetWeapon() ) then
+			return 0.15
+		else
+			return 0.05
+		end
 	end
 
 	function ENT:BladeEffectsPrimary( att )
@@ -183,53 +209,62 @@ if CLIENT then
 
 		local BladeCol = self:GetBladeColor()
 
+		local ViewDist = (LocalPlayer():GetViewEntity():GetPos() - self:GetPos()):Length()
+
+		local Lod0 = ViewDist < 400
+		local Lod1 = ViewDist < 800
+		local Lod2 = ViewDist < 2000
+
 		local Time = CurTime()
 
 		-- start and dir inverted for better looks at the tip
 		local Start = att.Pos + att.Ang:Up() * Length
 		local Dir = -att.Ang:Up()
 
-		self._bpNext = self._bpNext or 0
-		if self._bpNext < Time then
-			self._bpNext = Time + 0.015
+		if Lod1 then
+			self._bpNext = self._bpNext or 0
+			if self._bpNext < Time then
+				self._bpNext = Time + 0.015
 
-			local oldest = nil
-			local oldest_time = 0
+				local oldest = nil
+				local oldest_time = 0
 
-			for k, v in pairs( self.BladeElements ) do
-				if Time - v.time > self:GetBladeLifeTime() then
-					self.BladeElements[k] = nil
+				for k, v in pairs( self.BladeElements ) do
+					if Time - v.time > self:GetBladeLifeTime() then
+						self.BladeElements[k] = nil
+					end
+				end
+
+				if Lod0 then
+					if Length == self:GetMaxLength() then
+						local dlight = DynamicLight( self:EntIndex() )
+						if dlight then
+							dlight.pos = att.Pos + att.Ang:Up() * Length * 0.5
+							dlight.r = BladeCol.x
+							dlight.g = BladeCol.y
+							dlight.b = BladeCol.z
+							dlight.brightness = 2
+							dlight.Decay = 100
+							dlight.Size = 250
+							dlight.DieTime = Time + 0.2
+						end
+					end
+				end
+
+				local data = {
+					time = Time,
+					pos = Start,
+					dir = Dir,
+				}
+
+				if self:GetDMGActive() then
+					table.insert(self.BladeElements, data)
+					table.sort( self.BladeElements, function( a, b ) return a.time > b.time end )
 				end
 			end
-
-			if self.BladeGlow and Length == self:GetMaxLength() then
-				local dlight = DynamicLight( self:EntIndex() )
-				if dlight then
-					dlight.pos = att.Pos + att.Ang:Up() * Length * 0.5
-					dlight.r = BladeCol.x
-					dlight.g = BladeCol.y
-					dlight.b = BladeCol.z
-					dlight.brightness = 2
-					dlight.Decay = 100
-					dlight.Size = 250
-					dlight.DieTime = Time + 0.2
-				end
-			end
-
-			local data = {
-				time = Time,
-				pos = Start,
-				dir = Dir,
-			}
-
-			if self:GetDMGActive() then
-				table.insert(self.BladeElements, data)
-				table.sort( self.BladeElements, function( a, b ) return a.time > b.time end )
-			end
+			self:DrawTrail( Start, Dir, BladeCol, Length, Time, self.BladeElements, wep )
 		end
-
 		self:DrawBlade( att.Pos, -Dir, BladeCol, Length )
-		self:DrawTrail( Start, Dir, BladeCol, Length, Time, self.BladeElements, wep )
 	end
 
 	
@@ -303,7 +338,7 @@ if CLIENT then
 					end
 				end
 			end
-			
+
 			prev = {
 				pos = v.pos,
 				dir = v.dir,

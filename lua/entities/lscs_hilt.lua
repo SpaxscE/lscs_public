@@ -31,6 +31,15 @@ function ENT:IsOwned()
 	return IsValid( self:GetBelongTo() )
 end
 
+function ENT:GetDMGActive()
+	local wep = self:GetWeapon()
+	if IsValid( wep ) then
+		return wep:GetDMGActive()
+	else
+		return self:GetActive()
+	end
+end
+
 function ENT:DoAttackSound()
 	if self.SwingSound then
 		self:EmitSoundUnpredicted( self.SwingSound )
@@ -45,6 +54,17 @@ function ENT:GetOwningEnt()
 	else
 		return self
 	end
+end
+
+function ENT:IsActive()
+	local wep = self:GetWeapon()
+	local active = self:GetActive()
+
+	if IsValid( wep ) then
+		active = wep:GetActive()
+	end
+
+	return active
 end
 
 if SERVER then
@@ -77,7 +97,7 @@ if SERVER then
 	end
 
 	function ENT:UpdateTransmitState() 
-		return TRANSMIT_ALWAYS
+		return TRANSMIT_PVS
 	end
 
 	function ENT:DoPickup( ply, LH )
@@ -90,6 +110,7 @@ if SERVER then
 
 		self:SetTransmitWithParent( true )
 
+		self:SetSolid( SOLID_NONE )
 		self:DrawShadow( false )
 
 		self:EmitSound( "items/ammo_pickup.wav" )
@@ -99,11 +120,12 @@ if SERVER then
 		timer.Simple(0, function()
 			if not IsValid( self ) then return end
 
-			self:GetOwningEnt():EmitSound( name )
+			self:EmitSound( name )
 		end)
 	end
 
 	function ENT:GiveTo( ply )
+		if self:GetActive() then return end
 		if self:IsOwned() then return end
 		if not IsValid( ply ) or not ply:IsPlayer() or not ply:Alive() then return end
 
@@ -136,6 +158,8 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
+		self:StopIdleSound()
+
 		local ply = self:GetBelongTo()
 
 		if not IsValid( ply ) then return end
@@ -153,14 +177,63 @@ if SERVER then
 	end
 
 	function ENT:Use( ply )
+		if self:GetActive() then
+			self:SetActive( false )
+
+			return
+		end
+
 		self:GiveTo( ply )
 	end
 
+	function ENT:OnActiveChanged( oldActive, active )
+		if oldActive == nil then return end
+		if not self.IdleSound then return end
+
+		if active then
+			self:StopIdleSound()
+
+			self.SaberHumSound = CreateSound(self, self.IdleSound)
+			self.SaberHumSound:Play()
+		else
+			self:StopIdleSound()
+		end
+	end
+
+	function ENT:StopIdleSound()
+		if self.SaberHumSound then
+			self.SaberHumSound:Stop()
+			self.SaberHumSound = nil
+		end
+	end
+
 	function ENT:Think()
-		return false
+		local active = self:IsActive()
+
+		if self._oldActive ~= active then
+			self:OnActiveChanged( self._oldActive, active )
+
+			self._oldActive = active
+		end
+
+		if self.SaberHumSound then
+			local go = self:GetDMGActive()
+
+			if not IsValid( self:GetWeapon() ) then
+				go = false
+			end
+
+			self.SaberHumSound:ChangeVolume( go and 0 or 1, 0.2 )
+			self.SaberHumSound:ChangePitch( go and 130 or 100, 0.15 )
+		end
+
+		self:NextThink( CurTime() + 0.05 )
+
+		return true
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
+		self:SetActive( true )
 	end
 
 	function ENT:StartTouch( touch_ent )
@@ -221,7 +294,10 @@ else
 		self:DoBladeTrace( att.Pos, att.Ang:Up(), 2 )
 	end
 
-	function ENT:DoIdleImpactEffects( trace )
+	function ENT:ObjectImpactEffects( pos, dir )
+	end
+
+	function ENT:WallImpactEffects( pos, dir, playsound )
 	end
 
 	function ENT:DoBladeTrace( pos, dir, size )
@@ -246,8 +322,7 @@ else
 		if IsValid( trace.Entity ) and not self:GetDMGActive() then
 			if (self.GenericFX or 0) < CurTime() then
 				self.GenericFX = CurTime() + 0.05
-
-				self:DoIdleImpactEffects( trace )
+				self:ObjectImpactEffects( trace.HitPos, trace.HitNormal )
 			end
 		end
 
@@ -262,14 +337,12 @@ else
 
 		if IsValid( wep ) then
 			self:CalcBladeDamage( trace.Hit, trace.HitPos, trace.HitNormal, trace.Entity, wep:GetOwner(), min, max )
-		else
-			-- unowned dmg code here
 		end
 
 		return trace
 	end
 
-	function ENT:CalcBladeDamage( bHit, vPos, vDir, hitEnt, ply )
+	function ENT:CalcBladeDamage( bHit, vPos, vDir, hitEnt, ply, min, max )
 		local start_pos = ply:GetShootPos()
 		local aimDir = ply:GetAimVector()
 		local dmgActive = self:GetDMGActive()
@@ -282,99 +355,85 @@ else
 			end
 		end
 
-		if self.prev_hitpos and self.prev_hitnormal then
-			local _pos = self.prev_hitpos
-			local _dir = self.prev_hitnormal
-			local dir = (vPos - _pos):GetNormalized()
+		if LocalPlayer() == self:GetBelongTo() then
+			if self.prev_hitpos and self.prev_hitnormal then
+				local _pos = self.prev_hitpos
+				local _dir = self.prev_hitnormal
+				local dir = (vPos - _pos):GetNormalized()
 
-			local dist = math.Round( (vPos - _pos):Length() , 0 )
+				local dist = math.Round( (vPos - _pos):Length() , 0 )
 
-			if dist > 0 then
-				for i = 1.5, dist,1.5 do
-					local trace = util.TraceHull( {
-						start = start_pos,
-						endpos = _pos + dir * i + aimDir * 5,
-						mins = Vector( -2, -2, -2 ),
-						maxs = Vector( 2, 2, 2 ),
-						mask = MASK_SHOT_HULL,
-						filter = function( ent ) 
-							if ent == self or ent == self:GetBelongTo() or ent == self:GetWeapon() or ent.LSCSfilter then return false end
+				if dist > 0 then
+					local idx = 0
+					for i = 2, dist,2 do
+						local trace = util.TraceHull( {
+							start = start_pos,
+							endpos = _pos + dir * i + aimDir * 5,
+							mins = min,
+							maxs = max,
+							mask = MASK_SHOT_HULL,
+							filter = function( ent ) 
+								if ent == self or ent == self:GetBelongTo() or ent == self:GetWeapon() or ent.LSCSfilter then return false end
 
-							return true
+								return true
+							end
+						} )
+
+						debugoverlay.SweptBox( start_pos, _pos + dir * i + aimDir * 5, min, max, (start_pos -  (_pos + dir * i + aimDir * 5)):Angle(), 10, Color( 0, 100, 255 ) )
+
+						if trace.Hit and not IsValid( trace.Entity ) then
+							self:WallImpactEffects( trace.HitPos, trace.HitNormal, false )
 						end
-					} )
 
-					debugoverlay.SweptBox( start_pos, _pos + dir * i + aimDir * 5, min, max, (start_pos -  (_pos + dir * i + aimDir * 5)):Angle(), 10, Color( 0, 100, 255 ) )
 
-					if trace.Hit and not IsValid( trace.Entity ) then
-						local effectdata = EffectData()
-							effectdata:SetOrigin( trace.HitPos )
-							effectdata:SetNormal( trace.HitNormal )
-						util.Effect( "saber_hitwall", effectdata, true, true )
+						if dmgActive then
+							self:NWDamage( trace.Entity, trace.HitPos, trace.HitNormal )
+						end
 					end
-
+				else
 					if dmgActive then
-						self:NWDamage( trace.Entity, trace.HitPos, trace.HitNormal )
+						self:NWDamage( hitEnt, vPos, vDir )
+					else
+						if not IsValid( hitEnt ) then
+							self:WallImpactEffects(vPos, vDir, true )
+						end
 					end
 				end
 			else
-				if dmgActive then
-					self:NWDamage( hitEnt, vPos, vDir )
-				else
-					if not IsValid( hitEnt ) then
-						local effectdata = EffectData()
-							effectdata:SetOrigin( vPos )
-							effectdata:SetNormal( vDir )
-						util.Effect( "saber_hitwall", effectdata, true, true )
-
-						sound.Play(Sound( "saber_hitwall_spark" ), vPos, 75)
+				if not IsValid( hitEnt ) and bHitWall then
+					if (self.GenericFX or 0) < CurTime() then
+						self.GenericFX = CurTime() + 0.01
+						self:WallImpactEffects(vPos, vDir, true )
 					end
 				end
 			end
+
+			self.prev_hitpos = vPos
+			self.prev_hitnormal = vDir
 		else
 			if not IsValid( hitEnt ) and bHitWall then
-				local effectdata = EffectData()
-					effectdata:SetOrigin( vPos )
-					effectdata:SetNormal( vDir )
-				util.Effect( "saber_hitwall", effectdata, true, true )
-
-				sound.Play(Sound( "saber_hitwall_spark" ), vPos, 75)
+				if (self.GenericFX or 0) < CurTime() then
+					self.GenericFX = CurTime() + 0.05
+					self:WallImpactEffects(vPos, vDir, true )
+				end
 			end
 		end
-
-		self.prev_hitpos = vPos
-		self.prev_hitnormal = vDir
 	end
 
-	function ENT:GetDMGActive()
-		local wep = self:GetWeapon()
-		if IsValid( wep ) then
-			return wep:GetDMGActive()
-		else
-			return self:GetActive()
+	function ENT:CreateWorldModel()
+		if not IsValid( self.WorldModel ) then
+			self.WorldModel = ClientsideModel( self.MDL )
+			self.WorldModel:SetNoDraw(true)
 		end
 	end
 
 	function ENT:Initialize()
-		self.WorldModel = ClientsideModel( self.MDL )
-		self.WorldModel:SetNoDraw(true)
 	end
 
 	function ENT:OnRemove()
 		if IsValid( self.WorldModel ) then
 			self.WorldModel:Remove()
 		end
-	end
-
-	function ENT:IsActive()
-		local wep = self:GetWeapon()
-		local active = self:GetActive()
-
-		if IsValid( wep ) then
-			active = wep:GetActive()
-		end
-
-		return active
 	end
 
 	function ENT:OnActiveChanged( oldActive, active )
@@ -392,6 +451,8 @@ else
 	end
 
 	function ENT:Think()
+		self:CreateWorldModel()
+
 		local active = self:IsActive()
 
 		local FT = FrameTime()
@@ -411,7 +472,13 @@ else
 		local ply = self:GetBelongTo()
 		local WorldModel = self.WorldModel
 
-		local active = ply:GetActiveWeapon():GetClass() == "lscs_combohandler"
+		if not IsValid( WorldModel ) then return end
+
+		local wep = ply:GetActiveWeapon()
+
+		if not IsValid( wep ) then return end
+
+		local active = wep:GetClass() == "lscs_combohandler"
 
 		local data = self.MDL_INFO[ (self:GetLeftHand() and "LH" or "RH") ]
 

@@ -2,11 +2,7 @@ if SERVER then
 	util.AddNetworkString( "lscs_saberdamage" )
 
 	local function ApplyDamage( ply, victim, pos, dir )
-		local damage = 2000
-
-		if victim.IsPlayer and victim:IsPlayer() then
-			damage = damage / 10
-		end
+		local damage = 200
 
 		local dmg = DamageInfo()
 		dmg:SetDamage( damage )
@@ -15,7 +11,18 @@ if SERVER then
 		dmg:SetDamagePosition( pos ) 
 		dmg:SetDamageType( DMG_ENERGYBEAM )
 
-		if (victim:GetPos() - ply:GetPos()):Length() > 200 then return end
+		local startpos = ply:GetShootPos()
+		local endpos = pos + (victim:GetPos() - ply:GetPos()):GetNormalized() * 50
+
+		local trace = util.TraceLine( {
+			start = startpos,
+			endpos = pos + dir,
+			filter = function( ent ) 
+				return ent == victim
+			end
+		} )
+
+		if (trace.HitPos - startpos):Length() > 100 then return end
 
 		local wep = ply:GetActiveWeapon()
 		if not IsValid( wep ) then return end
@@ -47,7 +54,12 @@ if SERVER then
 		end
 
 		victim:TakeDamageInfo( dmg )
-		victim:EmitSound( "saber_hit" )
+
+		if victim:IsPlayer() or victim:IsNPC() then
+			victim:EmitSound( "saber_hit" )
+		else
+			victim:EmitSound( "saber_lighthit" )
+		end
 
 		net.Start( "lscs_saberdamage" )
 			net.WriteVector( pos )
@@ -61,6 +73,7 @@ if SERVER then
 		if not IsValid( ply ) then return end
 
 		local a_weapon = ply:GetActiveWeapon()
+
 		if not IsValid( a_weapon ) or not a_weapon.LSCS then return end
 
 		local victim = net.ReadEntity()

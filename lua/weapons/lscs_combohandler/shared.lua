@@ -37,14 +37,27 @@ function SWEP:SetupDataTables()
 
 	self:NetworkVar( "Float",0, "NWNextAttack" )
 	self:NetworkVar( "Float",1, "NWGestureTime" )
+
+	self:NetworkVar( "Vector",1, "Move" )
 end
 
 function SWEP:SetDMGActive( active )
 	self.b_dmgActive = active
+	if SERVER then
+		self:SetNWDMGActive( active )
+	end
 end
 
 function SWEP:GetDMGActive()
-	return self.b_dmgActive
+	if CLIENT then
+		if self:GetOwner() ~= LocalPlayer() then
+			return self:GetNWDMGActive()
+		else
+			return self.b_dmgActive
+		end
+	else
+		return self:GetNWDMGActive()
+	end
 end
 
 function SWEP:SetGestureTime( time )
@@ -133,6 +146,7 @@ end
 
 function SWEP:FinishAttack()
 	self:SetDMGActive( false )
+	self:SetMove( Vector(0,0,0) )
 end
 
 function SWEP:Deploy()
