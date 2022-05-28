@@ -82,7 +82,6 @@ COMBO.Attacks = {
 		AttackAnim = "a_combo3",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(0,-50,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
