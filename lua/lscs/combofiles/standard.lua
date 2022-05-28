@@ -87,7 +87,7 @@ COMBO.Attacks = {
 		Delay = 0,
 		Duration = 0.3,
 	},
-	["+45+"] = {
+	["-45-"] = {
 		AttackAnim = "a_combo4",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()
@@ -97,7 +97,7 @@ COMBO.Attacks = {
 		Delay = 0.1,
 		Duration = 0.3,
 	},
-	["-45-"] = {
+	["+45+"] = {
 		AttackAnim = "vanguard_r_s3_t3",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()

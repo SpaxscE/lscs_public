@@ -49,7 +49,7 @@ function SWEP:CalcView( ply, pos, angles, fov )
 
 	local view = {}
 
-	local clamped_angles = Angle( math.max( angles.p, -75 ), angles.y, angles.r )
+	local clamped_angles = Angle( math.max( angles.p, -60 ), angles.y, angles.r )
 
 	local endpos = pos - clamped_angles:Forward() * 70 + clamped_angles:Up() * 12
 

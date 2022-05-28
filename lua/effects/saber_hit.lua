@@ -21,7 +21,10 @@ local Materials = {
 function EFFECT:Init( data )
 	self.Pos = data:GetOrigin()
 	self.Dir = data:GetNormal()
-	
+
+	self.LifeTime = 0.2
+	self.DieTime = CurTime() + self.LifeTime
+
 	self:Spark( self.Pos, self.Dir )
 	self:Smoke( self.Pos, self.Dir )
 end
@@ -66,7 +69,7 @@ function EFFECT:Spark( pos, dir )
 			particle:SetDieTime( math.Rand(2,4) )
 			particle:SetStartAlpha( math.Rand( 200, 255 ) )
 			particle:SetEndAlpha( 0 )
-			particle:SetStartSize( math.Rand(3,6) )
+			particle:SetStartSize( math.Rand(2,4) )
 			particle:SetEndSize( 0 )
 			particle:SetRoll( math.Rand(-100,100) )
 			particle:SetRollDelta( math.Rand(-100,100) )
@@ -84,8 +87,15 @@ function EFFECT:Spark( pos, dir )
 end
 
 function EFFECT:Think()
-	return false
+	if self.DieTime < CurTime() then return false end
+	
+	return true
 end
 
+local mat = Material( "sprites/light_glow02_add" )
+
 function EFFECT:Render()
+	local Scale = (self.DieTime - CurTime()) / self.LifeTime
+	render.SetMaterial( mat )
+	render.DrawSprite( self.Pos + self.Dir, 150 * Scale, 150 * Scale, Color( 255, 150, 50, 255) ) 
 end
