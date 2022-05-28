@@ -1,0 +1,4 @@
+VertexLitGeneric
+{
+	$baseTexture "models/blu/jedi/saberhilt/katarn/saber.vtf"
+}
