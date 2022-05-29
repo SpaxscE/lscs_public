@@ -1,8 +1,13 @@
 include( "shared.lua" )
 include("sh_combo.lua")
+include("sh_animations.lua")
 
 SWEP.Slot = 0
 SWEP.SlotPos = 0
+
+if CLIENT then
+	language.Add( "lscsGlowstick", "Lightsaber" )
+end
 
 function SWEP:DoDrawCrosshair( x, y )
 	--surface.SetDrawColor( 0, 250, 255, 255 )
@@ -15,27 +20,9 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:DrawWorldModelTranslucent( flags )
-	local Hilt1 = self:GethiltLH()
-	local Hilt2 = self:GethiltRH()
-
-	if IsValid( Hilt1 ) then
-		Hilt1:DrawEquippedTranslucent( flags )
-	end
-	if IsValid( Hilt2 ) then
-		Hilt2:DrawEquippedTranslucent( flags )
-	end
 end
 
 function SWEP:DrawWorldModel( flags )
-	local Hilt1 = self:GethiltLH()
-	local Hilt2 = self:GethiltRH()
-
-	if IsValid( Hilt1 ) then
-		Hilt1:DrawEquipped( flags )
-	end
-	if IsValid( Hilt2 ) then
-		Hilt2:DrawEquipped( flags )
-	end
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
@@ -75,12 +62,16 @@ function SWEP:CalcView( ply, pos, angles, fov )
 	return view
 end
 
-function SWEP:OnRemove()
-end
-
 function SWEP:Reload()
 end
 
 function SWEP:Think()
 	self:ComboThink()
+end
+
+function SWEP:OnRemove()
+end
+
+function SWEP:EmitSoundUnpredicted( name )
+	-- im just here cuz the combo file calls emitsound shared
 end

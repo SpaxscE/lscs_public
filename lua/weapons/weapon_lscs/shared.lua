@@ -5,7 +5,7 @@ SWEP.Base = "weapon_base"
 
 SWEP.Category			= "[LSCS]"
 
-SWEP.PrintName		= "Sword Combat"
+SWEP.PrintName		= "#lscsGlowstick"
 SWEP.Author			= "Blu-x92 / Luna"
 
 SWEP.ViewModel		= "models/weapons/c_arms.mdl"
@@ -29,16 +29,20 @@ SWEP.RenderGroup = RENDERGROUP_BOTH
 SWEP.LSCS = true
 
 function SWEP:SetupDataTables()
-	self:NetworkVar( "Entity",1, "hiltLH" )
-	self:NetworkVar( "Entity",2, "hiltRH" )
-
 	self:NetworkVar( "Bool",0, "Active" )
 	self:NetworkVar( "Bool",1, "NWDMGActive" )
 
 	self:NetworkVar( "Float",0, "NWNextAttack" )
 	self:NetworkVar( "Float",1, "NWGestureTime" )
 
-	self:NetworkVar( "Vector",1, "Move" )
+	self:NetworkVar( "Vector",1, "BladeColor" )
+
+	self:NetworkVar( "String",0, "MDL")
+
+	if SERVER then
+		self:SetMDL( "models/lscs/weapons/katarn.mdl" )
+		self:SetBladeColor( Vector(0,65,255) )
+	end
 end
 
 function SWEP:SetDMGActive( active )
@@ -60,15 +64,6 @@ function SWEP:GetDMGActive()
 	end
 end
 
-function SWEP:SetGestureTime( time )
-	self:SetNWGestureTime( time )
-	self.f_NextGesture = time
-end
-
-function SWEP:GetGestureTime()
-	return math.max( (self.f_NextGesture or 0),self:GetNWGestureTime() )
-end
-
 function SWEP:SetNextPrimaryAttack( time )
 	self:SetNWNextAttack( time )
 	self.f_NextAttack = time
@@ -82,45 +77,6 @@ function SWEP:CanPrimaryAttack()
 	return self:GetNextPrimaryAttack() < CurTime()
 end
 
-function SWEP:PlayAnimation( anim )
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return end
-
-	ply.s_vcd_anim = anim
-
-	if SERVER then
-		net.Start( "lscs_animations" )
-			net.WriteEntity( ply )
-			net.WriteString( anim )
-		net.Broadcast()
-	end
-
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ),0, true )
-end
-
-function SWEP:DoAttackSound()
-	local Hilt1 = self:GethiltLH()
-	local Hilt2 = self:GethiltRH()
-
-	if IsValid( Hilt1 ) then
-		Hilt1:DoAttackSound()
-	end
-	if IsValid( Hilt2 ) then
-		Hilt2:DoAttackSound()
-	end
-end
-
-function SWEP:StopAnimation()
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return end
-
-	ply.s_vcd_anim = nil
-
-	self:SetGestureTime( CurTime() )
-end
-
 function SWEP:Initialize()
 	self:SetHoldType( "normal" )
 	self:DrawShadow( false )
@@ -130,6 +86,9 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+end
+
+function SWEP:DoAttackSound()
 end
 
 function SWEP:Holster( wep )
@@ -146,7 +105,11 @@ end
 
 function SWEP:FinishAttack()
 	self:SetDMGActive( false )
-	self:SetMove( Vector(0,0,0) )
+
+	local ply = self:GetOwner()
+	if IsValid( ply ) then
+		ply:lscsClearTimedMove()
+	end
 end
 
 function SWEP:Deploy()

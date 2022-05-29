@@ -1,5 +1,6 @@
 COMBO.Name = "standard"
 COMBO.PrintName = "Standard"
+COMBO.Description = "Standard GVP-Style taught by Master Blu-x92. Quick to learn, hard to master, but balanced and combat proven."
 
 COMBO.HoldType = "melee2"
 
@@ -10,8 +11,7 @@ COMBO.Attacks = {
 			weapon:DoAttackSound()
 			weapon:GetOwner():Freeze( true )
 			weapon:GetOwner():SetVelocity( Vector(0,0,200) )
-
-			weapon:GetOwner().PreventFallDamageTill = CurTime() + 5
+			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
 
 			timer.Simple( 0.5, function()
 				if IsValid( weapon ) and IsValid( weapon:GetOwner() ) then
@@ -45,8 +45,7 @@ COMBO.Attacks = {
 			weapon:SetDMGActive( false )
 
 			weapon:GetOwner():SetVelocity( Vector(0,0,250) - Angle(0,weapon:GetOwner():EyeAngles().y,0):Forward() * 200 )
-
-			weapon:GetOwner().PreventFallDamageTill = CurTime() + 5
+			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.0,
@@ -58,8 +57,7 @@ COMBO.Attacks = {
 			weapon:SetDMGActive( false )
 
 			weapon:GetOwner():SetVelocity( Vector(0,0,50) + Angle(0,weapon:GetOwner():EyeAngles().y,0):Right() * 600 )
-
-			weapon:GetOwner().PreventFallDamageTill = CurTime() + 5
+			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.0,
@@ -71,8 +69,7 @@ COMBO.Attacks = {
 			weapon:SetDMGActive( false )
 
 			weapon:GetOwner():SetVelocity( Vector(0,0,50) - Angle(0,weapon:GetOwner():EyeAngles().y,0):Right() * 600 )
-
-			weapon:GetOwner().PreventFallDamageTill = CurTime() + 5
+			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.0,
@@ -91,7 +88,7 @@ COMBO.Attacks = {
 		AttackAnim = "a_combo4",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(10,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,
@@ -101,7 +98,7 @@ COMBO.Attacks = {
 		AttackAnim = "vanguard_r_s3_t3",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(10,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,
@@ -111,7 +108,8 @@ COMBO.Attacks = {
 		AttackAnim = "h_left_t3",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(250,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.9, Vector(250,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 2, CurTime() + 0.9, 0.3, Vector(0,0,0) )
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
@@ -120,11 +118,6 @@ COMBO.Attacks = {
 			timer.Simple(0.6, function()
 				if not IsValid( weapon ) then return end
 				weapon:DoAttackSound()
-			end)
-			timer.Simple(0.9, function()
-				if not IsValid( weapon ) then return end
-				weapon:SetMove( Vector(0,0,0) )
-				weapon:GetOwner():Freeze( true )
 			end)
 		end,
 		FinishAttack = function( self, weapon ) end,
@@ -135,7 +128,7 @@ COMBO.Attacks = {
 		AttackAnim = "a_combo4",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(-10,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-10,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,
@@ -145,7 +138,8 @@ COMBO.Attacks = {
 		AttackAnim = "a_combo3",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(0,-50,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.2, Vector(0,-100,0) )
+			weapon:GetOwner():lscsSetTimedMove( 2, CurTime() + 0.2, 0.1, Vector(0,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
@@ -155,7 +149,8 @@ COMBO.Attacks = {
 		AttackAnim = "combo2",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(0,50,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.2, Vector(0,100,0) )
+			weapon:GetOwner():lscsSetTimedMove( 2, CurTime() + 0.2, 0.1, Vector(0,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
@@ -165,7 +160,7 @@ COMBO.Attacks = {
 		AttackAnim = "combo4",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(1,1,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.6, Vector(1,1,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.2,
@@ -175,7 +170,7 @@ COMBO.Attacks = {
 		AttackAnim = "combo3",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(25,-25,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(25,-25,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
@@ -185,7 +180,7 @@ COMBO.Attacks = {
 		AttackAnim = "a_combo2",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(-1,1,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-1,1,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
@@ -195,7 +190,7 @@ COMBO.Attacks = {
 		AttackAnim = "combo1",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:SetMove( Vector(-1,-1,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-1,-1,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0,
@@ -205,10 +200,10 @@ COMBO.Attacks = {
 		AttackAnim = "combo32",
 		BeginAttack = function( self, weapon ) 
 			weapon:DoAttackSound()
-			weapon:GetOwner():Freeze( true )
 			if weapon:GetOwner():OnGround() then
 				weapon:GetOwner():SetVelocity( Angle(0,weapon:GetOwner():EyeAngles().y,0):Forward() * 1000 )
 			end
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime() + 0.6, 0.2, Vector(0,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,

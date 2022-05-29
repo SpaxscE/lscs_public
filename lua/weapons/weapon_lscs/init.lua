@@ -1,8 +1,10 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_combo.lua" )
+AddCSLuaFile( "sh_animations.lua" )
 include( "shared.lua" )
 include("sh_combo.lua")
+include("sh_animations.lua")
 
 function SWEP:Reload()
 	if (self.NextReload or 0) > CurTime() then return end
@@ -29,27 +31,12 @@ function SWEP:Think()
 end
 
 function SWEP:OnRemove()
-	local Hilt1 = self:GethiltLH()
-	local Hilt2 = self:GethiltRH()
-
-	if IsValid( Hilt1 ) then
-		Hilt1:Remove()
-	end
-
-	if IsValid( Hilt2 ) then
-		Hilt2:Remove()
-	end
 end
 
-function SWEP:OnRemove()
-	local Hilt1 = self:GethiltLH()
-	local Hilt2 = self:GethiltRH()
-
-	if IsValid( Hilt1 ) then
-		Hilt1:Remove()
-	end
-
-	if IsValid( Hilt2 ) then
-		Hilt2:Remove()
-	end
+function SWEP:EmitSoundUnpredicted( name )
+	-- dirty... but works. Its the only easy way i know how to break prediction
+	timer.Simple(0, function()
+		if not IsValid( self ) then return end
+		self:EmitSound( name )
+	end)
 end
