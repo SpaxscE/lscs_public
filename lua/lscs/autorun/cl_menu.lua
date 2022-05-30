@@ -1,3 +1,20 @@
+surface.CreateFont( "LSCS_FONT", {
+	font = "Verdana",
+	extended = false,
+	size = 20,
+	weight = 2000,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = true,
+	additive = false,
+	outline = false,
+} )
 
 local Gradient = Material("vgui/gradient-l")
 local ClickMat = Material("sun/overlay")
@@ -8,6 +25,7 @@ local menu_dark = Color(24,30,54,255)
 local menu_dim = Color(37,42,64,255)
 local menu_light = Color(46,51,73,255)
 local menu_black = Color(31,31,31,255)
+local menu_text = Color(0,127,255,255)
 
 local icon_lscs = Material("lscs/ui/icon256.png")
 local icon_close = Material("lscs/ui/cross.png")
@@ -75,8 +93,9 @@ function LSCS:SetActivePanel( newpanel )
 	Frame.PANEL = newpanel
 end
 
-local function CreateSideBarButton( icon, ID )
+local function CreateSideBarButton( icon, ID, text )
 	local button = vgui.Create( "Button", Frame.SideBar )
+	button.text = text or ""
 	button:SetText( "" )	
 	button:SetSize( SelectorWidthActive,  80 )
 	button:SetPos( 0,  (ID - 1) * 80 )
@@ -87,16 +106,24 @@ local function CreateSideBarButton( icon, ID )
 	button.Paint = function(self, w, h )
 		Frame.SideBar._smSB = Frame.SideBar._smSB or SelectorWidth
 
+		local xPos = Frame.SideBar._smSB - 8 - 64
+
 		local Col = DrawButtonClick( self, w, h ) 
 		if Frame.ID == self.ID then
+			Col = menu_text
+
+			draw.DrawText( self.text, "LSCS_FONT", -110 + xPos, h * 0.5 - 10, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+
 			surface.SetMaterial( Gradient )
-			surface.SetDrawColor( 255,255,255,255)
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 			surface.DrawTexturedRect( 0, 0, 6, h )
+		else
+			draw.DrawText( self.text, "LSCS_FONT", -110 + xPos, h * 0.5 - 10, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		end
 
 		surface.SetMaterial( icon )
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawTexturedRect( Frame.SideBar._smSB - 8 - 64, 8, 64, 64 )
+		surface.DrawTexturedRect( xPos, 8, 64, 64 )
 	end
 	button.ID = ID
 
@@ -148,10 +175,10 @@ function LSCS:SideBar( Frame )
 		end
 	end
 
-	local button = CreateSideBarButton( icon_inventory, 1 )
-	local button = CreateSideBarButton( icon_hilt, 2 )
-	local button = CreateSideBarButton( icon_stance, 3 )
-	local button = CreateSideBarButton( icon_settings, 4 )
+	local button = CreateSideBarButton( icon_inventory, 1, "Inventory" )
+	local button = CreateSideBarButton( icon_hilt, 2, "Lightsaber" )
+	local button = CreateSideBarButton( icon_stance, 3, "Stance" )
+	local button = CreateSideBarButton( icon_settings, 4, "Settings" )
 end
 
 function LSCS:BuildMainMenu( Frame )
