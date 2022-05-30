@@ -41,10 +41,10 @@ function LSCS:RegisterBlade( data )
 		length = data.length or 45,
 		glow = (data.glow == true),
 		sounds = {
-			BladeSound = (data.sounds.BladeSound or "saber_hup"),
-			BladeActivateSound = (data.sounds.BladeActivateSound or "saber_turnon"),
-			BladeDisableSound = (data.sounds.BladeDisableSound or "saber_turnoff"),
-			BladeIdleSound =  (data.sounds.BladeIdleSound or "saber/saberhum4.wav"),
+			Attack = (data.sounds.Attack or "saber_hup"),
+			Activate = (data.sounds.Activate or "saber_turnon"),
+			Disable = (data.sounds.Disable or "saber_turnoff"),
+			Idle =  (data.sounds.Idle or "saber/saberhum4.wav"),
 		}
 	}
 

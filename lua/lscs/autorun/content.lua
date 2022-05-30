@@ -7,10 +7,10 @@ blade.color_core = Color(255,255,255)
 blade.length = 45
 blade.glow = true
 blade.sounds = {
-	BladeSound = "saber_hup",
-	BladeActivateSound = "saber_turnon",
-	BladeDisableSound = "saber_turnoff",
-	BladeIdleSound =  "saber/saberhum4.wav",
+	Attack = "saber_hup",
+	Activate = "saber_turnon",
+	Disable = "saber_turnoff",
+	Idle =  "saber/saberhum4.wav",
 }
 LSCS:RegisterBlade( blade )
 
