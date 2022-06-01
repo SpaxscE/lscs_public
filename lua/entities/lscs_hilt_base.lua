@@ -23,9 +23,6 @@ if SERVER then
 		self:SetTrigger( not self.PreventTouch ) -- this will make it so you can use ply:Give() and the player will automatically pick it up, but if spawned using the q-menu it wont
 	end
 
-	function ENT:OnPickedUp( ply )
-	end
-
 	function ENT:PhysicsCollide( data, physobj )
 		if data.Speed > 60 and data.DeltaTime > 0.2 then
 			if data.Speed > 200 then

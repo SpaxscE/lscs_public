@@ -16,6 +16,24 @@ surface.CreateFont( "LSCS_FONT", {
 	outline = false,
 } )
 
+surface.CreateFont( "LSCS_FONT_SMALL", {
+	font = "Verdana",
+	extended = false,
+	size = 12,
+	weight = 2000,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = true,
+	additive = false,
+	outline = false,
+} )
+
 local Gradient = Material("vgui/gradient-l")
 local ClickMat = Material("sun/overlay")
 
@@ -219,18 +237,6 @@ function LSCS:BuildMainMenu( Frame )
 	LSCS:SideBar( Frame )
 
 	Frame.ID = 1
-
-	local DermaButton = vgui.Create( "DButton", Panel )
-	DermaButton:SetText( "Say hi" )
-	DermaButton:SetPos( 25, 50 )
-	DermaButton:SetSize( 250, 30 )
-	DermaButton.DoClick = function()
-		local menu = DermaMenu()
-		menu:AddOption( "Copy to clipboard", function() SetClipboardText( "weapon_pistol" ) end )
-		menu:AddOption( "Spawn 5", function() for i=1,5 do RunConsoleCommand( "gm_spawnswep", "weapon_pistol" ) end end )
-		menu:AddOption( "Spawn 10", function() for i=1,10 do RunConsoleCommand( "gm_spawnswep", "weapon_pistol" ) end end )
-		menu:Open()
-	end
 end
 
 function LSCS:BuildInventory( Frame )
@@ -241,6 +247,67 @@ function LSCS:BuildInventory( Frame )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	local DScrollPanel = vgui.Create( "DScrollPanel", Panel )
+	DScrollPanel:Dock( FILL )
+
+	local Inventory = LocalPlayer():lscsGetInventory()
+
+	local X = 8
+	local Y = 8
+	for index, class in pairs( Inventory ) do
+		local DButton = vgui.Create( "DButton", DScrollPanel )
+		DButton:SetText( "" )
+		DButton:SetPos( X, Y )
+		DButton:SetSize( 128, 128 )
+
+		DButton.SetMaterial = function( self, mat ) self.Mat = Material( mat ) end
+		DButton.GetMaterial = function( self ) return self.Mat end
+
+		DButton.SetID = function( self, id ) self.ID = id end
+		DButton.GetID = function( self ) return self.ID end
+
+		DButton.SetItem = function( self, item ) self.Item = LSCS:ClassToItem( item ) self.ClassName = class end
+		DButton.GetItem = function( self ) return self.Item end
+
+		DButton:SetItem( class )
+		DButton:SetID( index )
+		DButton:SetMaterial( "entities/"..class..".png" )
+
+		DButton.Paint = function(self, w, h )
+			surface.SetMaterial( self:GetMaterial() )
+			surface.SetDrawColor( 255,255,255,255 )
+			surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
+
+			DrawButtonClick( self, w, h ) 
+
+			local Col = menu_dark
+			if not self:IsHovered() then
+				surface.SetDrawColor( Col.r, Col.g, Col.b, 200 )
+				surface.DrawRect( 2, 2, w - 4, h - 4 )
+
+				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+				surface.DrawRect( 4, h - 24, w-8, 20  )
+				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			end
+		end
+		DButton.DoClick = function( self )
+			BaseButtonClick( self )
+			local menu = DermaMenu()
+			menu:AddOption( "Equip", function() end )
+			menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:Remove() end )
+			menu:Open()
+		end
+		DButton.DoRightClick = function( self )
+			self:DoClick()
+		end
+
+		X = X + 128
+		if X > (PanelSizeX - 128) then
+			X = 8
+			Y = Y + 128
+		end
 	end
 
 	LSCS:SetActivePanel( Panel )

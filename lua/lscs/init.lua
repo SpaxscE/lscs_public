@@ -7,10 +7,28 @@ function LSCS:GetBlade( name )
 	return LSCS.Blade[ name ]
 end
 
+function LSCS:ClassToItem( class )
+	local words = string.Explode( "_", class )
+	local type = words[ 2 ]
+	local id = words[ 3 ]
+
+	if type == "saberhilt" then
+		return LSCS.Hilt[ id ]
+	end
+
+	if type == "crystal" then
+		return LSCS.Blade[ id ]
+	end
+
+	return false
+end
+
 function LSCS:RegisterHilt( data )
 	if not data.id or not data.mdl or not data.info then return end
 
 	LSCS.Hilt[ data.id ] = {
+		name = data.PrintName,
+		type = "Hilt",
 		mdl = data.mdl,
 		info = data.info,
 	}
@@ -36,6 +54,8 @@ function LSCS:RegisterBlade( data )
 	if not data.id then return end
 
 	LSCS.Blade[ data.id ] = {
+		name = data.PrintName,
+		type = "Crystal",
 		color_blur = data.color_blur or Color(0,65,255),
 		color_core = data.color_core or color_white,
 		length = data.length or 45,

@@ -36,24 +36,13 @@ if SERVER then
 	end
 
 	function ENT:OnPickedUp( ply )
+		ply:lscsAddInventory( self )
 	end
 
 	function ENT:DoPickup( ply )
 		self:EmitSound( self.PickupSound )
 
-		--[[
-		self:SetTrigger( false )
-		self:DrawShadow( false )
-		self:PhysicsDestroy()
-		self:SetMoveType( MOVETYPE_NONE )
-		self:SetSolid( SOLID_NONE )
-		self:SetPlayer( ply )
-		self:SetNoDraw( true )
-		]]
-
 		self:OnPickedUp( ply )
-
-		self:Remove()
 	end
 
 	function ENT:OnRemove()
