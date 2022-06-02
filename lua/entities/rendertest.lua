@@ -23,7 +23,7 @@ if SERVER then
 	end
 else
 	ENT.Positions = {}
-	ENT.BeamMaterial = Material( "trails/laser" )
+	ENT.BeamMaterial = Material( "lscs/effects/lightsaber_trail" )
 
 	function ENT:Draw()
 		self:DrawModel()
@@ -41,19 +41,24 @@ else
 		local MyDir = self:GetUp()
 		local MyPos = self:GetPos()
 
-		for id, data in pairs( self.Positions ) do
-			if CurTime - data.time > LifeTime then
-				self.Positions[id] = nil
-			end
-		end
+		self.Next = self.Next or 0
+		if self.Next < CurTime then
+			self.Next = CurTime + 0.02
 
-		local data = {
-			time = CurTime,
-			pos = MyPos,
-			dir = MyDir,
-		}
-		table.insert(self.Positions, data)
-		table.sort(self.Positions, function( a, b ) return a.time > b.time end )
+			for id, data in pairs( self.Positions ) do
+				if CurTime - data.time > LifeTime then
+					self.Positions[id] = nil
+				end
+			end
+
+			local data = {
+				time = CurTime,
+				pos = MyPos,
+				dir = MyDir,
+			}
+			table.insert(self.Positions, data)
+			table.sort(self.Positions, function( a, b ) return a.time > b.time end )
+		end
 
 		self:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length )
 	end
@@ -80,10 +85,10 @@ else
 			local direction = subtract:GetNormalized()
 			local distance = subtract:Length()
 
-			for i = 1, distance,1 do
+			for i = 2, distance,2 do
 				idx = idx + 1
 
-				if idx > 50 then
+				if idx > 200 then
 					break
 				end
 
@@ -92,7 +97,7 @@ else
 				local _time = prev.time + (cur.time - prev.time) / distance * i
 				local _alpha = math.max( (_time + LifeTime - CurTime) / LifeTime, 0)
 
-				local _alpha2 = math.max(_alpha - 0.4,0) ^ 2
+				local _alpha2 = (math.max(_alpha - 0.8,0) / 0.2) ^ 10
 				local inv_alpha2 = math.max(1 - _alpha2,0)
 
 				local _c = 255 * _alpha2
