@@ -20,7 +20,7 @@ surface.CreateFont( "LSCS_FONT_SMALL", {
 	font = "Verdana",
 	extended = false,
 	size = 12,
-	weight = 2000,
+	weight = 500,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
@@ -51,6 +51,8 @@ local icon_inventory = Material("lscs/ui/inventory.png")
 local icon_hilt = Material("lscs/ui/hilt.png")
 local icon_stance = Material("lscs/ui/stance.png")
 local icon_settings = Material("lscs/ui/settings.png")
+
+local zoom_mat = Material( "vgui/zoom" )
 
 local function BaseButtonClick( self, sound )
 	sound = sound or "ui/buttonclick.wav"
@@ -247,6 +249,15 @@ function LSCS:BuildInventory( Frame )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
+
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( 255, 255, 255, 255 )
+		local X, Y = self:CursorPos()
+		surface.DrawTexturedRectRotated( X, Y, 512, 512, 0 )
+
+		local Col = menu_light
+		surface.SetDrawColor( Col.r, Col.g, Col.b, 240 )
+		surface.DrawRect( 0, 0, w, h  )
 	end
 
 	local DScrollPanel = vgui.Create( "DScrollPanel", Panel )
@@ -276,36 +287,83 @@ function LSCS:BuildInventory( Frame )
 		DButton:SetMaterial( "entities/"..class..".png" )
 
 		DButton.Paint = function(self, w, h )
+			if not self:IsEnabled() then
+				local Col = menu_dim
+				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+				surface.DrawRect( 2, 2, w - 4, h - 4 )
+				return
+			end
+
 			surface.SetMaterial( self:GetMaterial() )
 			surface.SetDrawColor( 255,255,255,255 )
 			surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
 
 			DrawButtonClick( self, w, h ) 
 
-			local Col = menu_dark
-			if not self:IsHovered() then
-				surface.SetDrawColor( Col.r, Col.g, Col.b, 200 )
+			if not self:IsHovered() and not IsValid( self.menu ) then
+				local Col = menu_dark
+
+				surface.SetDrawColor( 0,0,0,150 )
 				surface.DrawRect( 2, 2, w - 4, h - 4 )
+
+				surface.SetDrawColor( Color(255,255,255,255) )
+				surface.SetMaterial(zoom_mat ) 
+
+				local BoxSize = w - 4
+				local xPos = 2
+				local yPos = 2
+
+				surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 90 )
+				surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 0 )
+				surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 180 )
+				surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 270 )
 
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 				surface.DrawRect( 4, h - 24, w-8, 20  )
-				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		
+				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			else
+				local Col = menu_light
+
+				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+				surface.DrawRect( 4, h - 24, w-8, 20  )
+
+				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 			end
 		end
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
-			local menu = DermaMenu()
-			menu:AddOption( "Equip", function() end )
-			menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:Remove() end )
-			menu:Open()
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Equip", function() end )
+			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
+			self.menu:Open()
 		end
 		DButton.DoRightClick = function( self )
-			self:DoClick()
+			--self:DoClick()
 		end
 
 		X = X + 128
 		if X > (PanelSizeX - 128) then
 			X = 8
+			Y = Y + 128
+		end
+	end
+
+	while Y < (PanelSizeY - 128) or X < (PanelSizeX - 128) do
+		local Panel = vgui.Create( "DPanel", DScrollPanel )
+		Panel:SetPos( X, Y )
+		Panel:SetSize( 128, 128 )
+		Panel.Paint = function(self, w, h )
+			local Col = menu_dim
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			surface.DrawRect( 2, 2, w - 4, h - 4 )
+		end
+
+		X = X + 128
+		if X > (PanelSizeX - 128) then
+			if Y < (PanelSizeY - 128) then
+				X = 8
+			end
 			Y = Y + 128
 		end
 	end
@@ -376,7 +434,7 @@ function LSCS:OpenMenu()
 		Frame.Paint = function(self, w, h )
 			draw.RoundedBox( 8, 0, 0, w, h, menu_light )
 			draw.RoundedBoxEx( 8, 0, 0, w, FrameBarHeight, menu_dark, true, true, false, false)
-			draw.SimpleText( "[LSCS] - Control Panel ", "LSCS_FONT", 5, 11, menu_light, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "[LSCS] - Control Panel ", "LSCS_FONT", 5, 11, menu_white_dim , TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		end
 		Frame.GetSideBar = function(self)
 			return self.SideBar 

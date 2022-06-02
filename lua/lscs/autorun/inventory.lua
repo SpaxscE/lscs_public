@@ -59,8 +59,9 @@ if SERVER then
 		ply:lscsDropItem( id )
 	end)
 else
-	local ply = LocalPlayer()
 	net.Receive( "lscs_inventory", function( len )
+		local ply = LocalPlayer()
+
 		local Add = net.ReadBool()
 		local id = net.ReadInt( 32 )
 
