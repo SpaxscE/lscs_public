@@ -374,6 +374,20 @@ function LSCS:BuildInventory( Frame )
 	Frame.ID = 2
 end
 
+local function bezier(p0, p1, p2, p3, t)
+	local e = p0 + t * (p1 - p0)
+	local f = p1 + t * (p2 - p1)
+	local g = p2 + t * (p3 - p2)
+
+	local h = e + t * (f - e)
+	local i = f + t * (g - f)
+
+	local p = h + t * (i - h)
+
+	return p
+end
+
+local blur = Material("pp/blurscreen")
 function LSCS:BuildSaberMenu( Frame )
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
@@ -382,7 +396,64 @@ function LSCS:BuildSaberMenu( Frame )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
+
+		Col = menu_dim
+
+		local startPos = Vector(66,58,0)
+		local endPos = Vector(150,158,0)
+		local p2 = Vector(endPos.x,startPos.y,0)
+		local p3 = Vector(startPos.x,endPos.y,0)
+
+		local detail = 15
+		for i = 1,detail do
+			local sp = bezier(startPos, p2, p3, endPos, (i - 1) / detail)
+			local ep = bezier(startPos, p2, p3, endPos, i / detail)
+
+			surface.SetDrawColor( 0, 0, 0, 255 )
+			surface.DrawLine( sp.x+1, sp.y+1, ep.x+1, ep.y+1 )
+			surface.SetDrawColor( 255, 255, 255, 255 )
+			surface.DrawLine( sp.x, sp.y, ep.x, ep.y )
+		end
+
+		surface.SetMaterial( blur )
+		blur:SetFloat( "$blur", 0.75 )
+		blur:Recompute()
+		if render then render.UpdateScreenEffectTexture() end
+		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.DrawTexturedRect( -Frame:GetX() - PanelPosX, -Frame:GetY() - PanelPosY, ScrW(), ScrH()  )
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 50, 50, 16, 16  )
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 150, 150, 16, 16  )
 	end
+
+	--[[
+	local receiver = vgui.Create("DPanel", Panel)
+	receiver:SetPos( 50, 50 )
+	receiver:SetSize( 128, 128 )
+
+	local droppable = vgui.Create("DPanel", Panel)
+	droppable:SetPos( 200, 50 )
+	droppable:SetSize( 128,128 )
+	droppable.Paint = function(self, w, h )
+		local Col = color_white
+		if self:IsDragging() then
+			Col = menu_dark
+		end
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	receiver:Receiver( "name", 
+		function( receiver, tableOfDroppedPanels, isDropped, menuIndex, mouseX, mouseY ) 
+			PrintChat(isDropped)
+		end,
+		{}
+	)
+	droppable:Droppable( "name" )
+	]]
 
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
@@ -393,11 +464,85 @@ end
 function LSCS:BuildStanceMenu( Frame )
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	local mdl = vgui.Create( "DModelPanel", Panel )
+	mdl:SetPos( 4, 4 )
+	mdl:SetSize( PanelSizeY - 8 + FrameBarHeight, PanelSizeY - 8 + FrameBarHeight )
+	mdl:SetFOV( 40 )
+	mdl:SetCamPos( vector_origin )
+	mdl:SetDirectionalLight( BOX_RIGHT, Color( 255, 160, 80, 255 ) )
+	mdl:SetDirectionalLight( BOX_LEFT, Color( 80, 160, 255, 255 ) )
+	mdl:SetAmbientLight( Vector( -64, -64, -64 ) )
+	mdl:SetAnimated( true )
+	mdl.Angles = angle_zero
+	mdl:SetLookAt( Vector( -100, 0, -22 ) )
+	mdl:SetModel( LocalPlayer():GetModel() )
+	function mdl.Entity:GetPlayerColor() return LocalPlayer():GetPlayerColor() end
+	mdl.Entity:SetPos( Vector( -100, 0, -61 ) )
+
+	function mdl:DragMousePress()
+		self.PressX, self.PressY = gui.MousePos()
+		self.Pressed = true
+	end
+
+	function mdl:DragMouseRelease() self.Pressed = false end
+
+	function mdl:LayoutEntity( ent )
+		if ( self.bAnimated ) then self:RunAnimation() end
+
+		if ( self.Pressed ) then
+			local mx = gui.MousePos()
+			self.Angles = self.Angles - Angle( 0, ( ( self.PressX or mx ) - mx ) / 2, 0 )
+
+			self.PressX, self.PressY = gui.MousePos()
+		end
+
+		ent:SetAngles( self.Angles )
+	end
+
+	mdl.Paint = function(self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	
+		if not IsValid( self.Entity ) then return end
+
+		local x, y = self:LocalToScreen( 0, 0 )
+
+		self:LayoutEntity( self.Entity )
+
+		local ang = self.aLookAngle
+		if not ang then
+			ang = ( self.vLookatPos - self.vCamPos ):Angle()
+		end
+
+		cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, self.FarZ )
+
+		render.SuppressEngineLighting( true )
+		render.SetLightingOrigin( self.Entity:GetPos() )
+		render.ResetModelLighting( self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255 )
+		render.SetColorModulation( self.colColor.r / 255, self.colColor.g / 255, self.colColor.b / 255 )
+		render.SetBlend( ( self:GetAlpha() / 255 ) * ( self.colColor.a / 255 ) ) -- * surface.GetAlphaMultiplier()
+
+		for i = 0, 6 do
+			local col = self.DirectionalLight[ i ]
+			if ( col ) then
+				render.SetModelLighting( i, col.r / 255, col.g / 255, col.b / 255 )
+			end
+		end
+
+		self:DrawModel()
+
+		render.SuppressEngineLighting( false )
+		cam.End3D()
+
+		self.LastPaint = RealTime()
 	end
 
 	LSCS:SetActivePanel( Panel )
