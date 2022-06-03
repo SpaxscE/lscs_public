@@ -303,7 +303,7 @@ function LSCS:BuildInventory( Frame )
 			if not self:IsHovered() and not IsValid( self.menu ) then
 				local Col = menu_dark
 
-				surface.SetDrawColor( 0,0,0,150 )
+				surface.SetDrawColor( 0,0,0,100 )
 				surface.DrawRect( 2, 2, w - 4, h - 4 )
 
 				surface.SetDrawColor( Color(255,255,255,255) )
@@ -374,20 +374,6 @@ function LSCS:BuildInventory( Frame )
 	Frame.ID = 2
 end
 
-local function bezier(p0, p1, p2, p3, t)
-	local e = p0 + t * (p1 - p0)
-	local f = p1 + t * (p2 - p1)
-	local g = p2 + t * (p3 - p2)
-
-	local h = e + t * (f - e)
-	local i = f + t * (g - f)
-
-	local p = h + t * (i - h)
-
-	return p
-end
-
-local blur = Material("pp/blurscreen")
 function LSCS:BuildSaberMenu( Frame )
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
@@ -396,64 +382,7 @@ function LSCS:BuildSaberMenu( Frame )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
-
-		Col = menu_dim
-
-		local startPos = Vector(66,58,0)
-		local endPos = Vector(150,158,0)
-		local p2 = Vector(endPos.x,startPos.y,0)
-		local p3 = Vector(startPos.x,endPos.y,0)
-
-		local detail = 15
-		for i = 1,detail do
-			local sp = bezier(startPos, p2, p3, endPos, (i - 1) / detail)
-			local ep = bezier(startPos, p2, p3, endPos, i / detail)
-
-			surface.SetDrawColor( 0, 0, 0, 255 )
-			surface.DrawLine( sp.x+1, sp.y+1, ep.x+1, ep.y+1 )
-			surface.SetDrawColor( 255, 255, 255, 255 )
-			surface.DrawLine( sp.x, sp.y, ep.x, ep.y )
-		end
-
-		surface.SetMaterial( blur )
-		blur:SetFloat( "$blur", 0.75 )
-		blur:Recompute()
-		if render then render.UpdateScreenEffectTexture() end
-		surface.SetDrawColor( 255, 255, 255, 255 )
-		surface.DrawTexturedRect( -Frame:GetX() - PanelPosX, -Frame:GetY() - PanelPosY, ScrW(), ScrH()  )
-
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 50, 50, 16, 16  )
-
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 150, 150, 16, 16  )
 	end
-
-	--[[
-	local receiver = vgui.Create("DPanel", Panel)
-	receiver:SetPos( 50, 50 )
-	receiver:SetSize( 128, 128 )
-
-	local droppable = vgui.Create("DPanel", Panel)
-	droppable:SetPos( 200, 50 )
-	droppable:SetSize( 128,128 )
-	droppable.Paint = function(self, w, h )
-		local Col = color_white
-		if self:IsDragging() then
-			Col = menu_dark
-		end
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
-	end
-
-	receiver:Receiver( "name", 
-		function( receiver, tableOfDroppedPanels, isDropped, menuIndex, mouseX, mouseY ) 
-			PrintChat(isDropped)
-		end,
-		{}
-	)
-	droppable:Droppable( "name" )
-	]]
 
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
