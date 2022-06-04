@@ -27,6 +27,15 @@ if SERVER then
 
 		self:lscsSetHilt()
 		self:lscsSetBlade()
+
+		local weapon = self:GetWeapon( "weapon_lscs" )
+
+		if IsValid( weapon ) then
+			weapon:SetHiltR( HiltR or "" )
+			weapon:SetHiltL( HiltL or "" )
+			weapon:SetBladeR( BladeR or "" )
+			weapon:SetBladeL( BladeL or "" )
+		end
 	end
 
 	function meta:lscsSetHilt( hilt_right, hilt_left )
@@ -309,7 +318,7 @@ else
 				local item = net.ReadString( item )
 				ply.m_inventory_lscs[ index ] = item
 			end
-			LSCS:RefreshInventory()
+			LSCS:RefreshMenu()
 		end
 	end)
 

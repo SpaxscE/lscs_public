@@ -28,6 +28,17 @@ SWEP.RenderGroup = RENDERGROUP_BOTH
 
 SWEP.LSCS = true
 
+SWEP._tblHilt = {}
+SWEP._tblBlade = {}
+
+SWEP.HAND_RIGHT = 1
+SWEP.HAND_LEFT = 2
+
+SWEP.HAND_STRING = {
+	[SWEP.HAND_RIGHT] = "RH",
+	[SWEP.HAND_LEFT] = "LH",
+}
+
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
 	self:NetworkVar( "Bool",1, "NWDMGActive" )
@@ -35,14 +46,60 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float",0, "NWNextAttack" )
 	self:NetworkVar( "Float",1, "NWGestureTime" )
 
-	self:NetworkVar( "Vector",1, "BladeColor" )
+	self:NetworkVar( "String",0, "HiltR")
+	self:NetworkVar( "String",1, "HiltL")
+	self:NetworkVar( "String",2, "BladeR")
+	self:NetworkVar( "String",3, "BladeL")
+end
 
-	self:NetworkVar( "String",0, "MDL")
+function SWEP:GetHiltData()
+	local HiltR = self:GetHiltR()
+	local HiltL = self:GetHiltL()
 
-	if SERVER then
-		self:SetMDL( "models/lscs/weapons/katarn.mdl" )
-		self:SetBladeColor( Vector(0,65,255) )
+	if self._oldHiltR ~= HiltR then
+		self._oldHiltR = HiltR
+		self._HiltR = LSCS:GetHilt( HiltR )
+
+		self._tblHilt[self.HAND_RIGHT] = self._HiltR
+
+		if CLIENT then
+			self:UpdateWorldModel(self.HAND_RIGHT, self._HiltR)
+		end
 	end
+
+	if self._oldHiltL ~= HiltL then
+		self._oldHiltL = HiltL
+		self._HiltL = LSCS:GetHilt( HiltL )
+
+		self._tblHilt[self.HAND_LEFT] = self._HiltR
+
+		if CLIENT then
+			self:UpdateWorldModel(self.HAND_LEFT, self._HiltL)
+		end
+	end
+
+	return self._tblHilt
+end
+
+function SWEP:GetBladeData()
+	local BladeR = self:GetBladeR()
+	local BladeL = self:GetBladeL()
+
+	if self._oldBladeR ~= BladeR then
+		self._oldBladeR = BladeR
+		self._BladeR = LSCS:GetBlade( BladeR )
+
+		self._tblBlade[1] = self._BladeR
+	end
+
+	if self._oldBladeL ~= BladeL then
+		self._oldBladeL = BladeL
+		self._BladeL = LSCS:GetBlade( BladeL )
+
+		self._tblBlade[2] = self._BladeL
+	end
+
+	return self._tblBlade
 end
 
 function SWEP:SetDMGActive( active )
