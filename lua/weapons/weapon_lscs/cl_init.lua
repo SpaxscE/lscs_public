@@ -137,7 +137,7 @@ function SWEP:DrawBlade( BladeID, PosData, bladeObject )
 	render.DrawBeam( pos, EndPos, actual_width , 1, 1, color_core )
 
 	render.SetMaterial( bladeObject.material_core_tip )
-	render.DrawBeam( EndPos, EndPos + dir, actual_width , width, 0.1, color_core )	
+	render.DrawBeam( EndPos, EndPos + dir, actual_width , 0.9, 0.1, color_core )	
 end
 
 function SWEP:DrawWorldModel( flags )
@@ -181,6 +181,12 @@ function SWEP:CalcView( ply, pos, angles, fov )
 end
 
 function SWEP:Reload()
+end
+
+function SWEP:OnActiveChanged( oldActive, active )
+end
+
+function SWEP:OnTick()
 end
 
 function SWEP:OnRemove()

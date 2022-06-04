@@ -183,6 +183,7 @@ end
 
 function SWEP:Holster( wep )
 	self:SetActive( false )
+	self:SetLength( 0 )
 
 	self:FinishCombo()
 
@@ -233,6 +234,10 @@ function SWEP:Think()
 			self:SetHoldType( "normal" )
 			self:EmitSound( self.DisableSound )
 		end
+
+		self:OnActiveChanged( self.OldActive, Active )
 	end
+
+	self:OnTick( Active )
 end
 

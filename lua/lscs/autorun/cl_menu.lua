@@ -397,17 +397,14 @@ function LSCS:BuildInventory( Frame )
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
 			self.menu = DermaMenu()
-			self.menu:AddOption( "Equip [Crafting Menu]", function()
+			self.menu:AddOption( "Equip", function()
 				LocalPlayer():lscsEquipFromInventory( self:GetID() )
 				self:SetEnabled( false )
 			end )
+			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
 			self.menu:Open()
 		end
 		DButton.DoRightClick = function( self )
-			BaseButtonClick( self )
-			self.menu = DermaMenu()
-			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
-			self.menu:Open()
 		end
 
 		X = X + 128

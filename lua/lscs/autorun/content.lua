@@ -23,30 +23,40 @@ LSCS:RegisterBlade( blade )
 blade.PrintName = "Rubin"
 blade.id = "rubin"
 blade.color_blur = Color(200,0,0)
+blade.width = 0.8
+blade.widthWiggle = 0.7
 blade.sounds.Idle = "saber/saberhum2.wav"
 LSCS:RegisterBlade( blade )
 
 blade.PrintName = "Smaragd"
 blade.id = "smaragd"
 blade.color_blur = Color(0,150,0)
+blade.width = 0.9
+blade.widthWiggle = 0.6
 blade.sounds.Idle = "saber/saberhum5.wav"
 LSCS:RegisterBlade( blade )
 
 blade.PrintName = "Amethyst"
 blade.id = "amethyst"
 blade.color_blur = Color(200,0,200)
+blade.width = 1
+blade.widthWiggle = 0.2
 blade.sounds.Idle = "saber/saberhum3.wav"
 LSCS:RegisterBlade( blade )
 
 blade.PrintName = "Citrine"
 blade.id = "citrine"
 blade.color_blur = Color(200,150,0)
+blade.width = 0.9
+blade.widthWiggle = 0.6
 blade.sounds.Idle = "saber/saberhum1.wav"
 LSCS:RegisterBlade( blade )
 
 blade.PrintName = "Allnatt"
 blade.id = "allnatt"
 blade.color_blur = Color(200,200,0)
+blade.width = 0.65
+blade.widthWiggle = 1
 blade.sounds.Idle = "saber/saberhum3.wav"
 LSCS:RegisterBlade( blade )
 
@@ -90,7 +100,7 @@ LSCS:RegisterHilt( hilt )
 
 
 local hilt = {}
-hilt.PrintName = "Guard Staff"
+hilt.PrintName = "Staff"
 hilt.Author = "Blu-x92 / Luna"
 hilt.id = "guard"
 hilt.mdl = "models/lscs/weapons/staff.mdl"
