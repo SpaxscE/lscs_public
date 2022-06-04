@@ -56,7 +56,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "String",3, "BladeL")
 end
 
-function SWEP:GetHiltData()
+function SWEP:GetHiltData( hand )
 	local HiltR = self:GetHiltR()
 	local HiltL = self:GetHiltL()
 
@@ -82,10 +82,14 @@ function SWEP:GetHiltData()
 		end
 	end
 
-	return self._tblHilt
+	if hand then
+		return self._tblHilt[ hand ]
+	else
+		return self._tblHilt
+	end
 end
 
-function SWEP:GetBladeData()
+function SWEP:GetBladeData( hand )
 	local BladeR = self:GetBladeR()
 	local BladeL = self:GetBladeL()
 
@@ -103,7 +107,11 @@ function SWEP:GetBladeData()
 		self._tblBlade[2] = self._BladeL
 	end
 
-	return self._tblBlade
+	if hand then
+		return self._tblBlade[ hand ]
+	else
+		return self._tblBlade
+	end
 end
 
 function SWEP:BuildSounds()
@@ -163,7 +171,14 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DoAttackSound()
-	self:EmitSound( self.AttackSound )
+	if CLIENT then return end
+
+	--ent:EmitSound internally calls SuppressHostEvents( )
+	--which i need to break with this timer.Simple or it will 'sometimes' play two different sounds from the soundscript at the same time
+	timer.Simple(0, function()
+		if not IsValid( self ) then return end
+		self:EmitSound( self.AttackSound )
+	end)
 end
 
 function SWEP:Holster( wep )
@@ -196,10 +211,23 @@ end
 function SWEP:OwnerChanged()
 end
 
+function SWEP:SetLength( n )
+	self.sm_length = n
+end
+
+function SWEP:GetLength()
+	return (self.sm_length or 0)
+end
+
 function SWEP:Think()
 	self:ComboThink()
 
 	local Active = self:GetActive()
+
+	local FT = FrameTime()
+	local Length = self:GetLength()
+
+	self:SetLength( Length + math.Clamp((Active and 1 or 0) - Length,-FT * 1.5,FT * 3) )
 
 	if Active ~= self.OldActive then
 		self.OldActive = Active

@@ -66,6 +66,8 @@ function SWEP:DrawWorldModelTranslucent( flags )
 
 	if not IsValid( ply ) then return end
 
+	local BladeID = 1
+
 	for handID, hiltObject in pairs( self:GetHiltData() ) do
 		local WorldModel = self:GetWorldModel( handID )
 
@@ -89,7 +91,53 @@ function SWEP:DrawWorldModelTranslucent( flags )
 		WorldModel:SetAngles( newAng )
 		WorldModel:SetupBones()
 		WorldModel:DrawModel()
+
+		local Positions = hiltObject.info.GetBladePos( WorldModel )
+		for _, PosData in ipairs( Positions ) do
+
+			self:DrawBlade( BladeID, PosData, self:GetBladeData( handID ) )
+
+			BladeID = BladeID + 1
+		end
 	end
+end
+
+function SWEP:DrawBlade( BladeID, PosData, bladeObject )
+	local Mul = self:GetLength()
+
+	if Mul <= 0 then return end
+
+	local length = bladeObject.length
+
+	local width = bladeObject.width
+	local actual_width = width + math.Rand(0,bladeObject.widthWiggle)
+
+	local pos = PosData.pos
+	local dir = PosData.dir
+
+	local w12 = width * 12
+	local w32 = width * 32
+
+	local color_blur = bladeObject.color_blur
+	local color_core = bladeObject.color_core
+
+	local Frac = 1 * Mul --self:DoBladeTrace( pos, up, 2 ).Fraction
+
+	render.SetMaterial( bladeObject.material_glow )
+	render.DrawSprite( pos, w32, w32, color_blur )
+
+	-- inefficient pls replace
+	for i = 0, math.Round( (length - 1) * Frac, 0 ) do
+		render.DrawSprite( pos + dir * i, w12, w12, color_blur ) 
+	end
+
+	local EndPos = pos + dir * math.max(length - 0.9,0) * Frac
+
+	render.SetMaterial( bladeObject.material_core )
+	render.DrawBeam( pos, EndPos, actual_width , 1, 1, color_core )
+
+	render.SetMaterial( bladeObject.material_core_tip )
+	render.DrawBeam( EndPos, EndPos + dir, actual_width , width, 0.1, color_core )	
 end
 
 function SWEP:DrawWorldModel( flags )

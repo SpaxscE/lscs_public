@@ -100,8 +100,7 @@ function LSCS:RegisterBlade( data )
 		widthWiggle = data.widthWiggle or 0.6,
 		material_core_tip = data.material_core_tip or Material( "lscs/effects/lightsaber_tip" ),
 		material_core = data.material_core or Material( "lscs/effects/lightsaber_core" ),
-		material_glow_start = data.material_glow_start or Material( "lscs/effects/lightsaber_glow" ),
-		material_glow = data.material_glow or Material( "lscs/effects/lightsaber_blade" ),
+		material_glow = data.material_glow_start or Material( "lscs/effects/lightsaber_glow" ),
 		material_trail = data.material_trail or Material( "lscs/effects/lightsaber_trail" ),
 		dynamic_light = (data.dynamic_light == true),
 		sounds = {
