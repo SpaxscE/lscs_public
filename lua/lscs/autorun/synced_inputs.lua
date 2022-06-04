@@ -2,9 +2,9 @@
 
 local meta = FindMetaTable( "Player" )
 
-meta.lscs_cmd = {}
-
 hook.Add( "StartCommand", "!!!!lscs_syncedinputs", function( ply, cmd )
+	if not ply.lscs_cmd then ply.lscs_cmd = {} end
+
 	ply.lscs_cmd[ IN_ATTACK ] = cmd:KeyDown( IN_ATTACK )
 	ply.lscs_cmd[ IN_FORWARD ] = cmd:KeyDown( IN_FORWARD )
 	ply.lscs_cmd[ IN_MOVELEFT ] =  cmd:KeyDown( IN_MOVELEFT )

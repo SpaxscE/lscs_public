@@ -8,6 +8,8 @@ COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
 	AttackAnim = "range_melee", -- which animation to play
 	BeginAttack = function( self, weapon )
+		weapon:DoAttackSound()
+
 		-- do whatever extra things you want to do when the attack is triggered. Please note this is run on both server and client
 	end,
 	FinishAttack = function( self, weapon )

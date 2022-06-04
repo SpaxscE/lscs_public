@@ -1,7 +1,5 @@
 local meta = FindMetaTable( "Player" )
 
-meta.m_inventory_lscs = {}
-
 local LSCS_FIRSTJOIN = 0
 local LSCS_HILT = 1
 local LSCS_BLADE = 2
@@ -83,7 +81,7 @@ if SERVER then
 			net.WriteString( item )
 		net.Send( self )
 
-		self.m_inventory_lscs[ index ] = item
+		self:lscsGetInventory()[ index ] = item
 
 		entity:Remove()
 	end
@@ -103,7 +101,7 @@ if SERVER then
 	end
 
 	function meta:lscsDropItem( id )
-		local item = self.m_inventory_lscs[ id ]
+		local item = self:lscsGetInventory()[ id ]
 
 		if not item then return end
 
@@ -126,13 +124,13 @@ if SERVER then
 			net.WriteInt( id, 8 )
 		net.Send( self )
 
-		self.m_inventory_lscs[ id ] = nil
+		item = nil
 
 		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent )
 	end
 
 	function meta:lscsRemoveItem( id )
-		local item = self.m_inventory_lscs[ id ]
+		local item = self:lscsGetInventory()[ id ]
 
 		if not item then return end
 
@@ -141,7 +139,7 @@ if SERVER then
 			net.WriteInt( id, 8 )
 		net.Send( self )
 
-		self.m_inventory_lscs[ id ] = nil
+		item = nil
 	end
 
 	function meta:lscsEquipFromInventory( id )
@@ -332,7 +330,7 @@ else
 			net.WriteInt( id, 8 )
 		net.SendToServer()
 
-		self.m_inventory_lscs[ id ] = nil
+		self:lscsGetInventory()[ id ] = nil
 	end
 
 	function meta:lscsEquipFromInventory( id )
@@ -354,10 +352,11 @@ else
 end
 
 function meta:lscsGetCombo()
-	return LSCS[ self:GetNWString( "lscsComboFile", "default" ) ]
+	return LSCS[ self:GetNWString( "lscsComboFile", "standard" ) ]
 end
 
 function meta:lscsGetInventory()
+	if not self.m_inventory_lscs then self.m_inventory_lscs = {} end
 	return self.m_inventory_lscs
 end
 

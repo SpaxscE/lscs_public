@@ -14,29 +14,5 @@ function SWEP:Reload()
 	self:SetActive( not self:GetActive() )
 end
 
-function SWEP:Think()
-	self:ComboThink()
-
-	local Active = self:GetActive()
-
-	if Active ~= self.OldActive then
-		self.OldActive = Active
-
-		if Active then
-			self:SetHoldType( self:GetCombo().HoldType )
-		else
-			self:SetHoldType( "normal" )
-		end
-	end
-end
-
 function SWEP:OnRemove()
-end
-
-function SWEP:EmitSoundUnpredicted( name )
-	-- dirty... but works. Its the only easy way i know how to break prediction
-	timer.Simple(0, function()
-		if not IsValid( self ) then return end
-		self:EmitSound( name )
-	end)
 end

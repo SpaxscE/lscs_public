@@ -135,14 +135,6 @@ end
 function SWEP:Reload()
 end
 
-function SWEP:Think()
-	self:ComboThink()
-end
-
 function SWEP:OnRemove()
 	self:ClearWorldModel()
-end
-
-function SWEP:EmitSoundUnpredicted( name )
-	-- im just here cuz the combo file calls emitsound shared
 end

@@ -1,10 +1,10 @@
 -- should, in theory, keep prediction working while taking control away from the player. In reality, it doesnt, but its still better than ply:SetVelocity as it fixes teleporting issues on low tickrate/fps
 
-local ply = FindMetaTable( "Player" )
-
-ply._lscsTimedMove = {}
+local meta = FindMetaTable( "Player" )
 
 hook.Add( "SetupMove", "!!!lscs_movementoverride", function( ply, mv, cmd )
+	if not ply._lscsTimedMove then ply._lscsTimedMove = {} end
+
 	if table.IsEmpty( ply._lscsTimedMove ) then return end
 
 	local Move = Vector(0,0,0)
@@ -42,7 +42,7 @@ hook.Add( "PlayerFootstep", "!!!lscs_CustomFootstep", function( ply, pos, foot, 
 	end
 end )
 
-function ply:lscsSetTimedMove( ID, time_start, time_duration, movement )
+function meta:lscsSetTimedMove( ID, time_start, time_duration, movement )
 	self._lscsTimedMove[ ID ] = {
 		start = time_start,
 		duration = time_duration,
@@ -50,6 +50,6 @@ function ply:lscsSetTimedMove( ID, time_start, time_duration, movement )
 	}
 end
 
-function ply:lscsClearTimedMove()
+function meta:lscsClearTimedMove()
 	table.Empty( self._lscsTimedMove )
 end

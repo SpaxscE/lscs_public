@@ -33,11 +33,15 @@ SWEP._tblBlade = {}
 
 SWEP.HAND_RIGHT = 1
 SWEP.HAND_LEFT = 2
-
 SWEP.HAND_STRING = {
 	[SWEP.HAND_RIGHT] = "RH",
 	[SWEP.HAND_LEFT] = "LH",
 }
+
+SWEP.AttackSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.ActivateSound = ""
+SWEP.DisableSound = ""
+SWEP.IdleSound = ""
 
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
@@ -102,6 +106,19 @@ function SWEP:GetBladeData()
 	return self._tblBlade
 end
 
+function SWEP:BuildSounds()
+	for _, data in pairs( self:GetBladeData() ) do
+		local SND = data.sounds
+		if SND then
+			self.AttackSound = SND.Attack
+			self.ActivateSound = SND.Activate
+			self.DisableSound = SND.Disable
+			self.IdleSound = SND.Idle
+			break
+		end
+	end
+end
+
 function SWEP:SetDMGActive( active )
 	self.b_dmgActive = active
 	if SERVER then
@@ -146,12 +163,15 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DoAttackSound()
+	self:EmitSound( self.AttackSound )
 end
 
 function SWEP:Holster( wep )
 	self:SetActive( false )
 
 	self:FinishCombo()
+
+	self:Think()
 
 	return true
 end
@@ -175,3 +195,24 @@ end
 
 function SWEP:OwnerChanged()
 end
+
+function SWEP:Think()
+	self:ComboThink()
+
+	local Active = self:GetActive()
+
+	if Active ~= self.OldActive then
+		self.OldActive = Active
+
+		if Active then
+			self:BuildSounds()
+
+			self:SetHoldType( self:GetCombo().HoldType )
+			self:EmitSound( self.ActivateSound )
+		else
+			self:SetHoldType( "normal" )
+			self:EmitSound( self.DisableSound )
+		end
+	end
+end
+
