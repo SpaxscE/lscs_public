@@ -51,5 +51,7 @@ function meta:lscsSetTimedMove( ID, time_start, time_duration, movement )
 end
 
 function meta:lscsClearTimedMove()
+	if not self._lscsTimedMove then self._lscsTimedMove = {} end
+
 	table.Empty( self._lscsTimedMove )
 end

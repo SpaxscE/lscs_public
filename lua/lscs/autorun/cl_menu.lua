@@ -246,7 +246,7 @@ function LSCS:SideBar( Frame )
 		LSCS:BuildInventory( Frame )
 	end
 
-	local button = CreateSideBarButton( icon_hilt, 3, "Crafting" )
+	local button = CreateSideBarButton( icon_hilt, 3, "Lightsaber" )
 	button.DoClick = function( self )
 		BaseButtonClickSB( self )
 		LSCS:BuildSaberMenu( Frame )
@@ -397,7 +397,7 @@ function LSCS:BuildInventory( Frame )
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
 			self.menu = DermaMenu()
-			self.menu:AddOption( "Equip", function()
+			self.menu:AddOption( "Equip [Crafting Menu]", function()
 				LocalPlayer():lscsEquipFromInventory( self:GetID() )
 				self:SetEnabled( false )
 			end )
@@ -510,12 +510,23 @@ local CrafterButtonPaint = function(self, w, h )
 		if self:IsHovered() then
 			Col = Color(255,0,0,255)
 		end
+		if IsValid( self.menu ) then
+			Col = menu_white
+		end
+
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 
 		surface.DrawTexturedRect( 32, 32, 64, 64 )
+
 		DrawFrame( w, h, 0, 2 )
 
 		draw.SimpleText( self.InfoText, "LSCS_FONT", w * 0.5, h - 8, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+
+		if IsValid( self.menu ) then
+			Col = menu_text
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			DrawFrame( w, h, 0, 2 )
+		end
 	end
 end
 
@@ -618,6 +629,24 @@ function LSCS:BuildSaberMenu( Frame )
 				ply:lscsUnEquip( true )
 			end )
 			self.menu:Open()
+		else
+			self.menu = DermaMenu()
+			local Num = 0
+			for k, v in pairs( ply:lscsGetInventory() ) do
+				local item = LSCS:ClassToItem( v )
+				if item.type == "hilt" then
+					Num = Num + 1
+					self.menu:AddOption( item.name, function()
+						LocalPlayer():lscsEquipFromInventory( k, 1 )
+					end )
+				end
+			end
+			if Num >= 1 then
+				self.menu:Open()
+			else
+				surface.PlaySound("buttons/button10.wav")
+				self.menu:Remove()
+			end
 		end
 	end
 	ButtonHilt.Main = Main
@@ -637,6 +666,24 @@ function LSCS:BuildSaberMenu( Frame )
 				ply:lscsUnEquip( false, false, true )
 			end )
 			self.menu:Open()
+		else
+			self.menu = DermaMenu()
+			local Num = 0
+			for k, v in pairs( ply:lscsGetInventory() ) do
+				local item = LSCS:ClassToItem( v )
+				if item.type == "crystal" then
+					Num = Num + 1
+					self.menu:AddOption( item.name, function()
+						LocalPlayer():lscsEquipFromInventory( k, 1 )
+					end )
+				end
+			end
+			if Num >= 1 then
+				self.menu:Open()
+			else
+				surface.PlaySound("buttons/button10.wav")
+				self.menu:Remove()
+			end
 		end
 	end
 	ButtonBlade.Main = Main
@@ -672,6 +719,24 @@ function LSCS:BuildSaberMenu( Frame )
 				ply:lscsUnEquip( false, true )
 			end )
 			self.menu:Open()
+		else
+			self.menu = DermaMenu()
+			local Num = 0
+			for k, v in pairs( ply:lscsGetInventory() ) do
+				local item = LSCS:ClassToItem( v )
+				if item.type == "hilt" then
+					Num = Num + 1
+					self.menu:AddOption( item.name, function()
+						LocalPlayer():lscsEquipFromInventory( k, 2 )
+					end )
+				end
+			end
+			if Num >= 1 then
+				self.menu:Open()
+			else
+				surface.PlaySound("buttons/button10.wav")
+				self.menu:Remove()
+			end
 		end
 	end
 	ButtonHilt.Main = Main
@@ -691,6 +756,24 @@ function LSCS:BuildSaberMenu( Frame )
 				ply:lscsUnEquip( false, false, false, true)
 			end )
 			self.menu:Open()
+		else
+			self.menu = DermaMenu()
+			local Num = 0
+			for k, v in pairs( ply:lscsGetInventory() ) do
+				local item = LSCS:ClassToItem( v )
+				if item.type == "crystal" then
+					Num = Num + 1
+					self.menu:AddOption( item.name, function()
+						LocalPlayer():lscsEquipFromInventory( k, 2 )
+					end )
+				end
+			end
+			if Num >= 1 then
+				self.menu:Open()
+			else
+				surface.PlaySound("buttons/button10.wav")
+				self.menu:Remove()
+			end
 		end
 	end
 	ButtonBlade.Main = Main

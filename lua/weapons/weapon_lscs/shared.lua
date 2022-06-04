@@ -50,6 +50,8 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float",0, "NWNextAttack" )
 	self:NetworkVar( "Float",1, "NWGestureTime" )
 
+	self:NetworkVar( "Float",2, "Length" )
+
 	self:NetworkVar( "String",0, "HiltR")
 	self:NetworkVar( "String",1, "HiltL")
 	self:NetworkVar( "String",2, "BladeR")
@@ -62,23 +64,25 @@ function SWEP:GetHiltData( hand )
 
 	if self._oldHiltR ~= HiltR then
 		self._oldHiltR = HiltR
-		self._HiltR = LSCS:GetHilt( HiltR )
 
-		self._tblHilt[self.HAND_RIGHT] = self._HiltR
+		local _HiltR = LSCS:GetHilt( HiltR )
+
+		self._tblHilt[self.HAND_RIGHT] = _HiltR
 
 		if CLIENT then
-			self:UpdateWorldModel(self.HAND_RIGHT, self._HiltR)
+			self:UpdateWorldModel(self.HAND_RIGHT, _HiltR)
 		end
 	end
 
 	if self._oldHiltL ~= HiltL then
 		self._oldHiltL = HiltL
-		self._HiltL = LSCS:GetHilt( HiltL )
 
-		self._tblHilt[self.HAND_LEFT] = self._HiltR
+		local _HiltL = LSCS:GetHilt( HiltL )
+
+		self._tblHilt[self.HAND_LEFT] = _HiltL
 
 		if CLIENT then
-			self:UpdateWorldModel(self.HAND_LEFT, self._HiltL)
+			self:UpdateWorldModel(self.HAND_LEFT, _HiltL)
 		end
 	end
 
@@ -95,16 +99,12 @@ function SWEP:GetBladeData( hand )
 
 	if self._oldBladeR ~= BladeR then
 		self._oldBladeR = BladeR
-		self._BladeR = LSCS:GetBlade( BladeR )
-
-		self._tblBlade[1] = self._BladeR
+		self._tblBlade[1] = LSCS:GetBlade( BladeR )
 	end
 
 	if self._oldBladeL ~= BladeL then
 		self._oldBladeL = BladeL
-		self._BladeL = LSCS:GetBlade( BladeL )
-
-		self._tblBlade[2] = self._BladeL
+		self._tblBlade[2] = LSCS:GetBlade( BladeL )
 	end
 
 	if hand then
@@ -209,14 +209,6 @@ function SWEP:Deploy()
 end
 
 function SWEP:OwnerChanged()
-end
-
-function SWEP:SetLength( n )
-	self.sm_length = n
-end
-
-function SWEP:GetLength()
-	return (self.sm_length or 0)
 end
 
 function SWEP:Think()

@@ -124,7 +124,7 @@ if SERVER then
 			net.WriteInt( id, 8 )
 		net.Send( self )
 
-		item = nil
+		self:lscsGetInventory()[ id ] = nil
 
 		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent )
 	end
@@ -139,43 +139,71 @@ if SERVER then
 			net.WriteInt( id, 8 )
 		net.Send( self )
 
-		item = nil
+		self:lscsGetInventory()[ id ] = nil
 	end
 
-	function meta:lscsEquipFromInventory( id )
+	function meta:lscsEquipFromInventory( id, slot )
 		local inventory = self:lscsGetInventory()
 		local item = LSCS:ClassToItem( inventory[ id ] )
 
 		if item.type == "hilt" then
 			local A, B = self:lscsGetHilt()
 
-			if A and B then
-				self:EmitSound("buttons/button10.wav")
-				self:SendLua( "LSCS:RefreshMenu()" )
-			else
-				if not A then
-					self:lscsSetHilt( item.id, B )
+			if slot == 0 then
+				if A and B then
+					self:EmitSound("buttons/button10.wav")
+					self:SendLua( "LSCS:RefreshMenu()" )
 				else
-					self:lscsSetHilt( A , item.id )
+					if not A then
+						self:lscsSetHilt( item.id, B )
+					else
+						self:lscsSetHilt( A , item.id )
+					end
+					self:lscsRemoveItem( id )
+					self:EmitSound( "lscs/equip.mp3" )
+					self:SendLua( "LSCS:RefreshMenu()" )
 				end
-				self:lscsRemoveItem( id )
-				self:EmitSound( "lscs/equip.mp3" )
+			else
+				if slot == 1 or slot == 2 then
+					if slot == 1 then
+						self:lscsSetHilt( item.id, B )
+					else
+						self:lscsSetHilt( A , item.id )
+					end
+					self:lscsRemoveItem( id )
+					self:EmitSound( "lscs/equip.mp3" )
+					self:SendLua( "LSCS:RefreshMenu()" )
+				end
 			end
 		end
 		if item.type == "crystal" then
 			local A, B = self:lscsGetBlade()
 
-			if A and B then
-				self:EmitSound("buttons/button10.wav")
-				self:SendLua( "LSCS:RefreshMenu()" )
-			else
-				if not A then
-					self:lscsSetBlade( item.id, B )
+			if slot == 0 then
+				if A and B then
+					self:EmitSound("buttons/button10.wav")
+					self:SendLua( "LSCS:RefreshMenu()" )
 				else
-					self:lscsSetBlade( A , item.id )
+					if not A then
+						self:lscsSetBlade( item.id, B )
+					else
+						self:lscsSetBlade( A , item.id )
+					end
+					self:lscsRemoveItem( id )
+					self:EmitSound( "lscs/equip.mp3" )
+					self:SendLua( "LSCS:RefreshMenu()" )
 				end
-				self:lscsRemoveItem( id )
-				self:EmitSound( "lscs/equip.mp3" )
+			else
+				if slot == 1 or slot == 2 then
+					if slot == 1 then
+						self:lscsSetBlade( item.id, B )
+					else
+						self:lscsSetBlade( A , item.id )
+					end
+					self:lscsRemoveItem( id )
+					self:EmitSound( "lscs/equip.mp3" )
+					self:SendLua( "LSCS:RefreshMenu()" )
+				end
 			end
 		end
 	end
@@ -226,8 +254,9 @@ if SERVER then
 			ply:SendLua( "LSCS:RefreshMenu()" )
 		else
 			local item = net.ReadInt( 8 )
+			local slot = net.ReadInt( 8 )
 
-			ply:lscsEquipFromInventory( item )
+			ply:lscsEquipFromInventory( item, slot )
 		end
 	end)
 
@@ -333,10 +362,12 @@ else
 		self:lscsGetInventory()[ id ] = nil
 	end
 
-	function meta:lscsEquipFromInventory( id )
+	function meta:lscsEquipFromInventory( id, slot )
+		local slot = slot or 0
 		net.Start( "lscs_equip" )
 			net.WriteBool( false )
 			net.WriteInt( id, 8 )
+			net.WriteInt( slot, 8 )
 		net.SendToServer()
 	end
 
