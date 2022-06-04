@@ -1,3 +1,5 @@
+-- prevent falldamage over set amount of time
+
 if SERVER then
 	hook.Add("GetFallDamage", "!!lscs_RemoveFallDamage", function(ply, speed)
 		if ply:lscsIsFalldamageSuppressed() then

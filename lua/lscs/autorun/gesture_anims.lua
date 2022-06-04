@@ -1,3 +1,5 @@
+-- just some gesture smoothing taken directly from my Jedi Academy saber. If someone has an idea how to replace the think player.getall please tell me. 
+-- In real tests this never made a difference in performance as the blade rendering is 10000 times worse than this
 
 if SERVER then
 	util.AddNetworkString( "lscs_animations" )

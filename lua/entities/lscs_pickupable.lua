@@ -40,7 +40,7 @@ if SERVER then
 	end
 
 	function ENT:DoPickup( ply )
-		self:EmitSound( self.PickupSound )
+		ply:EmitSound( self.PickupSound )
 
 		self:OnPickedUp( ply )
 	end

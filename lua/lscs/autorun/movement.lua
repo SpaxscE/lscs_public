@@ -1,3 +1,5 @@
+-- should, in theory, keep prediction working while taking control away from the player. In reality, it doesnt, but its still better than ply:SetVelocity as it fixes teleporting issues on low tickrate/fps
+
 local ply = FindMetaTable( "Player" )
 
 ply._lscsTimedMove = {}

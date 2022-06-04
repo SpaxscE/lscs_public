@@ -34,6 +34,41 @@ surface.CreateFont( "LSCS_FONT_SMALL", {
 	outline = false,
 } )
 
+local function bezier(p0, p1, p2, p3, t)
+	local e = p0 + t * (p1 - p0)
+	local f = p1 + t * (p2 - p1)
+	local g = p2 + t * (p3 - p2)
+
+	local h = e + t * (f - e)
+	local i = f + t * (g - f)
+
+	local p = h + t * (i - h)
+
+	return p
+end
+
+local function DrawFrame( w, h, offset, thickness )
+	surface.DrawRect( offset, offset, thickness, h - offset * 2 )
+	surface.DrawRect( w - offset - thickness, offset, thickness, h - offset * 2 )
+
+	surface.DrawRect( offset, offset, w - offset * 2 - thickness, thickness )
+	surface.DrawRect( offset, h - offset - thickness, w - offset * 2 - thickness, thickness )
+end
+
+local function DrawBezier( startPos, endPos )
+	local detail = 15
+	local p2 = Vector(endPos.x,startPos.y,0)
+	local p3 = Vector(startPos.x,endPos.y,0)
+
+	for i = 1,detail do
+		local sp = bezier(startPos, p2, p3, endPos, (i - 1) / detail)
+		local ep = bezier(startPos, p2, p3, endPos, i / detail)
+		surface.DrawLine( sp.x, sp.y, ep.x, ep.y )
+	end
+end
+local test1 = Material("entities/item_saberhilt_katarn.png")
+local test2 = Material("entities/item_crystal_sapphire.png")
+
 local Gradient = Material("vgui/gradient-l")
 local ClickMat = Material("sun/overlay")
 
@@ -46,11 +81,16 @@ local menu_black = Color(31,31,31,255)
 local menu_text = Color(0,127,255,255)
 
 local icon_lscs = Material("lscs/ui/icon256.png")
-local icon_close = Material("lscs/ui/cross.png")
 local icon_inventory = Material("lscs/ui/inventory.png")
 local icon_hilt = Material("lscs/ui/hilt.png")
 local icon_stance = Material("lscs/ui/stance.png")
 local icon_settings = Material("lscs/ui/settings.png")
+
+local icon_check = Material("lscs/ui/check.png")
+local icon_cross = Material("lscs/ui/cross.png")
+
+local icon_lhand = Material("lscs/ui/hand_l.png")
+local icon_rhand = Material("lscs/ui/hand_r.png")
 
 local zoom_mat = Material( "vgui/zoom" )
 
@@ -206,7 +246,7 @@ function LSCS:SideBar( Frame )
 		LSCS:BuildInventory( Frame )
 	end
 
-	local button = CreateSideBarButton( icon_hilt, 3, "Lightsaber" )
+	local button = CreateSideBarButton( icon_hilt, 3, "Crafting" )
 	button.DoClick = function( self )
 		BaseButtonClickSB( self )
 		LSCS:BuildSaberMenu( Frame )
@@ -273,7 +313,13 @@ function LSCS:BuildInventory( Frame )
 		DButton:SetPos( X, Y )
 		DButton:SetSize( 128, 128 )
 
-		DButton.SetMaterial = function( self, mat ) self.Mat = Material( mat ) end
+		DButton.SetMaterial = function( self, mat ) 
+			if file.Exists( "materials/"..mat, "GAME" ) then
+				self.Mat = Material( mat )
+			else
+				self.Mat = Material( "debug/debugwireframe" )
+			end
+		end
 		DButton.GetMaterial = function( self ) return self.Mat end
 
 		DButton.SetID = function( self, id ) self.ID = id end
@@ -321,25 +367,47 @@ function LSCS:BuildInventory( Frame )
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 				surface.DrawRect( 4, h - 24, w-8, 20  )
 		
-				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				local Item = self:GetItem()
+				if Item then
+					draw.SimpleText( Item.name.." ["..Item.Type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				else
+					draw.SimpleText( self.ClassName, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				end
 			else
-				local Col = menu_light
+				local Col = menu_text
+
+				if IsValid( self.menu ) then
+					surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+					DrawFrame( w, h, 2, 2 )
+				end
+
+				Col = menu_light
 
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 				surface.DrawRect( 4, h - 24, w-8, 20  )
 
-				draw.SimpleText( self:GetItem().name.." ["..self:GetItem().type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				local Item = self:GetItem()
+				if Item then
+					draw.SimpleText( Item.name.." ["..Item.Type.."]", "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				else
+					draw.SimpleText( self.ClassName, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				end
 			end
 		end
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
 			self.menu = DermaMenu()
-			self.menu:AddOption( "Equip", function() end )
-			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
+			self.menu:AddOption( "Equip", function()
+				LocalPlayer():lscsEquipFromInventory( self:GetID() )
+				self:SetEnabled( false )
+			end )
 			self.menu:Open()
 		end
 		DButton.DoRightClick = function( self )
-			--self:DoClick()
+			BaseButtonClick( self )
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
+			self.menu:Open()
 		end
 
 		X = X + 128
@@ -374,7 +442,88 @@ function LSCS:BuildInventory( Frame )
 	Frame.ID = 2
 end
 
+local CrafterButtonPaint = function(self, w, h )
+	if self.Item then
+		if not self.Mat then
+			if file.Exists( "materials/entities/"..self.Item.class..".png", "GAME" ) then
+				self.Mat = Material( "entities/"..self.Item.class..".png" )
+			else
+				self.Mat = Material( "debug/debugwireframe" )
+			end
+		end
+
+		surface.SetMaterial( self.Mat )
+		surface.SetDrawColor( 255, 255, 255 ,255 )
+		surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
+
+		local IsMainHovered = IsValid(self.Main) and self.Main:IsHovered()
+		if self:IsHovered() or IsValid( self.menu ) or IsMainHovered then
+			Col = menu_light
+
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			surface.DrawRect( 4, h - 24, w-8, 20  )
+
+			draw.SimpleText( self.Item.name, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		else
+			surface.SetDrawColor( Color(255,255,255,255) )
+			surface.SetMaterial(zoom_mat ) 
+			local BoxSize = w - 4
+			local xPos = 2
+			local yPos = 2
+
+			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 90 )
+			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 0 )
+			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 180 )
+			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 270 )
+
+			Col = menu_dark
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			surface.DrawRect( 4, h - 24, w-8, 20  )
+	
+			draw.SimpleText( self.Item.name, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		end
+
+		local Col = DrawButtonClick( self, w, h )
+		
+		if IsMainHovered then
+			Col = menu_white
+		end
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		DrawFrame( w, h, 0, 2 )
+
+
+		local Col = menu_text
+		if IsValid( self.menu ) then
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			DrawFrame( w, h, 0, 2 )
+		end
+	else
+		local Col = menu_dark
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+
+		Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_cross )
+
+		if self:IsHovered() then
+			Col = Color(255,0,0,255)
+		end
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+
+		surface.DrawTexturedRect( 32, 32, 64, 64 )
+		DrawFrame( w, h, 0, 2 )
+
+		draw.SimpleText( self.InfoText, "LSCS_FONT", w * 0.5, h - 8, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	end
+end
+
 function LSCS:BuildSaberMenu( Frame )
+	local ply = LocalPlayer()
+	local HiltR, HiltL = ply:lscsGetHilt()
+	local BladeR, BladeL = ply:lscsGetBlade()
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
 	Panel:SetSize( PanelSizeX, PanelSizeY )
@@ -382,7 +531,169 @@ function LSCS:BuildSaberMenu( Frame )
 		local Col = menu_light
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
+
+		Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 5, 15, PanelSizeX - 10, PanelSizeY - 15 )
+
+
+		if IsValid( self.Main ) and self.Main:IsHovered() then
+			local Col = menu_white_dim
+			if HiltR and BladeR then
+				Col = menu_white
+			end
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,35+64,0) )
+			surface.DrawLine( 163, 99, PanelSizeX * 0.5 - 64,35+64 )
+			Col = menu_white_dim
+			if HiltL and BladeR then
+				Col = menu_white
+			end
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
+			surface.DrawLine( 163, PanelSizeY - 64 - 35, PanelSizeX * 0.5 - 64,PanelSizeY - 64 - 35 )
+		else
+			local Col = menu_white_dim
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,35+64,0) )
+			surface.DrawLine( 163, 99, PanelSizeX * 0.5 - 64,35+64 )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
+			surface.DrawLine( 163, PanelSizeY - 64 - 35, PanelSizeX * 0.5 - 64,PanelSizeY - 64 - 35 )
+		end
 	end
+
+	local Main = vgui.Create( "DButton", Panel )
+	Main:SetText( "" )
+	Main:SetPos( PanelSizeX - 125,  PanelSizeY * 0.5 - 50 )
+	Main:SetSize( 100, 100 )
+	Main.Paint = function(self, w, h )
+		local Col = menu_dark
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+
+		Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_check )
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawTexturedRect( 18, 18, w - 36, h - 36 )
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		DrawFrame( w, h, 0, 2 )
+	end
+	Main.DoClick = function( self )
+		BaseButtonClick( self )
+		ply:lscsCraftSaber()
+		Frame:Remove()
+	end
+	Panel.Main = Main
+
+	-- RIGHT
+	local Clear = vgui.Create( "Button", Panel )
+	Clear:SetText( "" )	
+	Clear:SetSize( 46,  46 )
+	Clear:SetPos( PanelSizeX - 185, 79 )
+	Clear.DoClick = function( self )
+		BaseButtonClick( self )
+		ply:lscsUnEquip( true, false, true, false )
+	end
+	Clear.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+		surface.SetMaterial( icon_rhand )
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawTexturedRect( 0, 0, w, h )
+	end
+
+	local ButtonHilt = vgui.Create( "DButton", Panel )
+	ButtonHilt.InfoText = "Hilt"
+	ButtonHilt:SetText( "" )
+	ButtonHilt:SetPos( PanelSizeX * 0.5 - 64, 35 )
+	ButtonHilt:SetSize( 128, 128 )
+	ButtonHilt.Item = LSCS:GetHilt( HiltR )
+	ButtonHilt.Paint = CrafterButtonPaint
+	ButtonHilt.DoClick = function( self )
+		BaseButtonClick( self )
+		if self.Item then
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Unequip", function()
+				ply:lscsUnEquip( true )
+			end )
+			self.menu:Open()
+		end
+	end
+	ButtonHilt.Main = Main
+
+	local ButtonBlade = vgui.Create( "DButton", Panel )
+	ButtonBlade.InfoText = "Crystal"
+	ButtonBlade:SetText( "" )
+	ButtonBlade:SetPos( 35, 35 )
+	ButtonBlade:SetSize( 128, 128 )
+	ButtonBlade.Item = LSCS:GetBlade( BladeR )
+	ButtonBlade.Paint = CrafterButtonPaint
+	ButtonBlade.DoClick = function( self )
+		BaseButtonClick( self )
+		if self.Item then
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Unequip", function()
+				ply:lscsUnEquip( false, false, true )
+			end )
+			self.menu:Open()
+		end
+	end
+	ButtonBlade.Main = Main
+
+	-- LEFT
+	local Clear = vgui.Create( "Button", Panel )
+	Clear:SetText( "" )	
+	Clear:SetSize( 46,  46 )
+	Clear:SetPos( PanelSizeX - 185, PanelSizeY - 119 )
+	Clear.DoClick = function( self )
+		BaseButtonClick( self )
+		ply:lscsUnEquip( false, true, false, true )
+	end
+	Clear.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+		surface.SetMaterial( icon_lhand )
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawTexturedRect( 0, 0, w, h )
+	end
+
+	local ButtonHilt = vgui.Create( "DButton", Panel )
+	ButtonHilt.InfoText = "Hilt"
+	ButtonHilt:SetText( "" )
+	ButtonHilt:SetPos( PanelSizeX * 0.5 - 64, PanelSizeY - 128 - 35 )
+	ButtonHilt:SetSize( 128, 128 )
+	ButtonHilt.Item = LSCS:GetHilt( HiltL )
+	ButtonHilt.Paint = CrafterButtonPaint
+	ButtonHilt.DoClick = function( self )
+		BaseButtonClick( self )
+		if self.Item then
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Unequip", function()
+				ply:lscsUnEquip( false, true )
+			end )
+			self.menu:Open()
+		end
+	end
+	ButtonHilt.Main = Main
+
+	local ButtonBlade = vgui.Create( "DButton", Panel )
+	ButtonBlade.InfoText = "Crystal"
+	ButtonBlade:SetText( "" )
+	ButtonBlade:SetPos( 35, PanelSizeY - 128 - 35 )
+	ButtonBlade:SetSize( 128, 128 )
+	ButtonBlade.Item = LSCS:GetBlade( BladeL )
+	ButtonBlade.Paint = CrafterButtonPaint
+	ButtonBlade.DoClick = function( self )
+		BaseButtonClick( self )
+		if self.Item then
+			self.menu = DermaMenu()
+			self.menu:AddOption( "Unequip", function()
+				ply:lscsUnEquip( false, false, false, true)
+			end )
+			self.menu:Open()
+		end
+	end
+	ButtonBlade.Main = Main
 
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
@@ -494,6 +805,17 @@ function LSCS:BuildSettings( Frame )
 	LSCS:SideBar( Frame )
 
 	Frame.ID = 5
+end
+
+function LSCS:RefreshMenu()
+	if not IsValid( Frame ) then return end
+
+	if Frame.ID == 2 then
+		LSCS:BuildInventory( Frame )
+	end
+	if Frame.ID == 3 then
+		LSCS:BuildSaberMenu( Frame )
+	end
 end
 
 function LSCS:OpenMenu()

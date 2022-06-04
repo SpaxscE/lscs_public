@@ -1,4 +1,32 @@
 
+function LSCS:SetHilt( ply, hilt_right, hilt_left )
+	if hilt_right == "" or not LSCS:GetHilt( hilt_right ) then
+		ply.m_lscs_hilt_right = nil
+	else
+		ply.m_lscs_hilt_right = hilt_right
+	end
+
+	if hilt_left == ""  or not LSCS:GetHilt( hilt_left ) then
+		ply.m_lscs_hilt_left = nil
+	else
+		ply.m_lscs_hilt_left = hilt_left
+	end
+end
+
+function LSCS:SetBlade( ply, blade_right, blade_left )
+	if blade_right == "" or not LSCS:GetBlade( blade_right ) then
+		ply.m_lscs_blade_right = nil
+	else
+		ply.m_lscs_blade_right = blade_right
+	end
+
+	if blade_left == ""  or not LSCS:GetBlade( blade_left ) then
+		ply.m_lscs_blade_left = nil
+	else
+		ply.m_lscs_blade_left = blade_left
+	end
+end
+
 function LSCS:GetHilt( name )
 	return LSCS.Hilt[ name ]
 end
@@ -15,7 +43,6 @@ function LSCS:ClassToItem( class )
 	if type == "saberhilt" then
 		return LSCS.Hilt[ id ]
 	end
-
 	if type == "crystal" then
 		return LSCS.Blade[ id ]
 	end
@@ -26,9 +53,14 @@ end
 function LSCS:RegisterHilt( data )
 	if not data.id or not data.mdl or not data.info then return end
 
+	local class = "item_saberhilt_"..data.id
+
 	LSCS.Hilt[ data.id ] = {
+		id = data.id,
 		name = data.PrintName,
-		type = "Hilt",
+		type = "hilt",
+		Type = "Hilt",
+		class = class,
 		mdl = data.mdl,
 		info = data.info,
 	}
@@ -47,15 +79,20 @@ function LSCS:RegisterHilt( data )
 	ENT.ID = data.id
 	ENT.MDL = data.mdl
 
-	scripted_ents.Register( ENT, "item_saberhilt_"..data.id )
+	scripted_ents.Register( ENT, class )
 end
 
 function LSCS:RegisterBlade( data )
 	if not data.id then return end
 
+	local class = "item_crystal_"..data.id
+
 	LSCS.Blade[ data.id ] = {
+		id = data.id,
 		name = data.PrintName,
-		type = "Crystal",
+		type = "crystal",
+		Type = "Crystal",
+		class = class,
 		color_blur = data.color_blur or Color(0,65,255),
 		color_core = data.color_core or color_white,
 		length = data.length or 45,
@@ -81,7 +118,7 @@ function LSCS:RegisterBlade( data )
 
 	ENT.ID = data.id
 
-	scripted_ents.Register( ENT, "item_crystal_"..data.id )
+	scripted_ents.Register( ENT, class )
 end
 
 LSCS.Timeout = LSCS.Timeout or 0
@@ -90,8 +127,10 @@ LSCS.Reload = function()
 
 	local Time = CurTime()
 	if LSCS.Timeout > Time then 
-		print("[LSCS] - refusing refresh")
+		print("[LSCS] - refusing refresh ["..Time.."]")
 		return
+	else
+		print("[LSCS] - initialized ["..Time.."]")
 	end
 	LSCS.Timeout = CurTime() + 1
 
