@@ -92,7 +92,7 @@ function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, Col
 			local B = ColorStart.b * _alpha2 + ColorEnd.b * inv_alpha2
 			local A = (ColorStart.a * _alpha2 + ColorEnd.a * inv_alpha2) * _alpha
 
-			render.DrawBeam( _pos, _pos + _dir * Length, 20, 1, 1, Color(R, G, B, A ) )
+			render.DrawBeam( _pos, _pos + _dir * Length, 12, 1, 1, Color(R, G, B, A ) )
 		end
 		
 		prev = {
