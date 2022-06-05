@@ -61,10 +61,43 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	draw.SimpleText( "n", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
 end
 
-function SWEP:DrawWorldModelTranslucent( flags )
+
+function SWEP:DrawWorldModel()
+end
+
+function SWEP:DrawWorldModelUnequipped( ply )
+	local Pos = self:GetPos() 
+	local Ang = self:GetAngles()
+	local BladeID = 1
+
+	for handID, hiltObject in pairs( self:GetHiltData() ) do
+		local WorldModel = self:GetWorldModel( handID )
+
+		if not IsValid( WorldModel ) then continue end
+
+		WorldModel:SetPos( Pos )
+		WorldModel:SetAngles( Ang )
+		WorldModel:SetupBones()
+		WorldModel:DrawModel()
+
+		local Positions = hiltObject.info.GetBladePos( WorldModel )
+		for _, PosData in ipairs( Positions ) do
+
+			self:DrawBlade( BladeID, PosData, self:GetBladeData( handID ) )
+
+			BladeID = BladeID + 1
+		end
+	end
+end
+
+function SWEP:DrawWorldModelTranslucent()
 	local ply = self:GetOwner()
 
-	if not IsValid( ply ) then return end
+	if not IsValid( ply ) then
+		self:DrawWorldModelUnequipped( ply )
+
+		return
+	end
 
 	local BladeID = 1
 
@@ -138,9 +171,6 @@ function SWEP:DrawBlade( BladeID, PosData, bladeObject )
 
 	render.SetMaterial( bladeObject.material_core_tip )
 	render.DrawBeam( EndPos, EndPos + dir, actual_width , 0.9, 0.1, color_core )	
-end
-
-function SWEP:DrawWorldModel( flags )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )

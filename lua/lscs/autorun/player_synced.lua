@@ -23,8 +23,9 @@ if SERVER then
 
 		self:EmitSound("lscs/equip.mp3")
 
-		self:lscsSetHilt()
-		self:lscsSetBlade()
+		--?option consumables?
+		--self:lscsSetHilt()
+		--self:lscsSetBlade()
 
 		local weapon = self:GetWeapon( "weapon_lscs" )
 
@@ -338,7 +339,7 @@ else
 		end
 
 		if TYPE == LSCS_INVENTORY then
-			table.Empty( ply.m_inventory_lscs )
+			table.Empty( ply:lscsGetInventory() )
 			local num = net.ReadInt( 8 )
 			for i = 1, num do
 				local index = net.ReadInt( 8 )

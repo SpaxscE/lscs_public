@@ -10,8 +10,6 @@ hook.Add( "SetupMove", "!!!lscs_movementoverride", function( ply, mv, cmd )
 	local Move = Vector(0,0,0)
 	local Time = CurTime()
 
-	cmd:ClearMovement()
-
 	for id, obj in pairs( ply._lscsTimedMove ) do
 		if (obj.start + obj.duration) <= Time then
 			ply._lscsTimedMove[id] = nil
@@ -22,6 +20,10 @@ hook.Add( "SetupMove", "!!!lscs_movementoverride", function( ply, mv, cmd )
 			Move = Move + obj.move
 		end
 	end
+
+	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
+
+	cmd:ClearMovement()
 
 	mv:SetForwardSpeed( Move.x )
 	mv:SetUpSpeed( Move.z )

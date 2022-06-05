@@ -9,7 +9,7 @@ SWEP.PrintName		= "#lscsGlowstick"
 SWEP.Author			= "Blu-x92 / Luna"
 
 SWEP.ViewModel		= "models/weapons/c_arms.mdl"
-SWEP.WorldModel		= "models/props_junk/PopCan01a.mdl"
+SWEP.WorldModel		= "models/lscs/weapons/katarn.mdl"
 
 SWEP.Spawnable		= false
 SWEP.AdminOnly		= false

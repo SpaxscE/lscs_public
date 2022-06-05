@@ -35,8 +35,8 @@ function SWEP:OnTick( active )
 	if self.SaberHumSound then
 		local go = self:GetDMGActive()
 
-		self.SaberHumSound:ChangeVolume( go and 0 or 1, 0.2 )
-		self.SaberHumSound:ChangePitch( go and 130 or 100, 0.15 )
+		self.SaberHumSound:ChangeVolume( go and 0 or 1, 0.4 )
+		self.SaberHumSound:ChangePitch( go and 140 or 100, 0.2 )
 	end
 
 	self.Next_Think = CurTime + 0.05
@@ -51,4 +51,15 @@ end
 
 function SWEP:OnRemove()
 	self:StopIdleSound()
+end
+
+function SWEP:OnDrop()
+	self:FinishCombo()
+	self:SetActive( false )
+	self:SetLength( 0 )
+	self:StopIdleSound()
+end
+
+function SWEP:ShouldDropOnDie()
+	return false
 end
