@@ -136,14 +136,14 @@ function SWEP:WallImpactEffects( pos, dir, playsound )
 		local effectdata = EffectData()
 			effectdata:SetOrigin( pos )
 			effectdata:SetNormal( dir )
-		util.Effect( "saber_hitwall", effectdata, true, true )
+		util.Effect( "saber_hitwall_cheap", effectdata, true, true )
 
 		sound.Play(Sound( "saber_hitwall_spark" ), pos, 75)
 	else
 		local effectdata = EffectData()
 			effectdata:SetOrigin( pos )
 			effectdata:SetNormal( dir )
-		util.Effect( "saber_hitwall_cheap", effectdata, true, true )
+		util.Effect( "saber_hitwall", effectdata, true, true )
 	end
 end
 
@@ -198,8 +198,12 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 	if self.BladeData[HandID][BladeID].HitWall ~= bHitWall then
 		self.BladeData[HandID][BladeID].HitWall = bHitWall
 
-		if not bHitWall then
-			self:EmitSound( "saber_hitwall" )
+		if bHitWall then
+			if dmgActive then
+				sound.Play( "saber_lighthit", vPos )
+			end
+		else
+			sound.Play( "saber_hitwall", vPos )
 		end
 	end
 

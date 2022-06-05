@@ -124,7 +124,7 @@ function SWEP:DoCombo()
 	local ATTACK_DIR = W..A..S..D
 	local Hack45Deg = false
 
-	if ATTACK_DIR == "____" then
+	if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
 		if ply:EyeAngles().p > 30 then
 			ATTACK_DIR = "+45+"
 			Hack45Deg = true
