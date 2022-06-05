@@ -86,13 +86,15 @@ hilt.info = {
 
 		local att = ent:GetAttachment( ent.BladeID )
 
-		local blades = {
-			[1] = {
-				pos = att.Pos,
-				dir = att.Ang:Up(),
+		if att then
+			local blades = {
+				[1] = {
+					pos = att.Pos,
+					dir = att.Ang:Up(),
+				}
 			}
-		}
-		return blades
+			return blades
+		end
 	end,
 }
 LSCS:RegisterHilt( hilt )
@@ -128,17 +130,19 @@ hilt.info = {
 		local att1 = ent:GetAttachment( ent.BladeID1 )
 		local att2 = ent:GetAttachment( ent.BladeID2 )
 
-		local blades = {
-			[1] = {
-				pos = att1.Pos,
-				dir = att1.Ang:Up(),
-			},
-			[2] = {
-				pos = att2.Pos,
-				dir = att2.Ang:Up(),
+		if att1 and att2 then
+			local blades = {
+				[1] = {
+					pos = att1.Pos,
+					dir = att1.Ang:Up(),
+				},
+				[2] = {
+					pos = att2.Pos,
+					dir = att2.Ang:Up(),
+				}
 			}
-		}
-		return blades
+			return blades
+		end
 	end,
 }
 LSCS:RegisterHilt( hilt )

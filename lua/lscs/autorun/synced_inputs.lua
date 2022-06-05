@@ -15,5 +15,7 @@ hook.Add( "StartCommand", "!!!!lscs_syncedinputs", function( ply, cmd )
 end )
 
 function meta:lscsKeyDown( IN_KEY )
+	if not self.lscs_cmd then self.lscs_cmd = {} end
+
 	return self.lscs_cmd[ IN_KEY ]
 end
