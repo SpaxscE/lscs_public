@@ -240,4 +240,3 @@ function SWEP:Think()
 
 	self:OnTick( Active )
 end
-

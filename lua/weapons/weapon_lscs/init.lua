@@ -1,4 +1,6 @@
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_effects.lua" )
+AddCSLuaFile( "cl_worldmodel.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_combo.lua" )
 AddCSLuaFile( "sh_animations.lua" )

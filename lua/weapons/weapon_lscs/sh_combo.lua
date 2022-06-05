@@ -14,17 +14,15 @@ function SWEP:GetComboObject( id )
 end
 
 function SWEP:StartCombo( ComboObj )
-	if IsFirstTimePredicted() then
-		local Time = CurTime()
-		self.ComboStatus = 1
-		self.CurCombo = {
-			BeginTime = Time + ComboObj.Delay,
-			BeginFunc = ComboObj.BeginAttack,
-			SwingTime = ComboObj.Duration,
-			FinishFunc = ComboObj.FinishAttack,
-			FinishTime = (Time + ComboObj.Duration + ComboObj.Delay),
-		}
-	end
+	local Time = CurTime()
+	self.ComboStatus = 1
+	self.CurCombo = {
+		BeginTime = Time + ComboObj.Delay,
+		BeginFunc = ComboObj.BeginAttack,
+		SwingTime = ComboObj.Duration,
+		FinishFunc = ComboObj.FinishAttack,
+		FinishTime = (Time + ComboObj.Duration + ComboObj.Delay),
+	}
 end
 
 function SWEP:FinishCombo()
@@ -47,54 +45,52 @@ function SWEP:HandleCombo()
 		return
 	end
 
-	if IsFirstTimePredicted() then
-		if self.ComboStatus == 1 then
-			if self.CurCombo.BeginTime <= Time then
-				self:BeginAttack()
-				self.CurCombo.BeginFunc(self.CurCombo, self)
-				self.ComboStatus = 2
+	if self.ComboStatus == 1 then
+		if self.CurCombo.BeginTime <= Time then
+			self:BeginAttack()
+			self.CurCombo.BeginFunc(self.CurCombo, self)
+			self.ComboStatus = 2
 
-				if SERVER then
-					--[[
-					if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-						self:DrainBP( 2 )
-					else
-						self:DrainBP( 1 )
-					end]]
-				end
+			if SERVER then
+				--[[
+				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
+					self:DrainBP( 2 )
+				else
+					self:DrainBP( 1 )
+				end]]
 			end
 		end
+	end
 
-		if self.ComboStatus == 2 then
-			if (self.CurCombo.BeginTime + self.CurCombo.SwingTime) * 0.7 <= Time then
-				self.ComboStatus = 3
+	if self.ComboStatus == 2 then
+		if (self.CurCombo.BeginTime + self.CurCombo.SwingTime) * 0.7 <= Time then
+			self.ComboStatus = 3
 
-				if SERVER then
-				--[[
-					if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-						self:DrainBP( 2 )
-					end
-					]]
-				end
-			end
-		end
-
-		if self.ComboStatus == 3 then
-			if self.CurCombo.FinishTime <= Time then
-				self.CurCombo.FinishFunc(self.CurCombo, self)
-
-				ply:Freeze( false )
-
-				--[[
-				if SERVER then
-					if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-						self:DrainBP( 2 )
-					end
+			if SERVER then
+			--[[
+				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
+					self:DrainBP( 2 )
 				end
 				]]
-
-				self:FinishCombo()
 			end
+		end
+	end
+
+	if self.ComboStatus == 3 then
+		if self.CurCombo.FinishTime <= Time then
+			self.CurCombo.FinishFunc(self.CurCombo, self)
+
+			ply:Freeze( false )
+
+			--[[
+			if SERVER then
+				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
+					self:DrainBP( 2 )
+				end
+			end
+			]]
+
+			self:FinishCombo()
 		end
 	end
 end
