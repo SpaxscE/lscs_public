@@ -1,8 +1,22 @@
 if SERVER then
 	util.AddNetworkString( "lscs_saberdamage" )
 
-	local function ApplyDamage( ply, victim, pos, dir )
-		local damage = 200
+	local cVar_SaberDamage = CreateConVar( "lscs_sv_saberdamage", "200", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"amount of damage per saber hit" )
+
+	LSCS.SaberDamage = cVar_SaberDamage and cVar_SaberDamage:GetInt() or 200
+
+	cvars.AddChangeCallback( "lscs_sv_saberdamage", function( convar, oldValue, newValue ) 
+		LSCS.SaberDamage = tonumber( newValue )
+	end)
+
+	local slice = {
+		["npc_zombie"] = true,
+		["npc_zombine"] = true,
+		["npc_fastzombie"] = true,
+	}
+
+	function LSCS:ApplyDamage( ply, victim, pos, dir )
+		local damage = LSCS.SaberDamage
 
 		local dmg = DamageInfo()
 		dmg:SetDamage( damage )
@@ -11,6 +25,9 @@ if SERVER then
 		dmg:SetDamagePosition( pos ) 
 		dmg:SetDamageType( DMG_ENERGYBEAM )
 
+		if slice[ victim:GetClass() ] then
+			dmg:SetDamageType( bit.bor( DMG_CRUSH, DMG_SLASH ) )
+		end
 		local startpos = ply:GetShootPos()
 		local endpos = pos + (victim:GetPos() - ply:GetPos()):GetNormalized() * 50
 
@@ -25,33 +42,9 @@ if SERVER then
 		if (trace.HitPos - startpos):Length() > 100 then return end
 
 		local wep = ply:GetActiveWeapon()
-		if not IsValid( wep ) then return end
-		if not wep.GetDMGActive and not wep:GetDMGActive() then return end
 
-		if victim.GetActiveWeapon then
-			local wep = victim:GetActiveWeapon()
-			if IsValid( wep ) and wep.Block then
-
-				if wep:Block( dmg ) then
-					victim:EmitSound( "saber_block" )
-					net.Start( "saberdamage" )
-						net.WriteVector( pos )
-						net.WriteVector( dir )
-						net.WriteBool( true )
-					net.Broadcast()
-				else
-					victim:TakeDamageInfo( dmg )
-					victim:EmitSound( "saber_hit" )
-					net.Start( "saberdamage" )
-						net.WriteVector( pos )
-						net.WriteVector( dir )
-						net.WriteBool( false )
-					net.Broadcast()
-				end
-
-				return
-			end
-		end
+		if not IsValid( wep ) or not wep.LSCS then return end
+		if not wep:GetDMGActive() then return end
 
 		victim:TakeDamageInfo( dmg )
 
@@ -69,12 +62,11 @@ if SERVER then
 	end
 
 	net.Receive( "lscs_saberdamage", function( len, ply )
-
 		if not IsValid( ply ) then return end
 
-		local a_weapon = ply:GetActiveWeapon()
+		local wep = ply:GetActiveWeapon()
 
-		if not IsValid( a_weapon ) or not a_weapon.LSCS then return end
+		if not IsValid( wep ) or not wep.LSCS then return end
 
 		local victim = net.ReadEntity()
 		local pos = net.ReadVector()
@@ -82,7 +74,7 @@ if SERVER then
 
 		if not IsValid( victim ) then return end
 
-		ApplyDamage( ply, victim, pos, dir )
+		LSCS:ApplyDamage( ply, victim, pos, dir )
 	end)
 else
 	net.Receive( "lscs_saberdamage", function( len )
