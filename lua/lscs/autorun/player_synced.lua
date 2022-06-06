@@ -24,8 +24,8 @@ if SERVER then
 		self:EmitSound("lscs/equip.mp3")
 
 		--?option consumables?
-		--self:lscsSetHilt()
-		--self:lscsSetBlade()
+		self:lscsSetHilt()
+		self:lscsSetBlade()
 
 		local weapon = self:GetWeapon( "weapon_lscs" )
 
@@ -217,9 +217,15 @@ if SERVER then
 		end
 		if item.type == "stance" then
 			self:lscsRemoveItem( id )
-			self:EmitSound( "lscs/equip.mp3" )
-			PrintChat( "works" )
 			self:lscsSetStance( item.id )
+			self:EmitSound( "lscs/equip.mp3" )
+			self:SendLua( "LSCS:RefreshMenu()" )
+
+			local wep = self:GetActiveWeapon()
+
+			if IsValid( wep ) and wep.LSCS then
+				wep:SetActive( false )
+			end
 		end
 	end
 
