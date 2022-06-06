@@ -3,13 +3,22 @@ VertexLitGeneric
 	$basetexture "lscs/holocron/holocron"
 	$bumpmap "lscs/holocron/holocron_normal"
 
+	$detail "lscs/holocron/detail"
+
 	$alphatest 1
 	$alphatestreference 0.15
+
+	$envmap "env_cubemap"
+	$envmaptint "[0.25 0.25 0.25]"
+	$envmapfresnel 1
+	$envmapanisotropy 1
+	$envmapanisotropyscale 0.52
 
 	$phong 1
 	$phongfresnelranges "[0.65 0.82 1]"
 	$halflambert 1
 	$phongexponent 41
 	$phongboost 1.01
+
 	$nocull 1
 }
