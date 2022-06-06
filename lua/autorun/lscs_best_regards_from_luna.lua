@@ -8,7 +8,7 @@ best regards luna
 
 ]]--
 
-LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {} }
+LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {} }
 
 AddCSLuaFile("lscs/init.lua")
 include("lscs/init.lua")

@@ -15,14 +15,4 @@ if SERVER then
 		self:SetModel( "models/lscs/holocron.mdl" )
 		BaseClass.Initialize( self )
 	end
-
-	function ENT:TurnOn()
-		self:PlayAnimation("idle_open")
-		BaseClass.TurnOn( self )
-	end
-
-	function ENT:TurnOff()
-		self:PlayAnimation("close")
-		BaseClass.TurnOff( self )
-	end
 end

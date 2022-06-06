@@ -35,6 +35,10 @@ function LSCS:GetBlade( name )
 	return LSCS.Blade[ name ]
 end
 
+function LSCS:GetStance( name )
+	return LSCS.Stance[ name ]
+end
+
 function LSCS:ClassToItem( class )
 	local words = string.Explode( "_", class )
 	local type = words[ 2 ]
@@ -45,6 +49,9 @@ function LSCS:ClassToItem( class )
 	end
 	if type == "crystal" then
 		return LSCS.Blade[ id ]
+	end
+	if type == "stance" then
+		return LSCS.Stance[ id ]
 	end
 
 	return false
@@ -76,7 +83,6 @@ function LSCS:RegisterHilt( data )
 	ENT.Spawnable       = true
 	ENT.AdminSpawnable  = false
 
-	ENT.ID = data.id
 	ENT.MDL = data.mdl
 
 	scripted_ents.Register( ENT, class )
@@ -180,12 +186,31 @@ LSCS.Reload = function()
 
 		include("lscs/combos/"..filename)
 
-		LSCS[ COMBO.Name ] = {
-			Name = COMBO.PrintName,
-			Description = COMBO.Description,
+		local class = "item_stance_"..COMBO.id
+
+		LSCS.Stance[ COMBO.id ] = {
+			id = COMBO.id,
+			name = COMBO.PrintName,
+			description = COMBO.Description,
+			type = "stance",
+			Type = "Stance",
+			class = class,
 			HoldType = COMBO.HoldType,
 			Attacks = table.Copy( COMBO.Attacks ),
 		}
+
+		local ENT = {}
+
+		ENT.Base = "lscs_holocron_base"
+
+		ENT.PrintName = COMBO.PrintName
+		ENT.Author = COMBO.Author
+		ENT.Category = "[LSCS] - Stances"
+
+		ENT.Spawnable       = true
+		ENT.AdminSpawnable  = false
+
+		scripted_ents.Register( ENT, class )
 
 		table.Empty( COMBO )
 	end

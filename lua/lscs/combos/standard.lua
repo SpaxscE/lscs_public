@@ -1,5 +1,6 @@
-COMBO.Name = "standard"
+COMBO.id = "standard"
 COMBO.PrintName = "Standard"
+COMBO.Author = "Blu-x92 / Luna"
 COMBO.Description = "Standard GVP-Style taught by Master Blu-x92. Quick to learn, hard to master, but balanced and combat proven."
 
 COMBO.DeflectBullets = true

@@ -59,8 +59,9 @@ if SERVER then
 		net.Send( self )
 	end
 
-	function meta:lscsSetCombo( name )
-		if LSCS[ name ] then
+	function meta:lscsSetStance( name )
+		local stance = LSCS:GetStance( name )
+		if stance then
 			self:SetNWString( "lscsComboFile", name )
 		else
 			self:SetNWString( "lscsComboFile", "default" )
@@ -213,6 +214,12 @@ if SERVER then
 					self:SendLua( "LSCS:RefreshMenu()" )
 				end
 			end
+		end
+		if item.type == "stance" then
+			self:lscsRemoveItem( id )
+			self:EmitSound( "lscs/equip.mp3" )
+			PrintChat( "works" )
+			self:lscsSetStance( item.id )
 		end
 	end
 
@@ -391,7 +398,7 @@ else
 end
 
 function meta:lscsGetCombo()
-	return LSCS[ self:GetNWString( "lscsComboFile", "default" ) ]
+	return LSCS:GetStance( self:GetNWString( "lscsComboFile", "default" ) )
 end
 
 function meta:lscsGetInventory()

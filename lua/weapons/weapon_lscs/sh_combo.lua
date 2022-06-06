@@ -5,7 +5,7 @@ function SWEP:GetCombo()
 	if IsValid( ply ) then
 		return ply:lscsGetCombo()
 	else
-		return LSCS[ "default" ]
+		return LSCS:GetStance( "default" )
 	end
 end
 
@@ -50,29 +50,12 @@ function SWEP:HandleCombo()
 			self:BeginAttack()
 			self.CurCombo.BeginFunc(self.CurCombo, self)
 			self.ComboStatus = 2
-
-			if SERVER then
-				--[[
-				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-					self:DrainBP( 2 )
-				else
-					self:DrainBP( 1 )
-				end]]
-			end
 		end
 	end
 
 	if self.ComboStatus == 2 then
 		if (self.CurCombo.BeginTime + self.CurCombo.SwingTime) * 0.7 <= Time then
 			self.ComboStatus = 3
-
-			if SERVER then
-			--[[
-				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-					self:DrainBP( 2 )
-				end
-				]]
-			end
 		end
 	end
 
@@ -81,14 +64,6 @@ function SWEP:HandleCombo()
 			self.CurCombo.FinishFunc(self.CurCombo, self)
 
 			ply:Freeze( false )
-
-			--[[
-			if SERVER then
-				if ply.b_cmd_sprint and ply:GetVelocity():Length() > 50 then
-					self:DrainBP( 2 )
-				end
-			end
-			]]
 
 			self:FinishCombo()
 		end
@@ -122,7 +97,7 @@ function SWEP:DoCombo()
 	local D = ply:lscsKeyDown( IN_MOVERIGHT ) and "D" or "_"
 
 	local ATTACK_DIR = W..A..S..D
-	local Hack45Deg = false
+	local Hack45Deg = false -- hack45Deg  is used so +45+ and -45- is counted as ___ so you can not switch between those to get a quickswing
 
 	if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
 		if ply:EyeAngles().p > 30 then
