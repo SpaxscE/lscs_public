@@ -1,4 +1,16 @@
+ 
+ hook.Add( "ScalePlayerDamage", "!!!lscs_block_damage", function( ply, hitgroup, dmginfo )
+	timer.Simple( 0, function()
+		ply:RemoveAllDecals()
+	end )
+	return true
+ end)
+
 if SERVER then
+	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( target, dmginfo )
+		return true
+	end )
+
 	util.AddNetworkString( "lscs_saberdamage" )
 
 	local cVar_SaberDamage = CreateConVar( "lscs_sv_saberdamage", "200", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"amount of damage per saber hit" )

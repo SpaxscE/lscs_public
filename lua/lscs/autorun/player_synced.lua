@@ -384,7 +384,7 @@ else
 end
 
 function meta:lscsGetCombo()
-	return LSCS[ self:GetNWString( "lscsComboFile", "standard" ) ]
+	return LSCS[ self:GetNWString( "lscsComboFile", "default" ) ]
 end
 
 function meta:lscsGetInventory()

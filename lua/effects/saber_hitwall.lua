@@ -111,7 +111,7 @@ function EFFECT:Render()
 
 		cam.Start3D2D( self.RenderGlow.Pos + self.RenderGlow.Normal * 0.5, self.RenderGlow.Angle, 0.1 )
 			surface.SetMaterial( Mat )
-			surface.SetDrawColor( 255, 93 + 50 * Scale, 50 * Scale, 200 * Scale )
+			surface.SetDrawColor( 255, 93 + 60 * Scale, 60 * Scale, 200 * Scale )
 			surface.DrawTexturedRectRotated( 0, 0, 300 , 300 , self.RenderGlow.RandomAng )
 		cam.End3D2D()
 	end

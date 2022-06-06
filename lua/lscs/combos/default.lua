@@ -19,7 +19,7 @@ COMBO.Attacks["____"] = {
 		-- do whatever extra things you want to do when the attack is finished. Please note this is run on both server and client
 	end,
 	Delay = 0, -- how long to wait until dmg is active and BeginAttack is called. This can be used to exclude the windup animation from causing damage
-	Duration = 0.35,	-- Actual duration after keypress is Delay + Duration. After this time the gesture will be faded out, Damage will be disabled and player movement will be restored
+	Duration = 0.25,	-- Actual duration after keypress is Delay + Duration. After this time the gesture will be faded out, Damage will be disabled and player movement will be restored
 }
 
 --[[

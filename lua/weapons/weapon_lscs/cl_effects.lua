@@ -6,6 +6,7 @@ SWEP.BladeData = {
 }
 
 function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
+	local DMGActive = self:GetDMGActive()
 	local LifeTime = self:GetBladeLifeTime()
 	local CurTime = CurTime()
 
@@ -21,7 +22,7 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 			end
 		end
 
-		if self:GetDMGActive() then
+		if DMGActive then
 			local data = {
 				time = CurTime,
 				pos = cur_pos,
@@ -49,52 +50,58 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 
 	render.SetMaterial( bladeObject.material_trail )
 
-	self:DrawTrail( cur_pos, cur_dir, CurTime, LifeTime, length, self.BladeData[HandID][BladeID].BladePositions,  bladeObject.color_core, bladeObject.color_blur )
+	self:DrawTrail( cur_pos, cur_dir, CurTime, LifeTime, length, self.BladeData[HandID][BladeID].BladePositions,  bladeObject.color_core, bladeObject.color_blur, DMGActive )
 end
 
-function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, ColorStart, ColorEnd )
-	local prev = {
-		pos = MyPos,
-		dir = MyDir,
-		time = CurTime
-	}
+function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, ColorStart, ColorEnd, DMGActive )
+	local prev
+
+	if DMGActive then
+		prev = {
+			pos = MyPos,
+			dir = MyDir,
+			time = CurTime
+		}
+	end
 
 	local idx = 0
 	for _, cur in ipairs( Positions ) do
-		local startpos = prev.pos
-		local startdir = prev.dir
+		if prev then
+			local startpos = prev.pos
+			local startdir = prev.dir
 
-		local endpos = cur.pos
-		local enddir = cur.dir
+			local endpos = cur.pos
+			local enddir = cur.dir
 
-		local subtract = endpos - startpos
+			local subtract = endpos - startpos
 
-		local direction = subtract:GetNormalized()
-		local distance = subtract:Length()
+			local direction = subtract:GetNormalized()
+			local distance = subtract:Length()
 
-		for i = 2, distance,2 do
-			idx = idx + 1
+			for i = 2, distance,2 do
+				idx = idx + 1
 
-			if idx > self:GetMaxBeamElements() then
-				break
+				if idx > self:GetMaxBeamElements() then
+					break
+				end
+
+				local _pos = startpos + direction * i
+				local _dir = startdir + (enddir - startdir) / distance * i
+				local _time = prev.time + (cur.time - prev.time) / distance * i
+				local _alpha = math.max( (_time + LifeTime - CurTime) / LifeTime, 0)
+
+				local _alpha2 = (math.max(_alpha - 0.8,0) / 0.2) ^ 2
+				local inv_alpha2 = math.max(1 - _alpha2,0)
+
+				local R = ColorStart.r * _alpha2 + ColorEnd.r * inv_alpha2
+				local G = ColorStart.g * _alpha2 + ColorEnd.g * inv_alpha2
+				local B = ColorStart.b * _alpha2 + ColorEnd.b * inv_alpha2
+				local A = (ColorStart.a * _alpha2 + ColorEnd.a * inv_alpha2) * _alpha
+
+				render.DrawBeam( _pos, _pos + _dir * Length, 12, 1, 1, Color(R, G, B, A ) )
 			end
-
-			local _pos = startpos + direction * i
-			local _dir = startdir + (enddir - startdir) / distance * i
-			local _time = prev.time + (cur.time - prev.time) / distance * i
-			local _alpha = math.max( (_time + LifeTime - CurTime) / LifeTime, 0)
-
-			local _alpha2 = (math.max(_alpha - 0.8,0) / 0.2) ^ 2
-			local inv_alpha2 = math.max(1 - _alpha2,0)
-
-			local R = ColorStart.r * _alpha2 + ColorEnd.r * inv_alpha2
-			local G = ColorStart.g * _alpha2 + ColorEnd.g * inv_alpha2
-			local B = ColorStart.b * _alpha2 + ColorEnd.b * inv_alpha2
-			local A = (ColorStart.a * _alpha2 + ColorEnd.a * inv_alpha2) * _alpha
-
-			render.DrawBeam( _pos, _pos + _dir * Length, 12, 1, 1, Color(R, G, B, A ) )
 		end
-		
+
 		prev = {
 			pos = cur.pos,
 			dir = cur.dir,
@@ -173,7 +180,7 @@ function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles 
 	local Frac = self:DoBladeTrace( HandID, BladeID, pos, dir, length * Mul, width ).Fraction
 
 	if bladeObject.mdl then
-		self:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
+		self:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul * Frac, HiltAngles )
 
 		return
 	end
@@ -299,6 +306,11 @@ function SWEP:DoBladeTrace( HandID, BladeID, pos, dir, length, width )
 		mask = MASK_SHOT_HULL,
 		filter =  {self, ply}
 	} )
+
+	if trace.Hit and trace.Fraction == 1 then
+		trace.Fraction = 0
+		trace.HitPos = pos
+	end
 
 	if IsValid( trace.Entity ) and not self:GetDMGActive() then
 		if self:CanDoEffect( HandID, BladeID, 0.05 ) then

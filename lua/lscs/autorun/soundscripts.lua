@@ -151,7 +151,7 @@ sound.Add( {
 	channel = CHAN_STATIC,
 	volume = 0.3,
 	level = 75,
-	pitch = 100,
+	pitch = 80,
 	sound = {
 		"weapons/stunstick/spark1.wav",
 		"weapons/stunstick/spark2.wav",
@@ -162,8 +162,8 @@ sound.Add( {
 sound.Add( {
 	name = "nanosword_idle",
 	channel = CHAN_STATIC,
-	volume = 0.3,
+	volume = 0.4,
 	level = 75,
-	pitch = 100,
+	pitch = 80,
 	sound = "ambient/energy/electric_loop.wav",
 } )
