@@ -179,8 +179,10 @@ function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles 
 
 	local Frac = self:DoBladeTrace( HandID, BladeID, pos, dir, length * Mul, width ).Fraction
 
+	local MulxFrac = Mul * Frac
+
 	if bladeObject.mdl then
-		self:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul * Frac, HiltAngles )
+		self:DrawBladeModel( HandID, BladeID, PosData, bladeObject, MulxFrac, HiltAngles )
 
 		return
 	end
@@ -189,11 +191,11 @@ function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles 
 	render.DrawSprite( pos, w32, w32, color_blur )
 
 	-- inefficient pls replace
-	for i = 0, math.Round( (length - 1) * Frac, 0 ) do
+	for i = 0, math.Round( (length - 1) * MulxFrac, 0 ) do
 		render.DrawSprite( pos + dir * i, w12, w12, color_blur ) 
 	end
 
-	local EndPos = pos + dir * math.max(length - 0.9,0) * Frac
+	local EndPos = pos + dir * math.max(length - 0.9,0) * MulxFrac
 
 	render.SetMaterial( bladeObject.material_core )
 	render.DrawBeam( pos, EndPos, actual_width , 1, 1, color_core )

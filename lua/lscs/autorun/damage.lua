@@ -3,12 +3,12 @@
 	timer.Simple( 0, function()
 		ply:RemoveAllDecals()
 	end )
-	return true
+	--return true
  end)
 
 if SERVER then
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( target, dmginfo )
-		return true
+		--return true
 	end )
 
 	util.AddNetworkString( "lscs_saberdamage" )
@@ -38,8 +38,10 @@ if SERVER then
 		dmg:SetDamageType( DMG_ENERGYBEAM )
 
 		if slice[ victim:GetClass() ] then
+			victim:SetPos( victim:GetPos() + Vector(0,0,5) )
 			dmg:SetDamageType( bit.bor( DMG_CRUSH, DMG_SLASH ) )
 		end
+
 		local startpos = ply:GetShootPos()
 		local endpos = pos + (victim:GetPos() - ply:GetPos()):GetNormalized() * 50
 

@@ -147,6 +147,13 @@ if SERVER then
 		local inventory = self:lscsGetInventory()
 		local item = LSCS:ClassToItem( inventory[ id ] )
 
+		if not item then
+			self:ChatPrint("This Item can not be equipped!")
+			self:EmitSound("buttons/button10.wav")
+			self:SendLua( "LSCS:RefreshMenu()" )
+			return
+		end
+
 		if item.type == "hilt" then
 			local A, B = self:lscsGetHilt()
 

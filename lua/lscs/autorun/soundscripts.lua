@@ -162,8 +162,8 @@ sound.Add( {
 sound.Add( {
 	name = "nanosword_idle",
 	channel = CHAN_STATIC,
-	volume = 0.4,
+	volume = 0.15,
 	level = 75,
-	pitch = 80,
+	pitch = 75,
 	sound = "ambient/energy/electric_loop.wav",
 } )
