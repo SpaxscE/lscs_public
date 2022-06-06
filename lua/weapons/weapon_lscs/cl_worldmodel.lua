@@ -128,7 +128,9 @@ function SWEP:DrawWorldModelUnequipped( ply )
 
 		for _, PosData in ipairs( Positions ) do
 
-			self:DrawBlade( handID, BladeID, PosData, self:GetBladeData( handID ), Mul, Ang )
+			if BladeData then
+				self:DrawBlade( handID, BladeID, PosData, self:GetBladeData( handID ), Mul, Ang )
+			end
 
 			BladeID = BladeID + 1
 		end
@@ -180,9 +182,11 @@ function SWEP:DrawWorldModelTranslucent()
 		for _, PosData in ipairs( Positions ) do
 			local BladeData = self:GetBladeData( handID )
 
-			self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )
-			if not BladeData.no_trail then
-				self:CalcTrail( handID, BladeID, PosData, BladeData, Mul )
+			if BladeData then
+				self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )
+				if not BladeData.no_trail then
+					self:CalcTrail( handID, BladeID, PosData, BladeData, Mul )
+				end
 			end
 
 			BladeID = BladeID + 1

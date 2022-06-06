@@ -47,7 +47,7 @@ COMBO.Attacks = {
 		BeginAttack = function( self, weapon ) 
 			weapon:SetDMGActive( false )
 
-			weapon:GetOwner():SetVelocity( Vector(0,0,250) - Angle(0,weapon:GetOwner():EyeAngles().y,0):Forward() * 200 )
+			weapon:GetOwner():SetVelocity( Vector(0,0,250) - Angle(0,weapon:GetOwner():EyeAngles().y,0):Forward() * 50 )
 			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
 		end,
 		FinishAttack = function( self, weapon ) end,
