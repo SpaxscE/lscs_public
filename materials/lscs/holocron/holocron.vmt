@@ -1,0 +1,15 @@
+VertexLitGeneric
+{
+	$basetexture "lscs/holocron/holocron"
+	$bumpmap "lscs/holocron/holocron_normal"
+
+	$alphatest 1
+	$alphatestreference 0.15
+
+	$phong 1
+	$phongfresnelranges "[0.65 0.82 1]"
+	$halflambert 1
+	$phongexponent 41
+	$phongboost 1.01
+	$nocull 1
+}

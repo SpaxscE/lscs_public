@@ -32,7 +32,7 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 			table.sort(self.BladeData[HandID][BladeID].BladePositions, function( a, b ) return a.time > b.time end )
 		end
 
-		if Mul == 1 then
+		if Mul == 1 and bladeObject.dynamic_light then
 			local dlight = DynamicLight( self:EntIndex() * 1000 + HandID * 10 + BladeID )
 			if dlight then
 				dlight.pos = cur_pos + cur_dir * length * 0.5
@@ -155,7 +155,7 @@ function SWEP:GetBladeLifeTime()
 	return 0.15
 end
 
-function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul )
+function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
 	local length = bladeObject.length
 
 	local width = bladeObject.width
@@ -170,7 +170,13 @@ function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul )
 	local color_blur = bladeObject.color_blur
 	local color_core = bladeObject.color_core
 
-	local Frac = self:DoBladeTrace( HandID, BladeID, pos, dir, length, width ).Fraction * Mul
+	local Frac = self:DoBladeTrace( HandID, BladeID, pos, dir, length * Mul, width ).Fraction
+
+	if bladeObject.mdl then
+		self:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
+
+		return
+	end
 
 	render.SetMaterial( bladeObject.material_glow )
 	render.DrawSprite( pos, w32, w32, color_blur )
@@ -207,6 +213,8 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 		end
 	end
 
+	-- ?option performance setting?
+	--[[
 	if ply ~= LocalPlayer() then
 		if not IsValid( hitEnt ) and bHitWall then
 			if self:CanDoEffect( HandID, BladeID, 0.05 ) then
@@ -216,6 +224,7 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 
 		return
 	end
+	]]
 
 	if self.BladeData[HandID][BladeID].prev_hitpos and self.BladeData[HandID][BladeID].prev_hitnormal then
 		local _pos = self.BladeData[HandID][BladeID].prev_hitpos
@@ -312,19 +321,21 @@ end
 function SWEP:RegisterHitCL( target, Pos, Dir )
 	if not IsValid( target ) then return end
 
-	if IsValid( target ) and self:GetOwner() == LocalPlayer() then
-		local CurTime = CurTime()
+	local ply = self:GetOwner()
 
-		target.HitTime = target.HitTime or 0
+	if not IsValid( ply ) then return end
 
-		if target.HitTime < CurTime then
-			target.HitTime = CurTime + 0.15
+	if ply ~= LocalPlayer() then return end
 
-			net.Start( "lscs_saberdamage" ) 
-				net.WriteEntity( target )
-				net.WriteVector( Pos )
-				net.WriteVector( Dir )
-			net.SendToServer()
-		end
+	local CurTime = CurTime()
+
+	if (target.HitTime or 0) < CurTime then
+		target.HitTime = CurTime + 0.15
+
+		net.Start( "lscs_saberdamage" ) 
+			net.WriteEntity( target )
+			net.WriteVector( Pos )
+			net.WriteVector( Dir )
+		net.SendToServer()
 	end
 end

@@ -124,3 +124,46 @@ sound.Add( {
 		"lscs/saber/spark6.wav",
 	}
 } )
+
+sound.Add( {
+	name = "nanosword_hup",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 110,
+	pitch = { 120, 130 },
+	sound = {
+		"weapons/stunstick/stunstick_swing1.wav",
+		"weapons/stunstick/stunstick_swing2.wav",
+	}
+} )
+
+sound.Add( {
+	name = "nanosword_turnon",
+	channel = CHAN_STATIC,
+	volume = 0.1,
+	level = 75,
+	pitch = 100,
+	sound = "lscs/nanosword/activate.ogg",
+} )
+
+sound.Add( {
+	name = "nanosword_turnoff",
+	channel = CHAN_STATIC,
+	volume = 0.3,
+	level = 75,
+	pitch = 100,
+	sound = {
+		"weapons/stunstick/spark1.wav",
+		"weapons/stunstick/spark2.wav",
+		"weapons/stunstick/spark3.wav",
+	}
+} )
+
+sound.Add( {
+	name = "nanosword_idle",
+	channel = CHAN_STATIC,
+	volume = 0.3,
+	level = 75,
+	pitch = 100,
+	sound = "ambient/energy/electric_loop.wav",
+} )

@@ -1,4 +1,52 @@
 SWEP.WorldModelCL = {}
+SWEP.BladeModelCL = {}
+
+
+function SWEP:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
+	local HiltMDL = self:GetWorldModel( HandID )
+
+	if not IsValid( HiltMDL ) then return end
+
+	local BladeMDL = self:GetBladeModel( HandID, BladeID )
+
+	if IsValid( BladeMDL ) then
+		local Ang = HiltAngles
+		local Forward = HiltAngles:Up()
+		local Right = HiltAngles:Right()
+
+		Ang:RotateAroundAxis( Right, math.deg( math.acos( math.Clamp( Forward:Dot( PosData.dir ) ,-1,1) ) ) )
+
+		BladeMDL:SetPos( PosData.pos )
+		BladeMDL:SetAngles( Ang )
+		BladeMDL:SetupBones()
+		BladeMDL:DrawModel()
+
+		if bladeObject.mdl_poseparameter then
+			BladeMDL:SetPoseParameter(bladeObject.mdl_poseparameter, Mul  )
+			BladeMDL:InvalidateBoneCache()
+		end
+	else
+		local Model = ClientsideModel( bladeObject.mdl )
+		Model:SetNoDraw( true )
+		self.BladeModelCL[ HandID ][BladeID ] = Model
+	end
+end
+
+function SWEP:GetBladeModel( HandID, BladeID )
+	if not self.BladeModelCL[ HandID ] then
+		self.BladeModelCL[ HandID ] = {}
+	end
+
+	if HandID and BladeID then
+		if not self.BladeModelCL[ HandID ][BladeID ] then
+			return false
+		else
+			return self.BladeModelCL[ HandID ][BladeID ]
+		end
+	else
+		return self.BladeModelCL
+	end
+end
 
 function SWEP:GetWorldModel( handID )
 	if handID then
@@ -42,6 +90,17 @@ function SWEP:ClearWorldModel()
 	end
 end
 
+function SWEP:ClearBladeModel()
+	for _, tbl in pairs( self.BladeModelCL ) do
+		if not tbl then continue end
+
+		for _, mdl in pairs( tbl ) do
+			if not IsValid( mdl ) then continue end
+			mdl:Remove()
+		end
+	end
+end
+
 function SWEP:DrawWorldModel()
 end
 
@@ -69,7 +128,7 @@ function SWEP:DrawWorldModelUnequipped( ply )
 
 		for _, PosData in ipairs( Positions ) do
 
-			self:DrawBlade( handID, BladeID, PosData, self:GetBladeData( handID ), Mul )
+			self:DrawBlade( handID, BladeID, PosData, self:GetBladeData( handID ), Mul, Ang )
 
 			BladeID = BladeID + 1
 		end
@@ -121,8 +180,10 @@ function SWEP:DrawWorldModelTranslucent()
 		for _, PosData in ipairs( Positions ) do
 			local BladeData = self:GetBladeData( handID )
 
-			self:DrawBlade( handID, BladeID, PosData, BladeData, Mul )
-			self:CalcTrail( handID, BladeID, PosData, BladeData, Mul )
+			self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )
+			if not BladeData.no_trail then
+				self:CalcTrail( handID, BladeID, PosData, BladeData, Mul )
+			end
 
 			BladeID = BladeID + 1
 		end

@@ -67,4 +67,5 @@ end
 
 function SWEP:OnRemove()
 	self:ClearWorldModel()
+	self:ClearBladeModel()
 end

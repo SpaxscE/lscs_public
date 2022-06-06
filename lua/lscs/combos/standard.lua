@@ -2,6 +2,9 @@ COMBO.Name = "standard"
 COMBO.PrintName = "Standard"
 COMBO.Description = "Standard GVP-Style taught by Master Blu-x92. Quick to learn, hard to master, but balanced and combat proven."
 
+COMBO.DeflectBullets = true
+COMBO.AutoBlock = true
+
 COMBO.HoldType = "melee2"
 
 COMBO.Attacks = {

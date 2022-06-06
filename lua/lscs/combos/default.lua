@@ -2,6 +2,9 @@ COMBO.Name = "default" -- internal ID
 COMBO.PrintName = "Untrained" -- what should be displayed in your hud
 COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi." -- write an essay explaining what makes your saber style the best
 
+COMBO.DeflectBullets = false -- false, because this style can not deflect bullets
+COMBO.AutoBlock = false -- false, because this style can only block when a perfect block is performed. Dont use stamina system.
+
 COMBO.HoldType = "melee"  -- just like any other weapon
 
 COMBO.Attacks = {}

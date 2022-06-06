@@ -25,6 +25,8 @@ if SERVER then
 		self:DrawShadow( false )
 
 		self:SetTrigger( not self.PreventTouch ) -- this will make it so you can use ply:Give() and the player will automatically pick it up, but if spawned using the q-menu it wont
+
+		self:SetModelScale( 0.5 )
 	end
 
 	function ENT:PhysicsCollide( data, physobj )
@@ -38,7 +40,6 @@ if SERVER then
 	end
 else
 	function ENT:Initialize()
-		self:SetModelScale( 0.5 )
 	end
 
 	local mat = Material( "sprites/light_glow02_add" )
