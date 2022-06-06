@@ -115,6 +115,8 @@ function SWEP:GetBladeData( hand )
 end
 
 function SWEP:BuildSounds()
+	if self:GetHiltR() == "" and self:GetHiltL() == "" then return end
+
 	for _, data in pairs( self:GetBladeData() ) do
 		local SND = data.sounds
 		if SND then

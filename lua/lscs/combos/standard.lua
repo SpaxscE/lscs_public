@@ -89,16 +89,6 @@ COMBO.Attacks = {
 		Duration = 0.3,
 	},
 	["-45-"] = {
-		AttackAnim = "a_combo4",
-		BeginAttack = function( self, weapon )
-			weapon:DoAttackSound()
-			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
-		end,
-		FinishAttack = function( self, weapon ) end,
-		Delay = 0.1,
-		Duration = 0.3,
-	},
-	["+45+"] = {
 		AttackAnim = "vanguard_r_s3_t3",
 		BeginAttack = function( self, weapon )
 			weapon:DoAttackSound()
@@ -107,6 +97,16 @@ COMBO.Attacks = {
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,
 		Duration = 0.4,
+	},
+	["+45+"] = {
+		AttackAnim = "a_combo4",
+		BeginAttack = function( self, weapon )
+			weapon:DoAttackSound()
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
+		end,
+		FinishAttack = function( self, weapon ) end,
+		Delay = 0.1,
+		Duration = 0.3,
 	},
 	["W_S_"] = {
 		AttackAnim = "h_left_t3",
@@ -167,8 +167,8 @@ COMBO.Attacks = {
 			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.6, Vector(1,1,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
-		Delay = 0.2,
-		Duration = 0.6,
+		Delay = 0.4,
+		Duration = 0.4,
 	},
 	["WA__"] = {
 		AttackAnim = "combo3",
@@ -214,3 +214,4 @@ COMBO.Attacks = {
 		Duration = 0.8,
 	},
 }
+LSCS:Reload()
