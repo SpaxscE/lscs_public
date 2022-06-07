@@ -954,12 +954,10 @@ function LSCS:BuildStanceMenu( Frame )
 
 			local model = mdl.Entity
 			if IsValid( model ) then
-				if (model.Next or 0) < CurTime() then
-					local seqID = model:LookupSequence( attack.AttackAnim )
-					model:SetSequence( seqID )
-					model:ResetSequence( seqID )
-					model:SetCycle( 0 )
-				end
+				local seqID = model:LookupSequence( attack.AttackAnim )
+				model:SetSequence( seqID )
+				model:ResetSequence( seqID )
+				model:SetCycle( 0 )
 			end
 		end
 	end
