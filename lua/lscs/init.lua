@@ -60,10 +60,11 @@ end
 function LSCS:RegisterHilt( data )
 	if not data.id or not data.mdl or not data.info then return end
 
-	local class = "item_saberhilt_"..data.id
+	local id = string.lower( data.id )
+	local class = "item_saberhilt_"..id
 
-	LSCS.Hilt[ data.id ] = {
-		id = data.id,
+	LSCS.Hilt[ id ] = {
+		id = id,
 		name = data.PrintName,
 		type = "hilt",
 		Type = "Hilt",
@@ -91,10 +92,11 @@ end
 function LSCS:RegisterBlade( data )
 	if not data.id then return end
 
-	local class = "item_crystal_"..data.id
+	local id = string.lower( data.id )
+	local class = "item_crystal_"..id
 
-	LSCS.Blade[ data.id ] = {
-		id = data.id,
+	LSCS.Blade[ id ] = {
+		id = id,
 		name = data.PrintName,
 		type = "crystal",
 		Type = "Crystal",
@@ -131,7 +133,7 @@ function LSCS:RegisterBlade( data )
 	ENT.Spawnable       = true
 	ENT.AdminSpawnable  = false
 
-	ENT.ID = data.id
+	ENT.ID = id
 
 	scripted_ents.Register( ENT, class )
 end
@@ -186,12 +188,14 @@ LSCS.Reload = function()
 
 		include("lscs/combos/"..filename)
 
-		local class = "item_stance_"..COMBO.id
+		local id = string.lower( COMBO.id )
+		local class = "item_stance_"..id
 
-		LSCS.Stance[ COMBO.id ] = {
-			id = COMBO.id,
+		LSCS.Stance[ id ] = {
+			id = id,
 			name = COMBO.PrintName,
 			description = COMBO.Description,
+			author = COMBO.Author,
 			type = "stance",
 			Type = "Stance",
 			class = class,

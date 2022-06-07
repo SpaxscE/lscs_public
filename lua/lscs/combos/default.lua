@@ -1,5 +1,5 @@
-COMBO.id = "default" -- internal ID
-COMBO.PrintName = "Untrained" -- what should be displayed in your hud
+COMBO.id = "default" -- internal ID, lower case only
+COMBO.PrintName = "Scrub" -- what should be displayed in your hud
 COMBO.Author = "Blu-x92 / Luna"
 COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi." -- write an essay explaining what makes your saber style the best
 

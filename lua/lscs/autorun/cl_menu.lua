@@ -782,19 +782,85 @@ function LSCS:BuildSaberMenu( Frame )
 end
 
 function LSCS:BuildStanceMenu( Frame )
+	local ply = LocalPlayer()
+	local combo = ply:lscsGetCombo()
+
+	local mdlStart = 4
+	local mdlSize = PanelSizeY - 8 + FrameBarHeight
+
+	local HeaderY = 24
+
+	local hX = mdlStart * 2 + mdlSize
+	local hY = mdlStart * 2 + HeaderY
+	local hSizeX = PanelSizeX - hX - mdlStart
+	local hSizeY =  100
+
+	local sX = hX
+	local sY = hY + hSizeY + mdlStart
+
+	local sSizeX = hSizeX
+	local sSizeY = (PanelSizeY + FrameBarHeight) - (hY + hSizeY + mdlStart * 2)
+
+	local ColHead = menu_text
+	local ColText = menu_white
+
+	local LastID
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
 	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
-		local Col = menu_light
+		draw.RoundedBoxEx( 8, 0, 0, w, h, menu_light, false, false, false, true )
+
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( hX, mdlStart, hSizeX, HeaderY  )
+		draw.SimpleText( "Information", "LSCS_FONT", hX + hSizeX * 0.5, mdlStart + HeaderY * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+		surface.DrawRect( hX, sY, hSizeX, HeaderY  )
+		draw.SimpleText( "Attacks", "LSCS_FONT", hX + hSizeX * 0.5, sY + HeaderY * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	local description = vgui.Create( "DPanel", Panel )
+	description:SetPos( hX, hY )
+	description:SetSize( hSizeX, hSizeY )
+	description.Paint = function(self, w, h ) 
+		local Col = menu_dim
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
 	end
 
+	local richtext = vgui.Create( "RichText", description )
+	richtext:Dock( FILL )
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Name:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.name or combo.id).."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Description:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.description or "").."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Author:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.author or "").."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Internal-ID:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText(combo.id)
+
+	local SPB = vgui.Create( "DPanel", Panel )
+	SPB:SetPos( sX, sY + HeaderY + mdlStart )
+	SPB:SetSize( sSizeX, sSizeY - HeaderY - mdlStart )
+	SPB.Paint = function(self, w, h )
+		draw.RoundedBoxEx( 8, 0, 0, w, h, menu_dim, false, false, false, true )
+	end
+
 	local mdl = vgui.Create( "DModelPanel", Panel )
-	mdl:SetPos( 4, 4 )
-	mdl:SetSize( PanelSizeY - 8 + FrameBarHeight, PanelSizeY - 8 + FrameBarHeight )
-	mdl:SetFOV( 40 )
+	mdl:SetPos( mdlStart, mdlStart )
+	mdl:SetSize( mdlSize, mdlSize )
+	mdl:SetFOV( 50 )
 	mdl:SetCamPos( vector_origin )
 	mdl:SetDirectionalLight( BOX_RIGHT, Color( 255, 160, 80, 255 ) )
 	mdl:SetDirectionalLight( BOX_LEFT, Color( 80, 160, 255, 255 ) )
@@ -863,6 +929,39 @@ function LSCS:BuildStanceMenu( Frame )
 		cam.End3D()
 
 		self.LastPaint = RealTime()
+	end
+
+	local DScrollPanel = vgui.Create( "DScrollPanel", SPB )
+	DScrollPanel:Dock( FILL )
+
+	for index, attack in pairs( combo.Attacks ) do
+		local DButton = DScrollPanel:Add( "DButton" )
+		DButton:SetText( index )
+		DButton:Dock( TOP )
+		DButton:DockMargin( 5, 5, 5, 2.5 )
+		DButton.Paint = function(self, w, h )
+			DrawButtonClick( self, w, h ) 
+			if LastID == index then
+				local Col = menu_text
+				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+				DrawFrame( w, h, 0, 2 )
+			end
+		end
+		DButton.DoClick = function( self )
+			BaseButtonClick( self )
+
+			LastID = index
+
+			local model = mdl.Entity
+			if IsValid( model ) then
+				if (model.Next or 0) < CurTime() then
+					local seqID = model:LookupSequence( attack.AttackAnim )
+					model:SetSequence( seqID )
+					model:ResetSequence( seqID )
+					model:SetCycle( 0 )
+				end
+			end
+		end
 	end
 
 	LSCS:SetActivePanel( Panel )
