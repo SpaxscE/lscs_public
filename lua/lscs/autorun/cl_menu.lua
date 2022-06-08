@@ -934,9 +934,24 @@ function LSCS:BuildStanceMenu( Frame )
 	local DScrollPanel = vgui.Create( "DScrollPanel", SPB )
 	DScrollPanel:Dock( FILL )
 
-	for index, attack in pairs( combo.Attacks ) do
+	local nice_combo = {}
+
+	for index, obj in pairs( combo.Attacks ) do
+		local info = LSCS.ComboInfo[ index ]
+
+		local data = {
+			text = info.description,
+			AttackAnim = obj.AttackAnim,
+			id = info.order,
+		}
+		table.insert( nice_combo, data )
+	end
+	table.sort( nice_combo, function( a, b ) return a.id < b.id end )
+
+	for index, data in ipairs( nice_combo ) do
 		local DButton = DScrollPanel:Add( "DButton" )
-		DButton:SetText( index )
+		DButton:SetSize(100,50)
+		DButton:SetText( data.text )
 		DButton:Dock( TOP )
 		DButton:DockMargin( 5, 5, 5, 2.5 )
 		DButton.Paint = function(self, w, h )
@@ -954,7 +969,7 @@ function LSCS:BuildStanceMenu( Frame )
 
 			local model = mdl.Entity
 			if IsValid( model ) then
-				local seqID = model:LookupSequence( attack.AttackAnim )
+				local seqID = model:LookupSequence( data.AttackAnim )
 				model:SetSequence( seqID )
 				model:ResetSequence( seqID )
 				model:SetCycle( 0 )

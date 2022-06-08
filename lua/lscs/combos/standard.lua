@@ -58,7 +58,7 @@ COMBO.Attacks = {
 	["ROLL_RIGHT"] = {
 		AttackAnim = "rollright",
 		BeginAttack = function( self, weapon ) 
-			weapon:SetDMGActive( false )
+			weapon:DoAttackSound()
 
 			weapon:GetOwner():SetVelocity( Vector(0,0,50) + Angle(0,weapon:GetOwner():EyeAngles().y,0):Right() * 600 )
 			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )
@@ -70,7 +70,7 @@ COMBO.Attacks = {
 	["ROLL_LEFT"] = {
 		AttackAnim = "rollleft",
 		BeginAttack = function( self, weapon ) 
-			weapon:SetDMGActive( false )
+			weapon:DoAttackSound()
 
 			weapon:GetOwner():SetVelocity( Vector(0,0,50) - Angle(0,weapon:GetOwner():EyeAngles().y,0):Right() * 600 )
 			weapon:GetOwner():lscsSuppressFalldamage( CurTime() + 5 )

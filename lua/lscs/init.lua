@@ -221,3 +221,74 @@ LSCS.Reload = function()
 end
 
 LSCS:Reload()
+
+LSCS.ComboInfo = {
+	["____"] = {
+		order = 1,
+		description = "[Mouse 1]",
+	},
+	["W___"] = {
+		order = 2,
+		description = "[W]+[Mouse 1]",
+	},
+	["__S_"] = {
+		order = 3,
+		description = "[S]+[Mouse 1]",
+	},
+	["_A__"] = {
+		order = 4,
+		description = "[A]+[Mouse 1]",
+	},
+	["___D"] = {
+		order = 5,
+		description = "[D]+[Mouse 1]",
+	},
+	["W__D"] = {
+		order = 6,
+		description = "[W]+[D]+[Mouse 1]",
+	},
+	["WA__"] = {
+		order = 7,
+		description = "[W]+[A]+[Mouse 1]",
+	},
+	["__SD"] = {
+		order = 8,
+		description = "[S]+[D]+[Mouse 1]",
+	},
+	["_AS_"] = {
+		order = 9,
+		description = "[A]+[S]+[Mouse 1]",
+	},
+	["W_S_"] = {
+		order = 10,
+		description = "[W]+[S]+[Mouse 1]",
+	},
+	["-45-"] = {
+		order = 11,
+		description = "while looking UP Press\n[Mouse 1] or [W]+[Mouse 1]",
+	},
+	["+45+"] = {
+		order = 12,
+		description = "while looking DOWN Press\n[Mouse 1] or [W]+[Mouse 1]",
+	},
+	["FRONT_DASH"] = {
+		order = 13,
+		description = "HOLD [SPACE]+[W] then Press\n[Mouse 1] while still in air",
+	},
+	["BACKFLIP"] = {
+		order = 14,
+		description = "HOLD [SPACE]+[S] then Press\n[Mouse 1] while still in air",
+	},
+	["SLAM"] = {
+		order = 15,
+		description = "HOLD [SPACE]+[S] then HOLD\n[Mouse 1] while still in air",
+	},
+	["ROLL_RIGHT"] = {
+		order = 16,
+		description = "HOLD [SPACE]+[D] then Press\n[Mouse 1] while still in air",
+	},
+	["ROLL_LEFT"] = {
+		order = 17,
+		description = "HOLD [SPACE]+[A] then Press\n[Mouse 1] while still in air",
+	},
+}
