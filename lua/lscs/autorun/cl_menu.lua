@@ -941,7 +941,8 @@ function LSCS:BuildStanceMenu( Frame )
 
 		local data = {
 			text = info.description,
-			AttackAnim = obj.AttackAnim,
+			name = info.name,
+			AttackAnim = (obj.AttackAnimMenu or obj.AttackAnim),
 			id = info.order,
 		}
 		table.insert( nice_combo, data )
@@ -950,16 +951,41 @@ function LSCS:BuildStanceMenu( Frame )
 
 	for index, data in ipairs( nice_combo ) do
 		local DButton = DScrollPanel:Add( "DButton" )
+		DButton.InfoText = data.text
+		DButton.InfoName = data.name
 		DButton:SetSize(100,50)
-		DButton:SetText( data.text )
+		DButton:SetText("")
 		DButton:Dock( TOP )
 		DButton:DockMargin( 5, 5, 5, 2.5 )
 		DButton.Paint = function(self, w, h )
 			DrawButtonClick( self, w, h ) 
+			local Col = menu_white_dim
+
 			if LastID == index then
-				local Col = menu_text
+				Col = menu_text
+				draw.SimpleText( "["..self.InfoName.."]", "LSCS_FONT", w * 0.5, 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 				DrawFrame( w, h, 0, 2 )
+				Col = menu_white
+			else
+				if self:IsHovered() then
+					Col = menu_white
+					surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+					DrawFrame( w, h, 0, 2 )
+				end
+
+				draw.SimpleText( self.InfoName, "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+				return
+			end
+
+			local words = string.Explode( "\n", self.InfoText )
+			if #words > 1 then
+				draw.SimpleText( words[1], "LSCS_FONT_SMALL", w * 0.5, h - 2 - 12, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( words[2], "LSCS_FONT_SMALL", w * 0.5, h - 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			else
+				draw.SimpleText( words[1], "LSCS_FONT_SMALL", w * 0.5, h - 8, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 			end
 		end
 		DButton.DoClick = function( self )

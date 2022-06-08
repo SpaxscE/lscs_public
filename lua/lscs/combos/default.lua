@@ -11,6 +11,7 @@ COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos install
 COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
 	AttackAnim = "range_melee", -- which animation to play
+	AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
 	BeginAttack = function( self, weapon )
 		weapon:DoAttackSound()
 

@@ -224,71 +224,88 @@ LSCS:Reload()
 
 LSCS.ComboInfo = {
 	["____"] = {
+		name = "Base Attack",
 		order = 1,
 		description = "[Mouse 1]",
 	},
 	["W___"] = {
+		name = "Forward Attack",
 		order = 2,
 		description = "[W]+[Mouse 1]",
 	},
 	["__S_"] = {
+		name = "Reverse Attack",
 		order = 3,
 		description = "[S]+[Mouse 1]",
 	},
 	["_A__"] = {
+		name = "Left Attack",
 		order = 4,
 		description = "[A]+[Mouse 1]",
 	},
 	["___D"] = {
+		name = "Right Attack",
 		order = 5,
 		description = "[D]+[Mouse 1]",
 	},
 	["W__D"] = {
+		name = "45-Right Attack",
 		order = 6,
 		description = "[W]+[D]+[Mouse 1]",
 	},
 	["WA__"] = {
+		name = "45-Left Attack",
 		order = 7,
 		description = "[W]+[A]+[Mouse 1]",
 	},
 	["__SD"] = {
+		name = "Reverse 45-Right Attack",
 		order = 8,
 		description = "[S]+[D]+[Mouse 1]",
 	},
 	["_AS_"] = {
+		name = "Reverse 45-Left Attack",
 		order = 9,
 		description = "[A]+[S]+[Mouse 1]",
 	},
 	["W_S_"] = {
+		name = "Special Attack",
 		order = 10,
 		description = "[W]+[S]+[Mouse 1]",
 	},
 	["-45-"] = {
+		name = "Forward Up Attack",
 		order = 11,
-		description = "while looking UP Press\n[Mouse 1] or [W]+[Mouse 1]",
+		description = "while looking UP\nPress [Mouse 1] or [W]+[Mouse 1]",
 	},
 	["+45+"] = {
+		name = "Forward Down Attack",
 		order = 12,
-		description = "while looking DOWN Press\n[Mouse 1] or [W]+[Mouse 1]",
+		description = "while looking DOWN\nPress [Mouse 1] or [W]+[Mouse 1]",
 	},
 	["FRONT_DASH"] = {
+		name = "Dash Forward",
 		order = 13,
-		description = "HOLD [SPACE]+[W] then Press\n[Mouse 1] while still in air",
+		description = "HOLD [SPACE]+[W] then\nPress [Mouse 1] while still in air",
 	},
 	["BACKFLIP"] = {
+		name = "Backflip",
 		order = 14,
-		description = "HOLD [SPACE]+[S] then Press\n[Mouse 1] while still in air",
+		description = "HOLD [SPACE]+[S] then\nPress [Mouse 1] while still in air",
 	},
 	["SLAM"] = {
+		name = "Slam",
 		order = 15,
-		description = "HOLD [SPACE]+[S] then HOLD\n[Mouse 1] while still in air",
+		description = "Perform a [Backflip] then\nHOLD [Mouse 1] while still in air",
 	},
 	["ROLL_RIGHT"] = {
+		name = "Dodge Right",
 		order = 16,
-		description = "HOLD [SPACE]+[D] then Press\n[Mouse 1] while still in air",
+		description = "HOLD [SPACE]+[D] then\nPress [Mouse 1] while still in air",
 	},
 	["ROLL_LEFT"] = {
+		name = "Dodge Left",
 		order = 17,
-		description = "HOLD [SPACE]+[A] then Press\n[Mouse 1] while still in air",
+		description = "HOLD [SPACE]+[A] then\nPress [Mouse 1] while still in air",
 	},
 }
