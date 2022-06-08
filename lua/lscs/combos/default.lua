@@ -4,9 +4,9 @@ COMBO.Author = "Blu-x92 / Luna"
 COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi." -- write an essay explaining what makes your saber style the best
 
 COMBO.DeflectBullets = false -- false, because this style can not deflect bullets
-COMBO.AutoBlock = false -- false, because this style can only block when a perfect block is performed. Dont use stamina system.
+COMBO.AutoBlock = false -- false, because this style can only block when a perfect block is performed. Doesn't use stamina system. For any style that should not suck set to true
 
-COMBO.HoldType = "melee"  -- just like any other weapon
+COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
 COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
