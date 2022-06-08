@@ -158,7 +158,7 @@ function SWEP:DoCombo()
 		end
 	end
 
-	self:PlayAnimation( ComboObj.AttackAnim )
+	self:PlayAnimation( ComboObj.AttackAnim, ComboObj.AttackAnimStart )
 
 	local Time = CurTime() + ComboObj.Delay + ComboObj.Duration + 0.1
 	self:SetNextPrimaryAttack( Time )

@@ -35,13 +35,14 @@ else
 		if not IsValid( ply ) then return end
 
 		local seq = net.ReadString()
+		local start = tonumber( net.ReadString() )
 
 		if ply == LocalPlayer() then
 			if ply.s_vcd_anim ~= seq then
-				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),0, true )
+				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, true )
 			end
 		else
-			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),0, true )
+			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),start, true )
 		end
 	end )
 end

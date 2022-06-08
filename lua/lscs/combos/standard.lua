@@ -207,10 +207,11 @@ COMBO.Attacks = {
 			if weapon:GetOwner():OnGround() then
 				weapon:GetOwner():SetVelocity( Angle(0,weapon:GetOwner():EyeAngles().y,0):Forward() * 1000 )
 			end
-			weapon:GetOwner():lscsSetTimedMove( 1, CurTime() + 0.6, 0.2, Vector(0,0,0) )
+			weapon:GetOwner():lscsSetTimedMove( 1, CurTime(), 0.9, Vector(0,0,0) )
 		end,
 		FinishAttack = function( self, weapon ) end,
 		Delay = 0.1,
 		Duration = 0.8,
 	},
 }
+LSCS:Reload()

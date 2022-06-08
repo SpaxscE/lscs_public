@@ -8,7 +8,11 @@ function SWEP:GetGestureTime()
 	return math.max( (self.f_NextGesture or 0),self:GetNWGestureTime() )
 end
 
-function SWEP:PlayAnimation( anim )
+function SWEP:PlayAnimation( anim, start )
+	if not start then
+		start = 0
+	end
+
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return end
@@ -19,10 +23,11 @@ function SWEP:PlayAnimation( anim )
 		net.Start( "lscs_animations" )
 			net.WriteEntity( ply )
 			net.WriteString( anim )
+			net.WriteString( tostring(start) )
 		net.Broadcast()
 	end
 
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ),0, true )
+	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, true )
 end
 
 function SWEP:StopAnimation()

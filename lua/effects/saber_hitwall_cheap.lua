@@ -32,6 +32,7 @@ function EFFECT:Init( data )
 	local Pos = self.Pos
 	local Dir = data:GetNormal()
 
+	--[[
 	local trace = util.TraceLine( {
 		start = Pos + Dir * 5,
 		endpos = Pos - Dir * 5,
@@ -40,6 +41,7 @@ function EFFECT:Init( data )
 	if trace.Hit and not trace.HitNonWorld then
 		util.DecalEx( DecalMat, trace.Entity, trace.HitPos + trace.HitNormal, trace.HitNormal, Color(255,255,255,255), 0.3, 0.3 )
 	end
+	]]
 
 	local emitter = ParticleEmitter( Pos, false )
 

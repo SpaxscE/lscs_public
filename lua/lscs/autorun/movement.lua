@@ -10,7 +10,7 @@ if CLIENT then
 
 		if table.IsEmpty( ply._lscsTimedMove ) then return end
 
-		local Move = Vector(0,0,0)
+		local Move
 		local Time = CurTime()
 
 		for id, obj in pairs( ply._lscsTimedMove ) do
@@ -20,9 +20,15 @@ if CLIENT then
 			end
 
 			if obj.start <= Time then
-				Move = Move + obj.move
+				if not Move then
+					Move = obj.move
+				else
+					Move = Move + obj.move
+				end
 			end
 		end
+
+		if not Move then return end
 
 		if ply:GetMoveType() ~= MOVETYPE_WALK then return end
 
