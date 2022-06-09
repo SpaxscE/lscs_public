@@ -231,7 +231,7 @@ LSCS.ComboInfo = {
 	["W___"] = {
 		name = "Forward Attack",
 		order = 2,
-		description = "[W]+[Mouse 1]",
+		description = "[W]+[Mouse 1]+([Shift] to prioritize)",
 	},
 	["__S_"] = {
 		name = "Reverse Attack",

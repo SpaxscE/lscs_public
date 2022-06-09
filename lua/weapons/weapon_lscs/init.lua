@@ -65,3 +65,13 @@ end
 function SWEP:ShouldDropOnDie()
 	return false
 end
+
+function SWEP:EmitSoundUnpredicted( sound )
+	--break default prediction because if client/server go slightly out of sync the sounds will not play at all or will play twice.
+	--imo having serverside sounds with lag is better than having no sounds at all
+
+	timer.Simple(0, function()
+		if not IsValid( self ) then return end
+		self:EmitSound( sound )
+	end)
+end

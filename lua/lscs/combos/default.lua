@@ -14,12 +14,12 @@ COMBO.Attacks["____"] = {
 	--AttackAnimStart = 0.3, -- start from this cycle
 
 	AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
-	BeginAttack = function( self, weapon )
+	BeginAttack = function( weapon, ply )  
 		weapon:DoAttackSound()
 
 		-- do whatever extra things you want to do when the attack is triggered. Please note this is run on both server and client
 	end,
-	FinishAttack = function( self, weapon )
+	FinishAttack = function( weapon, ply )  
 		-- do whatever extra things you want to do when the attack is finished. Please note this is run on both server and client
 	end,
 	Delay = 0, -- how long to wait until dmg is active and BeginAttack is called. This can be used to exclude the windup animation from causing damage

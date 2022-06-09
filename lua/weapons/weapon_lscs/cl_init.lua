@@ -69,3 +69,7 @@ function SWEP:OnRemove()
 	self:ClearWorldModel()
 	self:ClearBladeModel()
 end
+
+function SWEP:EmitSoundUnpredicted( sound )
+	-- dont do anything on client
+end

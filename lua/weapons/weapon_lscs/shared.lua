@@ -130,9 +130,10 @@ function SWEP:BuildSounds()
 end
 
 function SWEP:SetDMGActive( active )
-	self.b_dmgActive = active
 	if SERVER then
 		self:SetNWDMGActive( active )
+	else
+		self.b_dmgActive = active
 	end
 end
 
@@ -149,8 +150,11 @@ function SWEP:GetDMGActive()
 end
 
 function SWEP:SetNextPrimaryAttack( time )
-	self:SetNWNextAttack( time )
-	self.f_NextAttack = time
+	if SERVER then
+		self:SetNWNextAttack( time )
+	else
+		self.f_NextAttack = time
+	end
 end
 
 function SWEP:GetNextPrimaryAttack()
@@ -173,14 +177,9 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DoAttackSound()
-	if CLIENT then return end
+	if not self:GetDMGActive() then return end
 
-	--ent:EmitSound internally calls SuppressHostEvents( )
-	--which i need to break with this timer.Simple or it will 'sometimes' play two different sounds from the soundscript at the same time
-	timer.Simple(0, function()
-		if not IsValid( self ) then return end
-		self:EmitSound( self.AttackSound )
-	end)
+	self:EmitSoundUnpredicted( self.AttackSound )
 end
 
 function SWEP:Holster( wep )
@@ -231,10 +230,10 @@ function SWEP:Think()
 			self:BuildSounds()
 
 			self:SetHoldType( self:GetCombo().HoldType )
-			self:EmitSound( self.ActivateSound )
+			self:EmitSoundUnpredicted( self.ActivateSound )
 		else
 			self:SetHoldType( "normal" )
-			self:EmitSound( self.DisableSound )
+			self:EmitSoundUnpredicted( self.DisableSound )
 		end
 
 		self:OnActiveChanged( self.OldActive, Active )

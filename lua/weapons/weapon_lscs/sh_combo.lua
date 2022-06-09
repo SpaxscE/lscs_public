@@ -48,7 +48,7 @@ function SWEP:HandleCombo()
 	if self.ComboStatus == 1 then
 		if self.CurCombo.BeginTime <= Time then
 			self:BeginAttack()
-			self.CurCombo.BeginFunc(self.CurCombo, self)
+			self.CurCombo.BeginFunc( self, ply )
 			self.ComboStatus = 2
 		end
 	end
@@ -61,7 +61,7 @@ function SWEP:HandleCombo()
 
 	if self.ComboStatus == 3 then
 		if self.CurCombo.FinishTime <= Time then
-			self.CurCombo.FinishFunc(self.CurCombo, self)
+			self.CurCombo.FinishFunc( self, ply )
 
 			ply:Freeze( false )
 
@@ -99,14 +99,16 @@ function SWEP:DoCombo()
 	local ATTACK_DIR = W..A..S..D
 	local Hack45Deg = false -- hack45Deg  is used so +45+ and -45- is counted as ___ so you can not switch between those to get a quickswing
 
-	if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
-		if ply:EyeAngles().p > 30 then
-			ATTACK_DIR = "+45+"
-			Hack45Deg = true
-		end
-		if ply:EyeAngles().p < -30 then
-			ATTACK_DIR = "-45-"
-			Hack45Deg = true
+	if not ply:lscsKeyDown( IN_SPEED ) then
+		if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
+			if ply:EyeAngles().p > 15 then
+				ATTACK_DIR = "+45+"
+				Hack45Deg = true
+			end
+			if ply:EyeAngles().p < -15 then
+				ATTACK_DIR = "-45-"
+				Hack45Deg = true
+			end
 		end
 	end
 
@@ -175,4 +177,31 @@ function SWEP:DoCombo()
 	]]
 
 	self:StartCombo( ComboObj )
+end
+
+if SERVER then
+	util.AddNetworkString( "lscs_cancelattack" )
+
+	function SWEP:CancelCombo( delay )
+		self:SetNextPrimaryAttack( math.max(self:GetNextPrimaryAttack(),CurTime()) + (delay or 0) )
+
+		self:FinishCombo()
+		self:StopAnimation()
+
+		net.Start( "lscs_cancelattack" )
+			net.WriteEntity( self )
+		net.Broadcast()
+	end
+else
+	function SWEP:CancelCombo()
+		self:FinishCombo()
+		self:StopAnimation()
+	end
+
+	net.Receive( "lscs_cancelattack", function( len )
+		local ent = net.ReadEntity()
+		if not IsValid( ent ) or not ent.LSCS then return end
+
+		ent:CancelCombo()
+	end )
 end

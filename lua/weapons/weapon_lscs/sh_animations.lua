@@ -5,7 +5,16 @@ function SWEP:SetGestureTime( time )
 end
 
 function SWEP:GetGestureTime()
-	return math.max( (self.f_NextGesture or 0),self:GetNWGestureTime() )
+	if SERVER then
+		return self:GetNWGestureTime()
+	else
+		local ply = self:GetOwner()
+		if IsValid( ply ) and ply == LocalPlayer() then
+			return (self.f_NextGesture or 0)
+		else
+			return self:GetNWGestureTime()
+		end
+	end
 end
 
 function SWEP:PlayAnimation( anim, start )
@@ -27,7 +36,8 @@ function SWEP:PlayAnimation( anim, start )
 		net.Broadcast()
 	end
 
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, true )
+	ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, false )
 end
 
 function SWEP:StopAnimation()
@@ -38,4 +48,6 @@ function SWEP:StopAnimation()
 	ply.s_vcd_anim = nil
 
 	self:SetGestureTime( CurTime() )
+
+	ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
 end

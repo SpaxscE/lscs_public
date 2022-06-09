@@ -39,10 +39,12 @@ else
 
 		if ply == LocalPlayer() then
 			if ply.s_vcd_anim ~= seq then
-				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, true )
+				ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, false )
 			end
 		else
-			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),start, true )
+			ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),start, false )
 		end
 	end )
 end
