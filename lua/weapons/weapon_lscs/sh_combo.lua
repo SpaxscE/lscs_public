@@ -29,11 +29,6 @@ function SWEP:FinishCombo()
 	self.CurCombo = nil
 	self.ComboStatus = nil
 	self:FinishAttack()
-
-	local ply = self:GetOwner()
-	if IsValid( ply ) then
-		ply:Freeze( false )
-	end
 end
 
 function SWEP:HandleCombo()
@@ -48,7 +43,9 @@ function SWEP:HandleCombo()
 	if self.ComboStatus == 1 then
 		if self.CurCombo.BeginTime <= Time then
 			self:BeginAttack()
-			self.CurCombo.BeginFunc( self, ply )
+
+			ProtectedCall( self.CurCombo.BeginFunc( self, ply ) )
+
 			self.ComboStatus = 2
 		end
 	end
@@ -61,9 +58,8 @@ function SWEP:HandleCombo()
 
 	if self.ComboStatus == 3 then
 		if self.CurCombo.FinishTime <= Time then
-			self.CurCombo.FinishFunc( self, ply )
 
-			ply:Freeze( false )
+			ProtectedCall( self.CurCombo.FinishFunc( self, ply ) )
 
 			self:FinishCombo()
 		end
@@ -99,7 +95,7 @@ function SWEP:DoCombo()
 	local ATTACK_DIR = W..A..S..D
 	local Hack45Deg = false -- hack45Deg  is used so +45+ and -45- is counted as ___ so you can not switch between those to get a quickswing
 
-	if not ply:lscsKeyDown( IN_SPEED ) then
+	if not ply:lscsKeyDown( IN_SPEED ) and not ply:lscsKeyDown( IN_JUMP ) then
 		if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
 			if ply:EyeAngles().p > 15 then
 				ATTACK_DIR = "+45+"

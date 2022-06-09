@@ -23,7 +23,9 @@ COMBO.Attacks = {
 				end
 			end)
 		end,
-		FinishAttack = function( weapon, ply ) end,
+		FinishAttack = function( weapon, ply )
+			ply:Freeze( false )
+		end,
 		Delay = 0.0,
 		Duration = 1.5,
 	},

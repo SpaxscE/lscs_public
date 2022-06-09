@@ -39,11 +39,10 @@ else
 
 		if ply == LocalPlayer() then
 			if ply.s_vcd_anim ~= seq then
-				ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+				-- this should only get called when a prediction error occurs or while in singleplayer/as host
 				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, false )
 			end
 		else
-			ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
 			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),start, false )
 		end
 	end )
