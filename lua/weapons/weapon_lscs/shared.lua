@@ -38,7 +38,7 @@ SWEP.HAND_STRING = {
 	[SWEP.HAND_LEFT] = "LH",
 }
 
-SWEP.AttackSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.AttackSound = ""
 SWEP.ActivateSound = ""
 SWEP.DisableSound = ""
 SWEP.IdleSound = ""
@@ -115,7 +115,7 @@ function SWEP:GetBladeData( hand )
 end
 
 function SWEP:BuildSounds()
-	if self:GetHiltR() == "" and self:GetHiltL() == "" then return end
+	if self:IsBrokenSaber() then return end
 
 	for _, data in pairs( self:GetBladeData() ) do
 		local SND = data.sounds
@@ -190,6 +190,13 @@ function SWEP:Holster( wep )
 
 	self:Think()
 
+	if SERVER then
+		local ply = self:GetOwner()
+		if IsValid( ply ) and ply:IsPlayer() then
+			ply:lscsSetShouldBleed( true )
+		end
+	end
+
 	return true
 end
 
@@ -211,6 +218,19 @@ function SWEP:Deploy()
 end
 
 function SWEP:OwnerChanged()
+end
+
+function SWEP:IsBrokenSaber()
+	if not self._IsBroken then
+		local Hilt1 = self:GetHiltR() == "" and 0 or 1
+		local Hilt2 = self:GetHiltL() == "" and 0 or 1
+		local Blade1 = self:GetBladeR() == "" and 0 or 1
+		local Blade2 = self:GetBladeL() == "" and 0 or 1
+
+		self._IsBroken = ((Hilt1 + Blade1) ~= 2 and (Hilt2 + Blade2) ~= 2)
+	end
+
+	return self._IsBroken
 end
 
 function SWEP:Think()

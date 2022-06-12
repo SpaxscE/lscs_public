@@ -4,6 +4,9 @@ hook.Add( "CalcView", "!!!simple_glowstickthirdperson",  function( ply, pos, ang
 	local weapon = ply:GetActiveWeapon()
 
 	if IsValid( weapon ) and weapon.LSCS and weapon.CalcView then
+
+		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end -- why would someone do that???
+
 		local view = weapon:CalcView( ply, pos, angles, fov )
 
 		return view

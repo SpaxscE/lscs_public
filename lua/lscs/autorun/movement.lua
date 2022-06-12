@@ -1,4 +1,4 @@
--- better than ply:SetVelocity but can be overwritten by playerlogic. Well, we shouldnt care as it doesnt allow to go faster than your actual MaxSpeed and it still triggers ply:Freeze() serverside
+-- alternative to ply:SetVelocity. Much smoother client experience
 
 local meta = FindMetaTable( "Player" )
 
@@ -8,7 +8,7 @@ if CLIENT then
 
 		if not ply._lscsTimedMove then ply._lscsTimedMove = {} end
 
-		if table.IsEmpty( ply._lscsTimedMove ) then return end
+		if ply:InVehicle() or table.IsEmpty( ply._lscsTimedMove ) then return end
 
 		local Move
 		local Time = CurTime()
@@ -47,6 +47,8 @@ if CLIENT then
 		}
 	end
 else
+	-- todo: verify movement on server using startcommand so people cant cheat with cs lua on
+
 	function meta:lscsSetTimedMove()
 		-- todo: add networking in case this is only called serverside
 	end

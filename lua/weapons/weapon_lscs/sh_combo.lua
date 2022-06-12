@@ -1,4 +1,31 @@
 
+if SERVER then
+	util.AddNetworkString( "lscs_cancelattack" )
+
+	function SWEP:CancelCombo( delay )
+		self:SetNextPrimaryAttack( math.max(self:GetNextPrimaryAttack(),CurTime()) + (delay or 0) )
+
+		self:FinishCombo()
+		self:StopAnimation()
+
+		net.Start( "lscs_cancelattack" )
+			net.WriteEntity( self )
+		net.Broadcast()
+	end
+else
+	function SWEP:CancelCombo()
+		self:FinishCombo()
+		self:StopAnimation()
+	end
+
+	net.Receive( "lscs_cancelattack", function( len )
+		local ent = net.ReadEntity()
+		if not IsValid( ent ) or not ent.LSCS then return end
+
+		ent:CancelCombo()
+	end )
+end
+
 function SWEP:GetCombo()
 	local ply = self:GetOwner()
 
@@ -175,29 +202,6 @@ function SWEP:DoCombo()
 	self:StartCombo( ComboObj )
 end
 
-if SERVER then
-	util.AddNetworkString( "lscs_cancelattack" )
-
-	function SWEP:CancelCombo( delay )
-		self:SetNextPrimaryAttack( math.max(self:GetNextPrimaryAttack(),CurTime()) + (delay or 0) )
-
-		self:FinishCombo()
-		self:StopAnimation()
-
-		net.Start( "lscs_cancelattack" )
-			net.WriteEntity( self )
-		net.Broadcast()
-	end
-else
-	function SWEP:CancelCombo()
-		self:FinishCombo()
-		self:StopAnimation()
-	end
-
-	net.Receive( "lscs_cancelattack", function( len )
-		local ent = net.ReadEntity()
-		if not IsValid( ent ) or not ent.LSCS then return end
-
-		ent:CancelCombo()
-	end )
+function SWEP:IsComboActive()
+	return self.ComboStatus ~= nil
 end

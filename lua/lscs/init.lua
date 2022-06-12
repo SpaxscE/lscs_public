@@ -1,4 +1,12 @@
 
+function LSCS:RegisterDeflectableTracer( tracername )
+	if not table.HasValue( LSCS.BulletTracerDeflectable, tracername ) then
+		table.insert( LSCS.BulletTracerDeflectable, tracername )
+	end
+end
+
+LSCS:RegisterDeflectableTracer( "laser_*" ) -- this should pretty much include all laser types, but you can add your own
+
 function LSCS:SetHilt( ply, hilt_right, hilt_left )
 	if hilt_right == "" or not LSCS:GetHilt( hilt_right ) then
 		ply.m_lscs_hilt_right = nil
@@ -200,6 +208,8 @@ LSCS.Reload = function()
 			Type = "Stance",
 			class = class,
 			HoldType = COMBO.HoldType,
+			DeflectBullets = COMBO.DeflectBullets,
+			AutoBlock = COMBO.AutoBlock,
 			Attacks = table.Copy( COMBO.Attacks ),
 		}
 
@@ -221,6 +231,20 @@ LSCS.Reload = function()
 end
 
 LSCS:Reload()
+
+LSCS.ComboInterupt = {
+	["____"] = "b_block_forward_riposte",
+	["-45-"] = "b_block_forward_riposte",
+	["+45+"] = "b_block_forward_riposte",
+	["__S_"] = "b_block_forward_riposte",
+	["_A__"] = "b_block_left_riposte",
+	["___D"] = "b_block_right_riposte",
+	["W__D"] = "b_block_forward_riposte",
+	["WA__"] = "b_block_forward_riposte",
+	["__SD"] = "b_block_right_riposte",
+	["_AS_"] = "b_block_left_riposte",
+	["W___"] = "b_block_forward_riposte",
+}
 
 LSCS.ComboInfo = {
 	["____"] = {

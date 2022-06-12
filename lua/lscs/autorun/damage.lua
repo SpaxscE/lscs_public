@@ -1,17 +1,52 @@
- 
- hook.Add( "ScalePlayerDamage", "!!!lscs_block_damage", function( ply, hitgroup, dmginfo )
-	timer.Simple( 0, function()
-		ply:RemoveAllDecals()
-	end )
-	--return true
- end)
+
+local meta = FindMetaTable( "Player" )
+
+function meta:lscsShouldBleed()
+	return self:GetNWBool( "lscsShouldBleed", true )
+end
 
 if SERVER then
-	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( target, dmginfo )
-		--return true
+	hook.Add( "EntityFireBullets", "!!!lscs_deflecting", function( entity, bullet )
+		local oldCallback = bullet.Callback
+		bullet.Callback = function(att, tr, dmginfo)
+			local ply = tr.Entity
+
+			if IsValid( ply ) and ply:IsPlayer() then
+				local wep = ply:GetActiveWeapon()
+
+				if not IsValid( wep ) or not wep.LSCS then return end
+
+				local Prevent = wep:DeflectBullet( att, tr, dmginfo, bullet )
+
+				if Prevent == true then return end
+
+				if oldCallback then
+					oldCallback( att, tr, dmginfo )
+				end
+			end
+		end
+
+		return true
+	end)
+
+	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
+		if dmginfo:GetDamage() <= 0 then return end
+
+		if not ply:IsPlayer() then return end
+
+		if not ply:lscsShouldBleed() then
+			ply:lscsClearBlood()
+		end
+
+		local wep = ply:GetActiveWeapon()
+
+		if not IsValid( wep ) or not wep.LSCS then return end
+
+		return wep:Block( dmginfo )
 	end )
 
 	util.AddNetworkString( "lscs_saberdamage" )
+	util.AddNetworkString( "lscs_clearblood" )
 
 	local cVar_SaberDamage = CreateConVar( "lscs_sv_saberdamage", "200", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"amount of damage per saber hit" )
 
@@ -90,6 +125,27 @@ if SERVER then
 
 		LSCS:ApplyDamage( ply, victim, pos, dir )
 	end)
+
+	function meta:lscsSetShouldBleed( bleed )
+		if bleed then
+			if self.lscsBloodColor then
+				self:SetBloodColor( self.lscsBloodColor )
+			end
+		else
+			if not self.lscsBloodColor then
+				self.lscsBloodColor = self:GetBloodColor()
+			end
+
+			self:SetBloodColor( DONT_BLEED )
+		end
+		self:SetNWBool( "lscsShouldBleed", bleed )
+	end
+
+	function meta:lscsClearBlood()
+		net.Start( "lscs_clearblood" )
+			net.WriteEntity( self )
+		net.Broadcast()
+	end
 else
 	net.Receive( "lscs_saberdamage", function( len )
 		local pos = net.ReadVector()
@@ -104,5 +160,12 @@ else
 		else
 			util.Effect( "saber_hit", effectdata, true, true )
 		end
+	end)
+
+	-- for some reason ply:RemoveAllDecals() doesnt work on players when called serverside... bug?
+	net.Receive( "lscs_clearblood", function( len )
+		local ply = net.ReadEntity()
+		if not IsValid( ply ) then return end
+		ply:RemoveAllDecals()
 	end)
 end

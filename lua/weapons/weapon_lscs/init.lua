@@ -7,6 +7,7 @@ AddCSLuaFile( "sh_animations.lua" )
 include( "shared.lua" )
 include("sh_combo.lua")
 include("sh_animations.lua")
+include("sv_blocking.lua")
 
 function SWEP:Reload()
 	if (self.NextReload or 0) > CurTime() then return end
@@ -60,6 +61,11 @@ function SWEP:OnDrop()
 	self:SetActive( false )
 	self:SetLength( 0 )
 	self:StopIdleSound()
+
+	local ply = self:GetOwner()
+	if IsValid( ply ) and ply:IsPlayer() then
+		ply:lscsSetShouldBleed( true )
+	end
 end
 
 function SWEP:ShouldDropOnDie()

@@ -31,6 +31,7 @@ function SWEP:PlayAnimation( anim, start )
 	if SERVER then
 		net.Start( "lscs_animations" )
 			net.WriteEntity( ply )
+			net.WriteBool( true )
 			net.WriteString( anim )
 			net.WriteString( tostring(start) )
 		net.Broadcast()

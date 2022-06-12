@@ -12,8 +12,8 @@ COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
 	AttackAnim = "range_melee", -- which animation to play
 	--AttackAnimStart = 0.3, -- start from this cycle
-
 	AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
+
 	BeginAttack = function( weapon, ply )  
 		weapon:DoAttackSound()
 
