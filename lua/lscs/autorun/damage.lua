@@ -1,10 +1,6 @@
 
 local meta = FindMetaTable( "Player" )
 
-function meta:lscsShouldBleed()
-	return self:GetNWBool( "lscsShouldBleed", true )
-end
-
 function meta:lscsSuppressFalldamage( time )
 	self._lscsPreventFallDamageTill = time
 end
@@ -15,6 +11,10 @@ function meta:lscsIsFalldamageSuppressed()
 	else
 		return (self._lscsPreventFallDamageTill or 0) > CurTime()
 	end
+end
+
+function meta:lscsShouldBleed()
+	return self:GetNWBool( "lscsShouldBleed", true )
 end
 
 if SERVER then

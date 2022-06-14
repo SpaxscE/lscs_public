@@ -1,7 +1,6 @@
 SWEP.WorldModelCL = {}
 SWEP.BladeModelCL = {}
 
-
 function SWEP:DrawBladeModel( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
 	local HiltMDL = self:GetWorldModel( HandID )
 
@@ -107,8 +106,6 @@ end
 function SWEP:DrawWorldModelUnequipped( ply )
 	local Pos = self:GetPos() 
 	local Ang = self:GetAngles()
-	local BladeID = 1
-	local Mul = self:GetLength()
 
 	for handID, hiltObject in pairs( self:GetHiltData() ) do
 		local WorldModel = self:GetWorldModel( handID )
@@ -119,21 +116,6 @@ function SWEP:DrawWorldModelUnequipped( ply )
 		WorldModel:SetAngles( Ang )
 		WorldModel:SetupBones()
 		WorldModel:DrawModel()
-
-		if Mul <= 0 then continue end
-
-		local Positions = hiltObject.info.GetBladePos( WorldModel )
-
-		if not Positions then continue end
-
-		for _, PosData in ipairs( Positions ) do
-
-			if BladeData then
-				self:DrawBlade( handID, BladeID, PosData, self:GetBladeData( handID ), Mul, Ang )
-			end
-
-			BladeID = BladeID + 1
-		end
 	end
 end
 

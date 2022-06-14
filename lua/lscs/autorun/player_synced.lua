@@ -24,8 +24,8 @@ if SERVER then
 		self:EmitSound("lscs/equip.mp3")
 
 		--?option consumables?
-		self:lscsSetHilt()
-		self:lscsSetBlade()
+		--self:lscsSetHilt()
+		--self:lscsSetBlade()
 
 		local weapon = self:GetWeapon( "weapon_lscs" )
 
