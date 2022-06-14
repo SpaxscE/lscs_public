@@ -12,3 +12,7 @@ LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {},BulletTr
 
 AddCSLuaFile("lscs/init.lua")
 include("lscs/init.lua")
+
+if SERVER then
+	resource.AddWorkshop( "2821066926" )
+end
