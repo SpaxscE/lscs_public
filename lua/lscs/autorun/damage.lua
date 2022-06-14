@@ -5,7 +5,25 @@ function meta:lscsShouldBleed()
 	return self:GetNWBool( "lscsShouldBleed", true )
 end
 
+function meta:lscsSuppressFalldamage( time )
+	self._lscsPreventFallDamageTill = time
+end
+
+function meta:lscsIsFalldamageSuppressed()
+	if self._lscsPreventFallDamageTill == true then
+		return true
+	else
+		return (self._lscsPreventFallDamageTill or 0) > CurTime()
+	end
+end
+
 if SERVER then
+	hook.Add("GetFallDamage", "!!lscs_RemoveFallDamage", function(ply, speed)
+		if ply:lscsIsFalldamageSuppressed() then
+			return 0
+		end
+	end)
+
 	hook.Add( "EntityFireBullets", "!!!lscs_deflecting", function( entity, bullet )
 		local oldCallback = bullet.Callback
 		bullet.Callback = function(att, tr, dmginfo)
