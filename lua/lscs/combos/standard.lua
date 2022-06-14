@@ -114,9 +114,9 @@ COMBO.Attacks = {
 		AttackAnim = "h_left_t3",
 		BeginAttack = function( weapon, ply )  
 			weapon:DoAttackSound()
-			ply:lscsSetTimedMove( 1, CurTime(), 0.6, Vector(250,0,0) )
-			ply:lscsSetTimedMove( 2, CurTime() + 0.6, 0.2, Vector(100,0,0) )
-			ply:lscsSetTimedMove( 3, CurTime() + 0.8, 0.4, Vector(0,0,0) )
+			ply:lscsSetTimedMove( 1, CurTime(), 0.7, Vector(250,0,0) )
+			ply:lscsSetTimedMove( 2, CurTime() + 0.7, 0.2, Vector(100,0,0) )
+			ply:lscsSetTimedMove( 3, CurTime() + 0.9, 0.4, Vector(0,0,0) )
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
@@ -128,8 +128,8 @@ COMBO.Attacks = {
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
-		Delay = 0.2,
-		Duration = 1.2,
+		Delay = 0.1,
+		Duration = 1.3,
 	},
 	["__S_"] = {
 		AttackAnim = "a_combo4",
