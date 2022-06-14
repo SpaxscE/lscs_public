@@ -26,6 +26,8 @@ SWEP.Secondary.Ammo		= "none"
 
 SWEP.RenderGroup = RENDERGROUP_BOTH 
 
+SWEP.AutoSwitchFrom = false
+
 SWEP.LSCS = true
 
 SWEP._tblHilt = {}

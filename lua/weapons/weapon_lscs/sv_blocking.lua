@@ -41,14 +41,14 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	end
 	if self:IsComboActive() then
 		if LSCS.ComboInterupt[ self.LastAttack ] and not ply:lscsKeyDown( IN_ATTACK ) then
-			self:CancelCombo( 0.5 )
-			self:SetNextDeflect( CurTime() + 0.5 )
+			self:CancelCombo( 0.1 )
+			self:SetNextDeflect( CurTime() + 0.1 )
 
 			ply:lscsPlayAnimation( LSCS.ComboInterupt[ self.LastAttack ] )
 
 			self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 
-			self:EmitSound( "lscs/saber/saberbounce"..math.random(1,3)..".mp3" )
+			ply:EmitSound( "saber_pblock" )
 		else
 			ply:lscsSetShouldBleed( true )
 		end
@@ -66,7 +66,7 @@ end
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	ply:lscsSetShouldBleed( false )
 
-	ply:EmitSound( "lscs/saber/reflect"..math.random(1,3)..".mp3" )
+	ply:EmitSound( "saber_deflect_bullet" )
 
 	local effectdata = EffectData()
 		effectdata:SetOrigin( pos )

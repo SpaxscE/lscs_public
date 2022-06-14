@@ -138,6 +138,14 @@ function SWEP:ObjectImpactEffects( pos, dir )
 	util.Effect( "saber_hit_generic", effectdata, true, true )
 end
 
+function SWEP:IsMe()
+	if not self._IsMe and IsValid( self:GetOwner() ) then
+		self._IsMe = self:GetOwner() == LocalPlayer()
+	end
+
+	return self._IsMe
+end
+
 function SWEP:WallImpactEffects( pos, dir, playsound )
 	if playsound then
 		local effectdata = EffectData()
@@ -155,11 +163,19 @@ function SWEP:WallImpactEffects( pos, dir, playsound )
 end
 
 function SWEP:GetMaxBeamElements()
-	return 200
+	if self:IsMe() then
+		return 200
+	else
+		return 25
+	end
 end
 
 function SWEP:GetBladeLifeTime()
-	return 0.15
+	if self:IsMe() then
+		return 0.15
+	else
+		return 0.1
+	end
 end
 
 function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
@@ -275,7 +291,7 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 		end
 	else
 		if not IsValid( hitEnt ) and bHitWall then
-			if self:CanDoEffect( HandID, BladeID, 0.01 ) then
+			if self:CanDoEffect( HandID, BladeID, self:IsMe() and 0.01 or 0.05 ) then
 				self:WallImpactEffects(vPos, vDir, true )
 			end
 		end

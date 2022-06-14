@@ -3,9 +3,9 @@
 sound.Add( {
 	name = "saber_hup",
 	channel = CHAN_STATIC,
-	volume = 0.35,
-	level = 110,
-	pitch = { 100, 100 },
+	volume = 0.4,
+	level = 100,
+	pitch = 100,
 	sound = {
 		"lscs/saber/saberhup1.mp3",
 		"lscs/saber/saberhup2.mp3",
@@ -23,7 +23,7 @@ sound.Add( {
 	channel = CHAN_STATIC,
 	volume = 0.5,
 	level = 100,
-	pitch = { 100, 100 },
+	pitch = 100,
 	sound = {
 		"lscs/saber/saberblock1.mp3",
 		"lscs/saber/saberblock2.mp3",
@@ -40,7 +40,7 @@ sound.Add( {
 sound.Add( {
 	name = "saber_pblock",
 	channel = CHAN_STATIC,
-	volume = 0.3,
+	volume = 0.5,
 	level = 100,
 	pitch = { 100, 100 },
 	sound = {
@@ -71,9 +71,9 @@ sound.Add( {
 sound.Add( {
 	name = "saber_hit",
 	channel = CHAN_STATIC,
-	volume = 0.8,
-	level = 100,
-	pitch = { 100, 100 },
+	volume = 1,
+	level = 125,
+	pitch = 100,
 	sound = {
 		"lscs/saber/saberhit1.mp3",
 		"lscs/saber/saberhit2.mp3",
@@ -82,11 +82,24 @@ sound.Add( {
 } )
 
 sound.Add( {
+	name = "saber_deflect_bullet",
+	channel = CHAN_STATIC,
+	volume = 0.35,
+	level = 100,
+	pitch = 100,
+	sound = {
+		"lscs/saber/reflect1.mp3",
+		"lscs/saber/reflect2.mp3",
+		"lscs/saber/reflect3.mp3",
+	}
+} )
+
+sound.Add( {
 	name = "saber_lighthit",
 	channel = CHAN_STATIC,
-	volume = 1,
+	volume = 0.75,
 	level = 100,
-	pitch = { 95, 105 },
+	pitch = 100,
 	sound = {
 		"lscs/saber/lighthit1.wav",
 		"lscs/saber/lighthit2.wav",
