@@ -1,4 +1,12 @@
 
+function SWEP:SetNextDeflectAnim( time )
+	self._nextDeflectAnim = time
+end
+
+function SWEP:CanPlayDeflectAnim()
+	return (self._nextDeflectAnim or 0) < CurTime()
+end
+
 function SWEP:SetNextDeflect( time )
 	self._nextDeflect = time
 end
@@ -40,15 +48,18 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 		return
 	end
 	if self:IsComboActive() then
-		if LSCS.ComboInterupt[ self.LastAttack ] and not ply:lscsKeyDown( IN_ATTACK ) then
-			self:CancelCombo( 0.1 )
-			self:SetNextDeflect( CurTime() + 0.1 )
+		if LSCS.ComboInterupt[ self.LastAttack ] and ply:lscsKeyDown( IN_ATTACK ) then
+			ply:lscsSetShouldBleed( false )
+
+			self:CancelCombo( 0.3 )
+
+			ply:lscsSetTimedMove()
 
 			ply:lscsPlayAnimation( LSCS.ComboInterupt[ self.LastAttack ] )
 
-			self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
+			self:SetNextDeflectAnim( CurTime() + 0.5 )
 
-			ply:EmitSound( "saber_pblock" )
+			self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 		else
 			ply:lscsSetShouldBleed( true )
 		end
@@ -56,12 +67,15 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 		return
 	end
 
-	ply:lscsPlayAnimation( "block"..math.random(1,3) )
+	if self:CanPlayDeflectAnim() then
+		ply:lscsPlayAnimation( "block"..math.random(1,3) )
+	end
 
 	self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 
 	return true
 end
+
 
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	ply:lscsSetShouldBleed( false )
@@ -73,30 +87,32 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 		effectdata:SetNormal( Vector(0,0,1) )
 	util.Effect( "saber_block", effectdata, true, true )
 
-	for _, Blockable in pairs( LSCS.BulletTracerDeflectable ) do
-		if  string.match( original_bullet.TracerName, Blockable ) then
-			local bullet = table.Copy( original_bullet )
-			local aimpos = ply:GetEyeTrace().HitPos
+	if not ply:lscsKeyDown( IN_ATTACK ) and not self:IsComboActive()  then
+		for _, Blockable in pairs( LSCS.BulletTracerDeflectable ) do
+			if original_bullet.TracerName and string.match( original_bullet.TracerName, Blockable ) then
+				local bullet = table.Copy( original_bullet )
+				local aimpos = ply:GetEyeTrace().HitPos
 
-			local effectdata = EffectData()
-				effectdata:SetStart( pos )
-				effectdata:SetOrigin( aimpos )
-				effectdata:SetEntity( self )
-			util.Effect( bullet.TracerName, effectdata )
+				local effectdata = EffectData()
+					effectdata:SetStart( pos )
+					effectdata:SetOrigin( aimpos )
+					effectdata:SetEntity( self )
+				util.Effect( bullet.TracerName, effectdata )
 
-			timer.Simple(0.05, function() -- dont deflect at the same frame. Prevent infinite loop when saber v saber bullet deflecting
-				if not IsValid( ply ) or not IsValid( self ) then return end
+				timer.Simple(0.05, function() -- dont deflect at the same frame. Prevent infinite loop when saber v saber bullet deflecting
+					if not IsValid( ply ) or not IsValid( self ) then return end
 
-				bullet.Num	= 1
-				bullet.Attacker = ply
-				bullet.TracerName = ""
-				bullet.Tracer = 0
-				bullet.Src		= pos
-				bullet.Dir		= (aimpos - pos):GetNormalized()
-				bullet.IgnoreEntity = ply
+					bullet.Num	= 1
+					bullet.Attacker = ply
+					bullet.TracerName = ""
+					bullet.Tracer = 0
+					bullet.Src		= pos
+					bullet.Dir		= (aimpos - pos):GetNormalized()
+					bullet.IgnoreEntity = ply
 
-				ply:FireBullets( bullet )
-			end)
+					ply:FireBullets( bullet )
+				end)
+			end
 		end
 	end
 

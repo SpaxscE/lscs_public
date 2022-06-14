@@ -46,11 +46,18 @@ if CLIENT then
 			move = movement,
 		}
 	end
-else
-	-- todo: verify movement on server using startcommand so people cant cheat with cs lua on
 
-	function meta:lscsSetTimedMove()
-		-- todo: add networking in case this is only called serverside
+	net.Receive( "lscs_nw_movement", function( len )
+		LocalPlayer():lscsSetTimedMove( -1, CurTime(), 0.5, Vector(0,0,0) )
+	end)
+else
+	util.AddNetworkString( "lscs_nw_movement" )
+
+	function meta:lscsSetTimedMove( ID )
+		if ID then return end
+
+		net.Start( "lscs_nw_movement" )
+		net.Send( self )
 	end
 end
 

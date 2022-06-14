@@ -125,12 +125,23 @@ function SWEP:DoCombo()
 	if not ply:lscsKeyDown( IN_SPEED ) and not ply:lscsKeyDown( IN_JUMP ) then
 		if ATTACK_DIR == "____" or ATTACK_DIR == "W___" then
 			if ply:EyeAngles().p > 15 then
-				ATTACK_DIR = "+45+"
-				Hack45Deg = true
-			end
-			if ply:EyeAngles().p < -15 then
-				ATTACK_DIR = "-45-"
-				Hack45Deg = true
+				if self:GetComboObject( "+45+" ) then
+					ATTACK_DIR = "+45+"
+					Hack45Deg = true
+				end
+
+			elseif ply:EyeAngles().p < -15 then
+				if self:GetComboObject( "-45-" ) then
+					ATTACK_DIR = "-45-"
+					Hack45Deg = true
+				end
+			else
+				if ATTACK_DIR == "W___" then
+					if self:GetComboObject(  "-45-" ) then
+						ATTACK_DIR =  "-45-"
+						Hack45Deg = true
+					end
+				end
 			end
 		end
 	end
