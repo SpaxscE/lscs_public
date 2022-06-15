@@ -12,7 +12,7 @@ function SWEP:SetNextDeflect( time )
 end
 
 function SWEP:CanDeflect()
-	if not self:GetActive() or not self:GetCombo().DeflectBullets or self:IsBrokenSaber() then
+	if not self:GetActive() or not self:GetCombo().DeflectBullets then
 		return false
 	end
 
@@ -78,6 +78,11 @@ end
 
 
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
+	if self:IsBrokenSaber() then -- If someone equips a saber with no hilt or blade just play animations. Its funny
+		ply:lscsSetShouldBleed( true )
+		return
+	end
+
 	ply:lscsSetShouldBleed( false )
 
 	ply:EmitSound( "saber_deflect_bullet" )
