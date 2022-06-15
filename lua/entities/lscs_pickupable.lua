@@ -61,7 +61,12 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		return false
+		if self.DieTime and self.DieTime < CurTime() then
+			self:Remove()
+		end
+		
+		self:NextThink( CurTime() )
+		return true
 	end
 
 	function ENT:OnTakeDamage( dmginfo )

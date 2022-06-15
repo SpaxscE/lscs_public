@@ -451,7 +451,7 @@ local CrafterButtonPaint = function(self, w, h )
 
 		surface.SetMaterial( self.Mat )
 		surface.SetDrawColor( 255, 255, 255 ,255 )
-		surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
+		surface.DrawTexturedRect( 2, h * 0.5 - w * 0.5 - 2, w - 4, w - 4 )
 
 		local IsMainHovered = IsValid(self.Main) and self.Main:IsHovered()
 		if self:IsHovered() or IsValid( self.menu ) or IsMainHovered then
@@ -464,14 +464,15 @@ local CrafterButtonPaint = function(self, w, h )
 		else
 			surface.SetDrawColor( Color(255,255,255,255) )
 			surface.SetMaterial(zoom_mat ) 
-			local BoxSize = w - 4
+			local BoxSizeX = w - 4
+			local BoxSizeY = h - 4
 			local xPos = 2
 			local yPos = 2
 
-			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 90 )
-			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.25, BoxSize * 0.5, BoxSize * 0.5, 0 )
-			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.25, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 180 )
-			surface.DrawTexturedRectRotated( xPos + BoxSize * 0.75, yPos + BoxSize * 0.75, BoxSize * 0.5, BoxSize * 0.5, 270 )
+			surface.DrawTexturedRectRotated( xPos + BoxSizeX * 0.25, yPos + BoxSizeY * 0.25, BoxSizeY * 0.5, BoxSizeX * 0.5, 90 )
+			surface.DrawTexturedRectRotated( xPos + BoxSizeX * 0.75, yPos + BoxSizeY * 0.25, BoxSizeX * 0.5, BoxSizeY * 0.5, 0 )
+			surface.DrawTexturedRectRotated( xPos + BoxSizeX * 0.25, yPos + BoxSizeY * 0.75, BoxSizeX * 0.5, BoxSizeY * 0.5, 180 )
+			surface.DrawTexturedRectRotated( xPos + BoxSizeX * 0.75, yPos + BoxSizeY * 0.75, BoxSizeY * 0.5, BoxSizeX * 0.5, 270 )
 
 			Col = menu_dark
 			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
@@ -785,22 +786,6 @@ function LSCS:BuildStanceMenu( Frame )
 	local ply = LocalPlayer()
 	local combo = ply:lscsGetCombo()
 
-	local mdlStart = 4
-	local mdlSize = PanelSizeY - 8 + FrameBarHeight
-
-	local HeaderY = 24
-
-	local hX = mdlStart * 2 + mdlSize
-	local hY = mdlStart * 2 + HeaderY
-	local hSizeX = PanelSizeX - hX - mdlStart
-	local hSizeY =  100
-
-	local sX = hX
-	local sY = hY + hSizeY + mdlStart
-
-	local sSizeX = hSizeX
-	local sSizeY = (PanelSizeY + FrameBarHeight) - (hY + hSizeY + mdlStart * 2)
-
 	local ColHead = menu_text
 	local ColText = menu_white
 
@@ -811,56 +796,13 @@ function LSCS:BuildStanceMenu( Frame )
 	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
 		draw.RoundedBoxEx( 8, 0, 0, w, h, menu_light, false, false, false, true )
-
-		local Col = menu_dim
-
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( hX, mdlStart, hSizeX, HeaderY  )
-		draw.SimpleText( "Information", "LSCS_FONT", hX + hSizeX * 0.5, mdlStart + HeaderY * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-
-		surface.DrawRect( hX, sY, hSizeX, HeaderY  )
-		draw.SimpleText( "Attacks", "LSCS_FONT", hX + hSizeX * 0.5, sY + HeaderY * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-	end
-
-	local description = vgui.Create( "DPanel", Panel )
-	description:SetPos( hX, hY )
-	description:SetSize( hSizeX, hSizeY )
-	description.Paint = function(self, w, h ) 
-		local Col = menu_dim
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
-	end
-
-	local richtext = vgui.Create( "RichText", description )
-	richtext:Dock( FILL )
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Name:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.name or combo.id).."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Description:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.description or "").."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Author:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.author or "").."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Internal-ID:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText(combo.id)
-
-	local SPB = vgui.Create( "DPanel", Panel )
-	SPB:SetPos( sX, sY + HeaderY + mdlStart )
-	SPB:SetSize( sSizeX, sSizeY - HeaderY - mdlStart )
-	SPB.Paint = function(self, w, h )
-		draw.RoundedBoxEx( 8, 0, 0, w, h, menu_dim, false, false, false, true )
 	end
 
 	local mdl = vgui.Create( "DModelPanel", Panel )
-	mdl:SetPos( mdlStart, mdlStart )
-	mdl:SetSize( mdlSize, mdlSize )
-	mdl:SetFOV( 50 )
+	mdl:SetSize( 250, 0)
+	mdl:Dock( RIGHT )
+	mdl:DockMargin( 4, 4, 4, 4 )
+	mdl:SetFOV( 30 )
 	mdl:SetCamPos( vector_origin )
 	mdl:SetDirectionalLight( BOX_RIGHT, Color( 255, 160, 80, 255 ) )
 	mdl:SetDirectionalLight( BOX_LEFT, Color( 80, 160, 255, 255 ) )
@@ -929,6 +871,56 @@ function LSCS:BuildStanceMenu( Frame )
 		cam.End3D()
 
 		self.LastPaint = RealTime()
+	end
+
+	local descriptionHeader = vgui.Create( "DPanel", Panel )
+	descriptionHeader:Dock( TOP )
+	descriptionHeader:DockMargin( 4, 4, 0, 0 )
+	descriptionHeader.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+		draw.SimpleText( "Information", "LSCS_FONT", w * 0.5, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+	end
+
+	local description = vgui.Create( "DPanel", Panel )
+	description:SetSize( 0, 180 )
+	description:Dock( TOP )
+	description:DockMargin( 4, 4, 0, 0 )
+	description.Paint = function(self, w, h ) 
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+	local richtext = vgui.Create( "RichText", description )
+	richtext:Dock( FILL )
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Name:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.name or combo.id).."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Description:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.description or "").."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Author:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.author or "").."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	--richtext:AppendText("Internal-ID:\n")
+	--richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	--richtext:AppendText(combo.id)
+
+	local SPB = vgui.Create( "DPanel", Panel )
+	SPB:SetSize( 276, 0 )
+	SPB:Dock( RIGHT )
+	SPB:DockMargin( 4, 4, 0, 4 )
+	SPB.Paint = function(self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
 	end
 
 	local DScrollPanel = vgui.Create( "DScrollPanel", SPB )
@@ -1003,6 +995,35 @@ function LSCS:BuildStanceMenu( Frame )
 		end
 	end
 
+	local Button = vgui.Create( "DButton", Panel )
+	Button.Item = combo
+	Button:SetText( "" )
+	Button:SetSize( 128, 0 )
+	Button:Dock( LEFT )
+	Button:DockMargin( 4, 4, 0, 4 )
+	Button.Paint = CrafterButtonPaint
+	Button.DoClick = function( self )
+		BaseButtonClick( self )
+
+		self.menu = DermaMenu()
+		local Num = 0
+		for k, v in pairs( ply:lscsGetInventory() ) do
+			local item = LSCS:ClassToItem( v )
+			if item.type == "stance" then
+				Num = Num + 1
+				self.menu:AddOption( item.name, function()
+					LocalPlayer():lscsEquipFromInventory( k, 1 )
+				end )
+			end
+		end
+		if Num >= 1 then
+			self.menu:Open()
+		else
+			surface.PlaySound("buttons/button10.wav")
+			self.menu:Remove()
+		end
+	end
+
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
 
@@ -1033,6 +1054,9 @@ function LSCS:RefreshMenu()
 	end
 	if Frame.ID == 3 then
 		LSCS:BuildSaberMenu( Frame )
+	end
+	if Frame.ID == 4 then
+		LSCS:BuildStanceMenu( Frame )
 	end
 end
 

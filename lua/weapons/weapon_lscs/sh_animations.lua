@@ -37,7 +37,7 @@ function SWEP:PlayAnimation( anim, start )
 		net.Broadcast()
 	end
 
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, false )
+	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, true )
 end
 
 function SWEP:StopAnimation()

@@ -10,32 +10,6 @@ if SERVER then
 	util.AddNetworkString( "lscs_inventory" )
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
-	util.AddNetworkString( "lscs_craft_saber" )
-
-	function meta:lscsCraftSaber()
-		local HiltR, HiltL = self:lscsGetHilt()
-		local BladeR, BladeL = self:lscsGetBlade()
-
-		self:StripWeapon( "weapon_lscs" )
-
-		self:Give("weapon_lscs")
-		self:SelectWeapon( "weapon_lscs" )
-
-		self:EmitSound("lscs/equip.mp3")
-
-		--?option consumables?
-		--self:lscsSetHilt()
-		--self:lscsSetBlade()
-
-		local weapon = self:GetWeapon( "weapon_lscs" )
-
-		if IsValid( weapon ) then
-			weapon:SetHiltR( HiltR or "" )
-			weapon:SetHiltL( HiltL or "" )
-			weapon:SetBladeR( BladeR or "" )
-			weapon:SetBladeL( BladeL or "" )
-		end
-	end
 
 	function meta:lscsSetHilt( hilt_right, hilt_left )
 		LSCS:SetHilt( self, hilt_right, hilt_left )
@@ -57,15 +31,6 @@ if SERVER then
 			net.WriteString( blade_left or "" )
 			net.WriteEntity( self )
 		net.Send( self )
-	end
-
-	function meta:lscsSetStance( name )
-		local stance = LSCS:GetStance( name )
-		if stance then
-			self:SetNWString( "lscsComboFile", name )
-		else
-			self:SetNWString( "lscsComboFile", "default" )
-		end
 	end
 
 	function meta:lscsAddInventory( entity )
@@ -120,6 +85,7 @@ if SERVER then
 		ent:Spawn()
 		ent:Activate()
 		ent:PhysWake()
+		ent.DieTime = CurTime() + 240
 
 		net.Start( "lscs_inventory" )
 			net.WriteBool( false )
@@ -170,7 +136,6 @@ if SERVER then
 					end
 					self:lscsRemoveItem( id )
 					self:EmitSound( "lscs/equip.mp3" )
-					self:SendLua( "LSCS:RefreshMenu()" )
 				end
 			else
 				if slot == 1 or slot == 2 then
@@ -181,7 +146,6 @@ if SERVER then
 					end
 					self:lscsRemoveItem( id )
 					self:EmitSound( "lscs/equip.mp3" )
-					self:SendLua( "LSCS:RefreshMenu()" )
 				end
 			end
 		end
@@ -200,7 +164,6 @@ if SERVER then
 					end
 					self:lscsRemoveItem( id )
 					self:EmitSound( "lscs/equip.mp3" )
-					self:SendLua( "LSCS:RefreshMenu()" )
 				end
 			else
 				if slot == 1 or slot == 2 then
@@ -211,15 +174,15 @@ if SERVER then
 					end
 					self:lscsRemoveItem( id )
 					self:EmitSound( "lscs/equip.mp3" )
-					self:SendLua( "LSCS:RefreshMenu()" )
 				end
 			end
 		end
 		if item.type == "stance" then
 			self:lscsRemoveItem( id )
+			self:Give( self:lscsGetCombo().class )
+
 			self:lscsSetStance( item.id )
 			self:EmitSound( "lscs/equip.mp3" )
-			self:SendLua( "LSCS:RefreshMenu()" )
 
 			local wep = self:GetActiveWeapon()
 
@@ -295,10 +258,6 @@ if SERVER then
 			ply:lscsSyncInventory()
 		end
 	end )
-
-	net.Receive( "lscs_craft_saber", function( len, ply )
-		ply:lscsCraftSaber()
-	end )
 else
 	hook.Add( "InitPostEntity", "!!!lscsPlayerReady", function()
 		net.Start( "lscs_sync" )
@@ -318,6 +277,7 @@ else
 		else
 			ply.m_inventory_lscs[ id ] = nil
 		end
+		LSCS:RefreshMenu()
 	end)
 
 	net.Receive( "lscs_sync", function( len )
@@ -370,11 +330,6 @@ else
 		end
 	end)
 
-	function meta:lscsCraftSaber()
-		net.Start( "lscs_craft_saber" )
-		net.SendToServer()
-	end
-
 	function meta:lscsDropItem( id )
 		net.Start( "lscs_inventory" )
 			net.WriteInt( id, 8 )
@@ -401,21 +356,4 @@ else
 			net.WriteBool( BladeL == true )
 		net.SendToServer()
 	end
-end
-
-function meta:lscsGetCombo()
-	return LSCS:GetStance( self:GetNWString( "lscsComboFile", "default" ) )
-end
-
-function meta:lscsGetInventory()
-	if not self.m_inventory_lscs then self.m_inventory_lscs = {} end
-	return self.m_inventory_lscs
-end
-
-function meta:lscsGetHilt()
-	return self.m_lscs_hilt_right, self.m_lscs_hilt_left
-end
-
-function meta:lscsGetBlade()
-	return self.m_lscs_blade_right, self.m_lscs_blade_left
 end

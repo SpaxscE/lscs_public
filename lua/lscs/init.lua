@@ -273,22 +273,22 @@ LSCS.ComboInfo = {
 		description = "[D]+[Mouse 1]",
 	},
 	["W__D"] = {
-		name = "45-Right Attack",
+		name = "Front-Right Attack",
 		order = 6,
 		description = "[W]+[D]+[Mouse 1]",
 	},
 	["WA__"] = {
-		name = "45-Left Attack",
+		name = "Front-Left Attack",
 		order = 7,
 		description = "[W]+[A]+[Mouse 1]",
 	},
 	["__SD"] = {
-		name = "Reverse 45-Right Attack",
+		name = "Back-Right Attack",
 		order = 8,
 		description = "[S]+[D]+[Mouse 1]",
 	},
 	["_AS_"] = {
-		name = "Reverse 45-Left Attack",
+		name = "Back-Left Attack",
 		order = 9,
 		description = "[A]+[S]+[Mouse 1]",
 	},
@@ -298,12 +298,12 @@ LSCS.ComboInfo = {
 		description = "[W]+[S]+[Mouse 1]",
 	},
 	["-45-"] = {
-		name = "Forward Up Attack",
+		name = "Up Attack",
 		order = 11,
 		description = "while looking UP\nPress [Mouse 1] or [W]+[Mouse 1]",
 	},
 	["+45+"] = {
-		name = "Forward Down Attack",
+		name = "Down Attack",
 		order = 12,
 		description = "while looking DOWN\nPress [Mouse 1] or [W]+[Mouse 1]",
 	},

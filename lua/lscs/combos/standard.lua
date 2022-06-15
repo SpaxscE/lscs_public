@@ -1,7 +1,7 @@
 COMBO.id = "standard"
-COMBO.PrintName = "GVP-Standard"
-COMBO.Author = "Blu-x92 / Luna"
-COMBO.Description = "Standard GVP-Style. Quick to learn, hard to master, but balanced and combat proven."
+COMBO.PrintName = "YongLi"
+COMBO.Author = "Luna"
+COMBO.Description = "Standard Sword Art. Quick to learn, hard to master, but balanced and combat proven."
 
 COMBO.DeflectBullets = true
 COMBO.AutoBlock = true
