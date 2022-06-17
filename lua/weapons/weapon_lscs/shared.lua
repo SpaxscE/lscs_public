@@ -54,6 +54,8 @@ function SWEP:SetupDataTables()
 
 	self:NetworkVar( "Float",2, "Length" )
 
+	self:NetworkVar( "Int",0, "Stance" )
+
 	self:NetworkVar( "String",0, "HiltR")
 	self:NetworkVar( "String",1, "HiltL")
 	self:NetworkVar( "String",2, "BladeR")

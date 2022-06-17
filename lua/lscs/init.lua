@@ -48,6 +48,8 @@ function LSCS:GetStance( name )
 end
 
 function LSCS:ClassToItem( class )
+	if not isstring( class ) then return end
+
 	local words = string.Explode( "_", class )
 	local type = words[ 2 ]
 	local id = words[ 3 ]

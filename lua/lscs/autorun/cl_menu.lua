@@ -89,6 +89,7 @@ local icon_settings = Material("lscs/ui/settings.png")
 local icon_check = Material("lscs/ui/check.png")
 local icon_cross = Material("lscs/ui/cross.png")
 
+local icon_hand = Material("lscs/ui/hand.png")
 local icon_lhand = Material("lscs/ui/hand_l.png")
 local icon_rhand = Material("lscs/ui/hand_r.png")
 
@@ -282,6 +283,8 @@ function LSCS:BuildMainMenu( Frame )
 end
 
 function LSCS:BuildInventory( Frame )
+	local ply = LocalPlayer()
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
 	Panel:SetSize( PanelSizeX, PanelSizeY )
@@ -373,15 +376,26 @@ function LSCS:BuildInventory( Frame )
 				else
 					draw.SimpleText( self.ClassName, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white_dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 				end
-			else
-				local Col = menu_text
 
-				if IsValid( self.menu ) then
-					surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+				local eq = ply:lscsGetEquipped()[ self:GetID() ] 
+				if isbool( eq ) then
+					surface.SetDrawColor( 255, 191, 0, 255 )
 					DrawFrame( w, h, 2, 2 )
-				end
+	
+					if Item.type == "hilt" or Item.type == "crystal" then
+						if eq == true then
+							surface.SetMaterial( icon_rhand )
+						else
+							surface.SetMaterial( icon_lhand )
+						end
+					else
+						surface.SetMaterial( icon_hand )
+					end
+					surface.DrawTexturedRect( 4, 4, 64, 64 )
 
-				Col = menu_light
+				end
+			else
+				local Col = menu_light
 
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 				surface.DrawRect( 4, h - 24, w-8, 20  )
@@ -392,16 +406,59 @@ function LSCS:BuildInventory( Frame )
 				else
 					draw.SimpleText( self.ClassName, "LSCS_FONT_SMALL", w * 0.5, h - 8, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 				end
+
+				Col = menu_text
+
+				if IsValid( self.menu ) then
+					surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+					DrawFrame( w, h, 2, 2 )
+					if isbool( ply:lscsGetEquipped()[ self:GetID() ] ) then
+						surface.SetDrawColor( 255, 191, 0, 255 )
+						DrawFrame( w, h, 4, 2 )
+					end
+				else
+					if isbool( ply:lscsGetEquipped()[ self:GetID() ] ) then
+						surface.SetDrawColor( 255, 191, 0, 255 )
+						DrawFrame( w, h, 2, 2 )
+					else
+						if self:IsHovered() then
+							surface.SetDrawColor( Color(255,255,255,255) )
+							DrawFrame( w, h, 2, 2 )
+						end
+					end
+				end
 			end
 		end
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
 			self.menu = DermaMenu()
-			self.menu:AddOption( "Equip", function()
-				LocalPlayer():lscsEquipFromInventory( self:GetID() )
-				self:SetEnabled( false )
-			end )
-			self.menu:AddOption( "Drop", function() LocalPlayer():lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
+			if isbool( ply:lscsGetEquipped()[ self:GetID() ] ) then
+				self.menu:AddOption( "Unequip", function()
+					ply:lscsEquipItem( self:GetID(), nil )
+				end )
+			else
+				self.menu:AddOption( "Equip", function()
+					local Item = self:GetItem()
+					if Item.type == "hilt" then
+						ply:lscsClearEquipped( "hilt" )
+					end
+
+					if Item.type == "crystal" then
+						ply:lscsClearEquipped( "crystal" )
+					end
+
+					ply:lscsEquipItem( self:GetID(), true )
+
+					if Item.type =="hilt" or Item.type == "crystal" then
+						local A, _ = ply:lscsGetHilt()
+						local B, _ = ply:lscsGetBlade()
+						if A and A ~= "" and B and B ~= "" then
+							ply:lscsCraftSaber()
+						end
+					end
+				end )
+			end
+			self.menu:AddOption( "Drop", function() ply:lscsDropItem( self:GetID() ) self:SetEnabled( false ) end )
 			self.menu:Open()
 		end
 		DButton.DoRightClick = function( self )
@@ -603,7 +660,8 @@ function LSCS:BuildSaberMenu( Frame )
 	Clear:SetPos( PanelSizeX - 185, 79 )
 	Clear.DoClick = function( self )
 		BaseButtonClick( self )
-		ply:lscsUnEquip( true, false, true, false )
+		ply:lscsClearEquipped( "hilt", true )
+		ply:lscsClearEquipped( "crystal", true )
 	end
 	Clear.Paint = function(self, w, h )
 		local Col = DrawButtonClick( self, w, h )
@@ -624,18 +682,20 @@ function LSCS:BuildSaberMenu( Frame )
 		if self.Item then
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
-				ply:lscsUnEquip( true )
+				ply:lscsClearEquipped( "hilt", true )
 			end )
 			self.menu:Open()
 		else
 			self.menu = DermaMenu()
 			local Num = 0
 			for k, v in pairs( ply:lscsGetInventory() ) do
+				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
 				local item = LSCS:ClassToItem( v )
 				if item.type == "hilt" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
-						LocalPlayer():lscsEquipFromInventory( k, 1 )
+						ply:lscsEquipItem( k, true )
 					end )
 				end
 			end
@@ -658,21 +718,24 @@ function LSCS:BuildSaberMenu( Frame )
 	ButtonBlade.Paint = CrafterButtonPaint
 	ButtonBlade.DoClick = function( self )
 		BaseButtonClick( self )
+
 		if self.Item then
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
-				ply:lscsUnEquip( false, false, true )
+				ply:lscsClearEquipped( "crystal", true )
 			end )
 			self.menu:Open()
 		else
 			self.menu = DermaMenu()
 			local Num = 0
 			for k, v in pairs( ply:lscsGetInventory() ) do
+				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
 				local item = LSCS:ClassToItem( v )
 				if item.type == "crystal" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
-						LocalPlayer():lscsEquipFromInventory( k, 1 )
+						ply:lscsEquipItem( k, true )
 					end )
 				end
 			end
@@ -693,7 +756,8 @@ function LSCS:BuildSaberMenu( Frame )
 	Clear:SetPos( PanelSizeX - 185, PanelSizeY - 119 )
 	Clear.DoClick = function( self )
 		BaseButtonClick( self )
-		ply:lscsUnEquip( false, true, false, true )
+		ply:lscsClearEquipped( "hilt", false )
+		ply:lscsClearEquipped( "crystal", false )
 	end
 	Clear.Paint = function(self, w, h )
 		local Col = DrawButtonClick( self, w, h )
@@ -714,18 +778,20 @@ function LSCS:BuildSaberMenu( Frame )
 		if self.Item then
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
-				ply:lscsUnEquip( false, true )
+				ply:lscsClearEquipped( "hilt", false )
 			end )
 			self.menu:Open()
 		else
 			self.menu = DermaMenu()
 			local Num = 0
 			for k, v in pairs( ply:lscsGetInventory() ) do
+				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
 				local item = LSCS:ClassToItem( v )
 				if item.type == "hilt" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
-						LocalPlayer():lscsEquipFromInventory( k, 2 )
+						ply:lscsEquipItem( k, false )
 					end )
 				end
 			end
@@ -751,18 +817,20 @@ function LSCS:BuildSaberMenu( Frame )
 		if self.Item then
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
-				ply:lscsUnEquip( false, false, false, true)
+				ply:lscsClearEquipped( "crystal", false )
 			end )
 			self.menu:Open()
 		else
 			self.menu = DermaMenu()
 			local Num = 0
 			for k, v in pairs( ply:lscsGetInventory() ) do
+				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
 				local item = LSCS:ClassToItem( v )
 				if item.type == "crystal" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
-						LocalPlayer():lscsEquipFromInventory( k, 2 )
+						ply:lscsEquipItem( k, false )
 					end )
 				end
 			end
@@ -784,7 +852,7 @@ end
 
 function LSCS:BuildStanceMenu( Frame )
 	local ply = LocalPlayer()
-	local combo = ply:lscsGetCombo()
+	local combo = ply:lscsGetCombo( 1 )
 
 	local ColHead = menu_text
 	local ColText = menu_white
@@ -1005,6 +1073,7 @@ function LSCS:BuildStanceMenu( Frame )
 	Button.DoClick = function( self )
 		BaseButtonClick( self )
 
+		--[[
 		self.menu = DermaMenu()
 		local Num = 0
 		for k, v in pairs( ply:lscsGetInventory() ) do
@@ -1022,6 +1091,7 @@ function LSCS:BuildStanceMenu( Frame )
 			surface.PlaySound("buttons/button10.wav")
 			self.menu:Remove()
 		end
+		]]
 	end
 
 	LSCS:SetActivePanel( Panel )

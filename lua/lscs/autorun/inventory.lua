@@ -1,37 +1,9 @@
 local meta = FindMetaTable( "Player" )
 
-local LSCS_FIRSTJOIN = 0
-local LSCS_HILT = 1
-local LSCS_BLADE = 2
-local LSCS_MULTI = 3
-local LSCS_INVENTORY = 4
-
 if SERVER then
 	util.AddNetworkString( "lscs_inventory" )
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
-
-	function meta:lscsSetHilt( hilt_right, hilt_left )
-		LSCS:SetHilt( self, hilt_right, hilt_left )
-
-		net.Start( "lscs_sync" )
-			net.WriteInt( LSCS_HILT, 4 )
-			net.WriteString( hilt_right or "" )
-			net.WriteString( hilt_left or "" )
-			net.WriteEntity( self )
-		net.Send( self )
-	end
-
-	function meta:lscsSetBlade( blade_right, blade_left )
-		LSCS:SetBlade( self, blade_right, blade_left )
-
-		net.Start( "lscs_sync" )
-			net.WriteInt( LSCS_BLADE, 4 )
-			net.WriteString( blade_right or "" )
-			net.WriteString( blade_left or "" )
-			net.WriteEntity( self )
-		net.Send( self )
-	end
 
 	function meta:lscsAddInventory( entity )
 
@@ -49,19 +21,79 @@ if SERVER then
 		net.Send( self )
 
 		self:lscsGetInventory()[ index ] = item
+		self:lscsGetEquipped()[ index ] = nil
 
 		entity:Remove()
 	end
 
+	function meta:lscsEquipItem( index, hand )
+		if not self:lscsGetInventory()[ index ] then return end
+
+		self:lscsGetEquipped()[ index ] = hand
+
+		net.Start( "lscs_equip" )
+			net.WriteInt( index, 8 )
+			if hand == true then
+				net.WriteInt( 1, 3 )
+			elseif hand == false then
+				net.WriteInt( 0, 3 )
+			else
+				net.WriteInt( -1, 3 )
+			end
+		net.Send( self )
+
+		self:lscsBuildPlayerInfo()
+	end
+
+	net.Receive( "lscs_equip", function( len, ply )
+		local inventory = ply:lscsGetInventory()
+		local equipped = ply:lscsGetEquipped()
+
+		local index = net.ReadInt( 8 )
+		local equip = net.ReadInt( 3 )
+
+		if inventory[ index ] then
+			if equip == 1 then
+				ply:EmitSound( "lscs/equip.mp3" )
+				equipped[ index ] = true
+
+			elseif equip == 0 then
+				ply:EmitSound( "lscs/equip.mp3" )
+				equipped[ index ] = false
+
+			else
+				if isbool( equipped[ index ] ) then
+					equipped[ index ] = nil
+					ply:EmitSound( "weapons/sniper/sniper_zoomout.wav" )
+				end
+			end
+		else
+			equipped[ index ] = nil
+		end
+
+		ply:lscsBuildPlayerInfo()
+	end )
+
 	function meta:lscsSyncInventory()
 		local inv = self:lscsGetInventory()
+		local eq = self:lscsGetEquipped()
+
 		local num = table.Count( inv )
 
 		net.Start( "lscs_sync" )
-			net.WriteInt( LSCS_INVENTORY, 4 )
 			net.WriteInt( num, 8 )
 			for index, item in pairs( inv ) do
 				net.WriteInt( index, 8 )
+
+				local IsEquipped = eq[ index ]
+				if IsEquipped == true then
+					net.WriteInt( 1, 3 )
+				elseif IsEquipped == false then
+					net.WriteInt( 0, 3 )
+				else
+					net.WriteInt( -1, 3 )
+				end
+
 				net.WriteString( item )
 			end
 		net.Send( self )
@@ -81,11 +113,13 @@ if SERVER then
 		local ent = ents.Create( item )
 		ent:SetPos( tr.HitPos )
 		ent:SetAngles( Angle(90,self:EyeAngles().y,0) )
+
 		ent.PreventTouch = true
+		ent.DieTime = CurTime() + 240
+
 		ent:Spawn()
 		ent:Activate()
 		ent:PhysWake()
-		ent.DieTime = CurTime() + 240
 
 		net.Start( "lscs_inventory" )
 			net.WriteBool( false )
@@ -93,6 +127,7 @@ if SERVER then
 		net.Send( self )
 
 		self:lscsGetInventory()[ id ] = nil
+		self:lscsGetEquipped()[ id ] = nil
 
 		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent )
 	end
@@ -108,141 +143,8 @@ if SERVER then
 		net.Send( self )
 
 		self:lscsGetInventory()[ id ] = nil
+		self:lscsGetEquipped()[ id ] = nil
 	end
-
-	function meta:lscsEquipFromInventory( id, slot )
-		local inventory = self:lscsGetInventory()
-		local item = LSCS:ClassToItem( inventory[ id ] )
-
-		if not item then
-			self:ChatPrint("This Item can not be equipped!")
-			self:EmitSound("buttons/button10.wav")
-			self:SendLua( "LSCS:RefreshMenu()" )
-			return
-		end
-
-		if item.type == "hilt" then
-			local A, B = self:lscsGetHilt()
-
-			if slot == 0 then
-				if A and B then
-					self:EmitSound("buttons/button10.wav")
-					self:SendLua( "LSCS:RefreshMenu()" )
-				else
-					if not A then
-						self:lscsSetHilt( item.id, B )
-					else
-						self:lscsSetHilt( A , item.id )
-					end
-					self:lscsRemoveItem( id )
-					self:EmitSound( "lscs/equip.mp3" )
-				end
-			else
-				if slot == 1 or slot == 2 then
-					if slot == 1 then
-						self:lscsSetHilt( item.id, B )
-					else
-						self:lscsSetHilt( A , item.id )
-					end
-					self:lscsRemoveItem( id )
-					self:EmitSound( "lscs/equip.mp3" )
-				end
-			end
-		end
-		if item.type == "crystal" then
-			local A, B = self:lscsGetBlade()
-
-			if slot == 0 then
-				if A and B then
-					self:EmitSound("buttons/button10.wav")
-					self:SendLua( "LSCS:RefreshMenu()" )
-				else
-					if not A then
-						self:lscsSetBlade( item.id, B )
-					else
-						self:lscsSetBlade( A , item.id )
-					end
-					self:lscsRemoveItem( id )
-					self:EmitSound( "lscs/equip.mp3" )
-				end
-			else
-				if slot == 1 or slot == 2 then
-					if slot == 1 then
-						self:lscsSetBlade( item.id, B )
-					else
-						self:lscsSetBlade( A , item.id )
-					end
-					self:lscsRemoveItem( id )
-					self:EmitSound( "lscs/equip.mp3" )
-				end
-			end
-		end
-		if item.type == "stance" then
-			self:lscsRemoveItem( id )
-			self:Give( self:lscsGetCombo().class )
-
-			self:lscsSetStance( item.id )
-			self:EmitSound( "lscs/equip.mp3" )
-
-			local wep = self:GetActiveWeapon()
-
-			if IsValid( wep ) and wep.LSCS then
-				wep:SetActive( false )
-			end
-		end
-	end
-
-	net.Receive( "lscs_equip", function( len, ply )
-		local unequip = net.ReadBool()
-
-		if unequip then
-			local unequip_hiltR = net.ReadBool()
-			local unequip_hiltL = net.ReadBool()
-			local unequip_bladeR = net.ReadBool()
-			local unequip_bladeL = net.ReadBool()
-
-			local HiltR, HiltL = ply:lscsGetHilt()
-			if unequip_hiltR then
-				local item = LSCS:GetHilt( HiltR )
-				if item and item.class then
-					ply:Give( item.class )
-					HiltR = nil
-				end
-			end
-			if unequip_hiltL then
-				local item = LSCS:GetHilt( HiltL )
-				if item and item.class then
-					ply:Give( item.class )
-					HiltL = nil
-				end
-			end
-			ply:lscsSetHilt( HiltR, HiltL )
-
-			local BladeR, BladeL = ply:lscsGetBlade()
-			if unequip_bladeR then
-				local item = LSCS:GetBlade( BladeR )
-				if item and item.class then
-					ply:Give( item.class )
-					BladeR = nil
-				end
-			end
-			if unequip_bladeL then
-				local item = LSCS:GetBlade( BladeL )
-				if item and item.class then
-					ply:Give( item.class )
-					BladeL = nil
-				end
-			end
-			ply:lscsSetBlade( BladeR, BladeL )
-
-			ply:SendLua( "LSCS:RefreshMenu()" )
-		else
-			local item = net.ReadInt( 8 )
-			local slot = net.ReadInt( 8 )
-
-			ply:lscsEquipFromInventory( item, slot )
-		end
-	end)
 
 	net.Receive( "lscs_inventory", function( len, ply )
 		local id = net.ReadInt( 8 )
@@ -250,18 +152,15 @@ if SERVER then
 	end)
 
 	net.Receive( "lscs_sync", function( len, ply )
-		local TYPE = net.ReadInt( 4 )
+		-- in case someone was spamming ply:Give while the player wasnt ready for networking
+		-- this will make sure the client's inventory is 100% in sync with the server
+		ply:lscsSyncInventory()
 
-		if TYPE == LSCS_FIRSTJOIN then
-			-- in case someone was spamming ply:Give while the player wasnt ready for networking
-			-- this will make sure the client's inventory is 100% in sync with the server
-			ply:lscsSyncInventory()
-		end
+		hook.Run( "LSCS:OnPlayerFullySpawned", ply )
 	end )
 else
 	hook.Add( "InitPostEntity", "!!!lscsPlayerReady", function()
 		net.Start( "lscs_sync" )
-			net.WriteInt( LSCS_FIRSTJOIN, 4 )
 		net.SendToServer()
 	end )
 
@@ -271,63 +170,47 @@ else
 		local Add = net.ReadBool()
 		local id = net.ReadInt( 8 )
 
+		local inventory = ply:lscsGetInventory()
+		local equipped = ply:lscsGetEquipped()
+	
 		if Add then
 			local item = net.ReadString()
-			ply.m_inventory_lscs[ id ] = item
+			inventory[ id ] = item
 		else
-			ply.m_inventory_lscs[ id ] = nil
+			inventory[ id ] = nil
 		end
+		equipped[ id ] = nil
+
 		LSCS:RefreshMenu()
 	end)
 
 	net.Receive( "lscs_sync", function( len )
 		local ply = LocalPlayer()
 
-		local TYPE = net.ReadInt( 4 )
+		local inventory = ply:lscsGetInventory()
+		local equipped = ply:lscsGetEquipped()
 
-		if TYPE == LSCS_HILT then
-			local hilt_right = net.ReadString()
-			local hilt_left = net.ReadString()
-			local ply = net.ReadEntity()
-	
-			if IsValid( ply ) then
-				LSCS:SetHilt( ply, hilt_right, hilt_left )
+		table.Empty( inventory )
+		table.Empty( equipped )
+
+		local num = net.ReadInt( 8 )
+		for i = 1, num do
+			local index = net.ReadInt( 8 )
+			local IsEquipped = net.ReadInt( 3 )
+			local item = net.ReadString( item )
+
+			inventory[ index ] = item
+
+			if IsEquipped == 1 then
+				equipped[ index ] = true
+			elseif IsEquipped == 0 then
+				equipped[ index ] = false
+			else
+				equipped[ index ] = nil
 			end
 		end
 
-		if TYPE == LSCS_BLADE then
-			local blade_right = net.ReadString()
-			local blade_left = net.ReadString()
-			local ply = net.ReadEntity()
-	
-			if IsValid( ply ) then
-				LSCS:SetBlade( ply, blade_right, blade_left )
-			end
-		end
-
-		if TYPE == LSCS_MULTI then
-			local hilt_right = net.ReadString()
-			local hilt_left = net.ReadString()
-			local blade_right = net.ReadString()
-			local blade_left = net.ReadString()
-			local ply = net.ReadEntity()
-	
-			if IsValid( ply ) then
-				LSCS:SetHilt( ply, hilt_right, hilt_left )
-				LSCS:SetBlade( ply, blade_right, blade_left )
-			end
-		end
-
-		if TYPE == LSCS_INVENTORY then
-			table.Empty( ply:lscsGetInventory() )
-			local num = net.ReadInt( 8 )
-			for i = 1, num do
-				local index = net.ReadInt( 8 )
-				local item = net.ReadString( item )
-				ply.m_inventory_lscs[ index ] = item
-			end
-			LSCS:RefreshMenu()
-		end
+		LSCS:RefreshMenu()
 	end)
 
 	function meta:lscsDropItem( id )
@@ -336,24 +219,51 @@ else
 		net.SendToServer()
 
 		self:lscsGetInventory()[ id ] = nil
+		self:lscsGetEquipped()[ id ] = nil
 	end
 
-	function meta:lscsEquipFromInventory( id, slot )
-		local slot = slot or 0
+	function meta:lscsEquipItem( index, hand )
+		if not self:lscsGetInventory()[ index ] then return end
+
+		self:lscsGetEquipped()[ index ] = hand
+
 		net.Start( "lscs_equip" )
-			net.WriteBool( false )
-			net.WriteInt( id, 8 )
-			net.WriteInt( slot, 8 )
+			net.WriteInt( index, 8 )
+			if hand == true then
+				net.WriteInt( 1, 3 )
+			elseif hand == false then
+				net.WriteInt( 0, 3 )
+			else
+				net.WriteInt( -1, 3 )
+			end
 		net.SendToServer()
+
+		self:lscsBuildPlayerInfo()
 	end
 
-	function meta:lscsUnEquip( HiltR, HiltL, BladeR, BladeL )
-		net.Start( "lscs_equip" )
-			net.WriteBool( true )
-			net.WriteBool( HiltR == true )
-			net.WriteBool( HiltL == true )
-			net.WriteBool( BladeR == true )
-			net.WriteBool( BladeL == true )
-		net.SendToServer()
-	end
+	net.Receive( "lscs_equip", function( len )
+		local ply = LocalPlayer()
+
+		local inventory = ply:lscsGetInventory()
+		local equipped = ply:lscsGetEquipped()
+
+		local index = net.ReadInt( 8 )
+		local equip = net.ReadInt( 3 )
+
+		if inventory[ index ] then
+			if equip == 1 then
+				equipped[ index ] = true
+
+			elseif equip == 0 then
+				equipped[ index ] = false
+
+			else
+				equipped[ index ] = nil
+			end
+		else
+			equipped[ index ] = nil
+		end
+
+		ply:lscsBuildPlayerInfo()
+	end )
 end
