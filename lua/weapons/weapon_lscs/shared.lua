@@ -60,6 +60,10 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "String",1, "HiltL")
 	self:NetworkVar( "String",2, "BladeR")
 	self:NetworkVar( "String",3, "BladeL")
+
+	if SERVER then
+		self:SetStance( 1 )
+	end
 end
 
 function SWEP:GetHiltData( hand )
@@ -178,6 +182,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	self:SetStance( self:GetStance() + 1 )
 end
 
 function SWEP:DoAttackSound()
@@ -241,6 +246,7 @@ function SWEP:Think()
 	self:ComboThink()
 
 	local Active = self:GetActive()
+	local Stance = self:GetStance()
 
 	local FT = FrameTime()
 	local Length = self:GetLength()
@@ -263,5 +269,14 @@ function SWEP:Think()
 		self:OnActiveChanged( self.OldActive, Active )
 	end
 
+	if Stance ~= self.OldStance then
+		if self:GetActive() then
+			self:SetHoldType( self:GetCombo().HoldType )
+		end
+
+		self.OldStance = Stance
+	end
+	
 	self:OnTick( Active )
 end
+

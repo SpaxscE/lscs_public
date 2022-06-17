@@ -150,6 +150,12 @@ function meta:lscsBuildPlayerInfo()
 
 			self:lscsSendComboDataTo( ply )
 		end
+
+		local wep = self:GetWeapon( "weapon_lscs" )
+
+		if IsValid( wep ) then
+			wep:SetActive( false )
+		end
 	else
 		LSCS:RefreshMenu()
 	end

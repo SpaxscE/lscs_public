@@ -126,6 +126,7 @@ local function DrawButtonClick( self, w, h )
 	return Col
 end
 
+local StanceNum = 1
 local Frame
 
 local FrameBarHeight = 24
@@ -852,7 +853,12 @@ end
 
 function LSCS:BuildStanceMenu( Frame )
 	local ply = LocalPlayer()
-	local combo = ply:lscsGetCombo( 1 )
+
+	if StanceNum > #ply:lscsGetCombo() then
+		StanceNum = 1
+	end
+
+	local combo = ply:lscsGetCombo( StanceNum )
 
 	local ColHead = menu_text
 	local ColText = menu_white
@@ -1073,25 +1079,13 @@ function LSCS:BuildStanceMenu( Frame )
 	Button.DoClick = function( self )
 		BaseButtonClick( self )
 
-		--[[
-		self.menu = DermaMenu()
-		local Num = 0
-		for k, v in pairs( ply:lscsGetInventory() ) do
-			local item = LSCS:ClassToItem( v )
-			if item.type == "stance" then
-				Num = Num + 1
-				self.menu:AddOption( item.name, function()
-					LocalPlayer():lscsEquipFromInventory( k, 1 )
-				end )
-			end
+		StanceNum = StanceNum + 1
+		if StanceNum > #ply:lscsGetCombo() then
+			StanceNum = 1
 		end
-		if Num >= 1 then
-			self.menu:Open()
-		else
-			surface.PlaySound("buttons/button10.wav")
-			self.menu:Remove()
-		end
-		]]
+
+		combo = ply:lscsGetCombo( StanceNum )
+		LSCS:RefreshMenu()
 	end
 
 	LSCS:SetActivePanel( Panel )

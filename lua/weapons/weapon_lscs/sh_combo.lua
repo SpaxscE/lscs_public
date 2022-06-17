@@ -30,7 +30,13 @@ function SWEP:GetCombo()
 	local ply = self:GetOwner()
 
 	if IsValid( ply ) then
-		return ply:lscsGetCombo( 1 )
+		local combo = ply:lscsGetCombo()
+
+		if self:GetStance() > #combo then
+			self:SetStance( 1 )
+		end
+
+		return LSCS:GetStance( combo[ self:GetStance() ] )
 	else
 		return LSCS:GetStance( "default" )
 	end
