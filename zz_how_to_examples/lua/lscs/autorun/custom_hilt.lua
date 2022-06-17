@@ -17,7 +17,7 @@ hilt.info = {
 			ang = Angle(8, 0, -10),
 		},
 	},
-	GetBladePos = function( ent ) -- GetBladePos allows you to modify where the blade is being rendered. By using a function you could in theory do all sort of crazy things without having to redo the model's attachments
+	GetBladePos = function( ent ) -- GetBladePos allows you to modify where and how the blade is being rendered. By using a function you could in theory do all sort of crazy things without having to redo the model's attachments (for example: spinning helicopter sabers like the inquisitors have)
 		if not ent.BladeID1 then
 			ent.BladeID1 = ent:LookupAttachment( "primary_blade" )
 		end
@@ -35,9 +35,11 @@ hilt.info = {
 					dir = att1.Ang:Up(),
 				},
 				--[2] = { -- add any amount of blades. Just increment the number
-				--	pos = att2.Pos,
-				--	dir = att2.Ang:Up(),
+				--	pos = att2.Pos, -- you can also just use ent:LocalToWorld( Vector(10,0,0) ) or something
+				--	dir = att2.Ang:Up(), -- same as above. ent:GetUp() or ent:localToWorldAngles( Angle(34,0,0) ):Up() or be creative
 				--	no_trail = true, -- disable trail effect. Looks better when doing crossguards
+				--	length_multiplier = 10, -- modify the blade length
+				--	width_multiplier = 0.1, -- modify the blade width
 				--}
 			}
 			return blades

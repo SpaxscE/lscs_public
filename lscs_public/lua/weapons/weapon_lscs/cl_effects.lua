@@ -10,7 +10,7 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 	local LifeTime = self:GetBladeLifeTime()
 	local CurTime = CurTime()
 
-	local length = bladeObject.length
+	local length = bladeObject.length * (PosData.length_multiplier or 1)
 
 	local cur_pos = PosData.pos + PosData.dir * length
 	local cur_dir = -PosData.dir
@@ -179,9 +179,9 @@ function SWEP:GetBladeLifeTime()
 end
 
 function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles )
-	local length = bladeObject.length
+	local length = bladeObject.length * (PosData.length_multiplier or 1)
 
-	local width = bladeObject.width
+	local width = bladeObject.width * (PosData.width_multiplier or 1)
 	local actual_width = width + math.Rand(0,bladeObject.widthWiggle)
 
 	local pos = PosData.pos
