@@ -1,9 +1,9 @@
-COMBO.id = "default" -- internal ID, lower case only
-COMBO.PrintName = "Untrained" -- what should be displayed in your hud
+COMBO.id = "template" -- internal ID, lower case only
+COMBO.PrintName = "Template Stance" -- what should be displayed in your hud
 COMBO.Author = "Luna"
-COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi." -- write an essay explaining what makes your saber style the best
+COMBO.Description = "best stance that beats all other stances" -- write an essay explaining what makes your saber style the best
 
-COMBO.DeflectBullets = false -- false, because this style can not deflect bullets
+COMBO.DeflectBullets = false -- false, because this style can not deflect bullets. Set to true to enable
 COMBO.AutoBlock = false -- false, because this style can only block when a perfect block is performed. Doesn't use stamina system. For any style that should not suck set to true
 
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
@@ -12,7 +12,7 @@ COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
 	AttackAnim = "range_melee", -- which animation to play
 	--AttackAnimStart = 0.3, -- start from this cycle
-	AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
+	--AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
 
 	BeginAttack = function( weapon, ply )  
 		weapon:DoAttackSound()

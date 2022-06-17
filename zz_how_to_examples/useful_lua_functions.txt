@@ -26,3 +26,8 @@ ply:lscsGetCombo() -- returns the equipped combo stances. When given a number it
 ply:lscsCraftSaber() -- force crafting a lightsaber
 
 ply:lscsSuppressFalldamage( time ) -- suppress falldamage for given amount of seconds
+
+
+
+
+LSCS:RegisterDeflectableTracer( "tracer_" ) -- register all bullets with the tracername "tracer_" to be able to be deflected. Internaly it just calls string.match() on this name so you dont have to register hundreds of tracers with different colors

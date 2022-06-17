@@ -166,7 +166,7 @@ function SWEP:DrawWorldModelTranslucent()
 
 			if BladeData then
 				self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )
-				if not BladeData.no_trail then
+				if not BladeData.no_trail and not PosData.no_trail then
 					self:CalcTrail( handID, BladeID, PosData, BladeData, Mul )
 				end
 			end
