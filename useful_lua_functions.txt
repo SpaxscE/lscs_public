@@ -1,0 +1,28 @@
+#SERVER
+ply:lscsRemoveItem( index ) -- remove the item behind the given index from inventory
+
+ply:lscsGetHilt() -- get saber Hilt's  ( local HiltRight, HiltLeft = ply:lscsGetHilt() )
+ply:lscsGetBlade() -- get saber Blades's  ( local BladeRight, BladeLeft = ply:lscsGetBlade() )
+
+ply:lscsSyncInventory() -- sync the entire inventory with the client
+
+ply:lscsAddInventory( entity ) -- add a entity to the players inventory. Only supports sents.
+easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")
+
+
+#SHARED
+ply:lscsEquipItem( index, hand ) -- equip a item from the inventory. Hand can be true, false or nil.  true = equip,  false = equip left hand,  nil = unequip
+ply:lscsClearEquipped( type, hand ) -- clear all equipped items of same type and hand.  if hand = nil it will clear all items of the same type.
+
+ply:lscsDropItem( index ) - drop the item behind the given index from the inventory
+
+ply:lscsGetInventory() -- returns the inventory
+ply:lscsGetEquipped() -- returns the equipped list
+
+ply:lscsGetInventoryItem( index ) -- returns the item object (only works with lscs entities)
+
+ply:lscsGetCombo() -- returns the equipped combo stances. When given a number it will return the combo object (  example:  ply:lscsGetCombo( 1 )  )
+
+ply:lscsCraftSaber() -- force crafting a lightsaber
+
+ply:lscsSuppressFalldamage( time ) -- suppress falldamage for given amount of seconds
