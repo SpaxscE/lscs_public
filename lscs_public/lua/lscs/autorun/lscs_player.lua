@@ -38,6 +38,14 @@ else
 		end
 
 		ply.m_lscs_combo = stances
+
+		local wep = ply:GetWeapon("weapon_lscs")
+		if IsValid( wep ) then
+			wep._oldHiltR = nil
+			wep._oldHiltL = nil
+			wep._oldBladeR = nil
+			wep._oldBladeL = nil
+		end
 	end )
 end
 
