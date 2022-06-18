@@ -1104,6 +1104,29 @@ function LSCS:BuildSettings( Frame )
 		surface.DrawRect( 0, 0, w, h  )
 	end
 
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", Panel )
+	DCheckbox:Dock( TOP )
+	DCheckbox:DockMargin( 4, 4, 0, 0 )
+	DCheckbox:SetText("Dynamic Light")	
+	DCheckbox:SetConVar("lscs_dynamiclight")
+	DCheckbox:SizeToContents()
+
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", Panel )
+	DCheckbox:Dock( TOP )
+	DCheckbox:DockMargin( 4, 4, 0, 0 )
+	DCheckbox:SetText("High Quality Impact Effects")	
+	DCheckbox:SetConVar("lscs_impacteffects")
+	DCheckbox:SizeToContents()
+
+	local DSlider = vgui.Create( "DNumSlider", Panel )
+	DSlider:Dock( TOP )
+	DSlider:DockMargin( 4, 4, 0, 0 )
+	DSlider:SetText( "Trail Effect Detail" )
+	DSlider:SetMin( 0 )
+	DSlider:SetMax( 100 )
+	DSlider:SetDecimals( 0 )
+	DSlider:SetConVar( "lscs_traildetail" )	
+
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
 

@@ -33,7 +33,7 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 			table.sort(self.BladeData[HandID][BladeID].BladePositions, function( a, b ) return a.time > b.time end )
 		end
 
-		if Mul == 1 and bladeObject.dynamic_light then
+		if Mul == 1 and bladeObject.dynamic_light and LSCS.DynamicLight then
 			local dlight = DynamicLight( self:EntIndex() * 1000 + HandID * 10 + BladeID )
 			if dlight then
 				dlight.pos = cur_pos + cur_dir * length * 0.5
@@ -164,17 +164,17 @@ end
 
 function SWEP:GetMaxBeamElements()
 	if self:IsMe() then
-		return 200
+		return 200 * LSCS.SaberTrailDetail
 	else
-		return 25
+		return 25 * LSCS.SaberTrailDetail
 	end
 end
 
 function SWEP:GetBladeLifeTime()
 	if self:IsMe() then
-		return 0.15
+		return 0.15 * LSCS.SaberTrailDetail
 	else
-		return 0.1
+		return 0.1 * LSCS.SaberTrailDetail
 	end
 end
 

@@ -161,8 +161,12 @@ function SWEP:DrawWorldModelTranslucent()
 
 		if not Positions then continue end
 
+		local COMBO = self:GetCombo()
+
 		for _, PosData in ipairs( Positions ) do
 			local BladeData = self:GetBladeData( handID )
+
+			if (handID == 2 and not COMBO.LeftSaberActive) then continue end
 
 			if BladeData then
 				self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )

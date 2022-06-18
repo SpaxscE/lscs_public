@@ -6,6 +6,8 @@ COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber do
 COMBO.DeflectBullets = false
 COMBO.AutoBlock = false
 
+COMBO.LeftSaberActive = false
+
 COMBO.HoldType = "melee"
 
 COMBO.Attacks = {}

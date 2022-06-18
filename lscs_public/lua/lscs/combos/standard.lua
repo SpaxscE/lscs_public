@@ -6,6 +6,8 @@ COMBO.Description = "Standard Sword Art. Quick to learn, hard to master, but bal
 COMBO.DeflectBullets = true
 COMBO.AutoBlock = true
 
+COMBO.LeftSaberActive = false
+
 COMBO.HoldType = "melee2"
 
 COMBO.Attacks = {

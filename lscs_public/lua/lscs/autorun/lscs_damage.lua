@@ -113,13 +113,25 @@ if SERVER then
 		if not IsValid( wep ) or not wep.LSCS then return end
 		if not wep:GetDMGActive() then return end
 
-		victim:TakeDamageInfo( dmg )
+		if victim:IsPlayer() then
+			local victim_wep = victim:GetActiveWeapon()
+			if IsValid( victim_wep ) and victim_wep.LSCS then
+				local Blocked = victim_wep:Block( dmg )
+
+				if Blocked then
+					wep:OnBlocked()
+					return
+				end
+			end
+		end
 
 		if victim:IsPlayer() or victim:IsNPC() then
 			victim:EmitSound( "saber_hit" )
 		else
 			victim:EmitSound( "saber_lighthit" )
 		end
+
+		victim:TakeDamageInfo( dmg )
 
 		net.Start( "lscs_saberdamage" )
 			net.WriteVector( pos )

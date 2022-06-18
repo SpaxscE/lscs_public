@@ -34,24 +34,26 @@ function EFFECT:Init( data )
 	
 	local emitter = ParticleEmitter( Pos, false )
 
-	local trace = util.TraceLine( {
-		start = Pos + Dir * 5,
-		endpos = Pos - Dir * 5,
-		filter = function( ent ) 
-			if ent.GetOwningEnt then return false end
-			return true
+	if LSCS.ImpactEffects then
+		local trace = util.TraceLine( {
+			start = Pos + Dir * 5,
+			endpos = Pos - Dir * 5,
+			filter = function( ent ) 
+				if ent.GetOwningEnt then return false end
+				return true
+			end
+		} )
+
+		if trace.Hit and not trace.HitNonWorld then
+			self.RenderGlow = {
+				Pos = trace.HitPos,
+				Normal = trace.HitNormal,
+				Angle = trace.HitNormal:Angle() + Angle(90,0,0),
+				RandomAng = math.random(0,360),
+			}
+
+			util.DecalEx( DecalMat, trace.Entity, trace.HitPos + trace.HitNormal, trace.HitNormal, Color(255,255,255,255), math.Rand(0.3,0.6), math.Rand(0.3,0.6) )
 		end
-	} )
-
-	if trace.Hit and not trace.HitNonWorld then
-		self.RenderGlow = {
-			Pos = trace.HitPos,
-			Normal = trace.HitNormal,
-			Angle = trace.HitNormal:Angle() + Angle(90,0,0),
-			RandomAng = math.random(0,360),
-		}
-
-		util.DecalEx( DecalMat, trace.Entity, trace.HitPos + trace.HitNormal, trace.HitNormal, Color(255,255,255,255), math.Rand(0.3,0.6), math.Rand(0.3,0.6) )
 	end
 
 	local particle = emitter:Add( Materials[ math.random(1,table.Count( Materials )) ], Pos )
@@ -104,15 +106,22 @@ function EFFECT:Think()
 end
 
 local Mat = Material("particle/particle_glow_05_addnofog")
-function EFFECT:Render()
-	if self.RenderGlow then
-		local Timed = 1 - (self.DieTime - CurTime()) / self.LifeTime
-		local Scale = math.max(math.min(2 - Timed * 2,1),0)
 
-		cam.Start3D2D( self.RenderGlow.Pos + self.RenderGlow.Normal * 0.5, self.RenderGlow.Angle, 0.1 )
-			surface.SetMaterial( Mat )
-			surface.SetDrawColor( 255, 93 + 60 * Scale, 60 * Scale, 200 * Scale )
-			surface.DrawTexturedRectRotated( 0, 0, 300 , 300 , self.RenderGlow.RandomAng )
-		cam.End3D2D()
+function EFFECT:Render()
+	if LSCS.ImpactEffects then
+		if self.RenderGlow then
+			local Timed = 1 - (self.DieTime - CurTime()) / self.LifeTime
+			local Scale = math.max(math.min(2 - Timed * 2,1),0)
+
+			cam.Start3D2D( self.RenderGlow.Pos + self.RenderGlow.Normal * 0.5, self.RenderGlow.Angle, 0.1 )
+				surface.SetMaterial( Mat )
+				surface.SetDrawColor( 255, 93 + 60 * Scale, 60 * Scale, 200 * Scale )
+				surface.DrawTexturedRectRotated( 0, 0, 300 , 300 , self.RenderGlow.RandomAng )
+			cam.End3D2D()
+		end
+	else
+		local Scale = (self.DieTime - CurTime()) / self.LifeTime
+		render.SetMaterial( Mat )
+		render.DrawSprite( self.Pos, 32, 32, Color( 255, 93 + 60 * Scale, 60 * Scale, 200 * Scale) ) 
 	end
 end

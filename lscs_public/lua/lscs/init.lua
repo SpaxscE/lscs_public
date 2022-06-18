@@ -213,6 +213,7 @@ LSCS.Reload = function()
 			DeflectBullets = COMBO.DeflectBullets,
 			AutoBlock = COMBO.AutoBlock,
 			Attacks = table.Copy( COMBO.Attacks ),
+			LeftSaberActive = (COMBO.LeftSaberActive == true),
 		}
 
 		local ENT = {}
@@ -241,11 +242,11 @@ LSCS.ComboInterupt = {
 	["__S_"] = "b_block_forward_riposte",
 	["_A__"] = "b_block_left_riposte",
 	["___D"] = "b_block_right_riposte",
-	["W__D"] = "b_block_forward_riposte",
+	["W__D"] = "b_right_riposte",
 	["WA__"] = "b_block_forward_riposte",
-	["__SD"] = "b_block_right_riposte",
+	["__SD"] = "b_right_riposte",
 	["_AS_"] = "b_block_left_riposte",
-	["W___"] = "b_block_forward_riposte",
+	["W___"] = "b_forward_riposte",
 }
 
 LSCS.ComboInfo = {

@@ -27,7 +27,46 @@ function SWEP:CanBlock()
 	return (self._nextBlock or 0) < CurTime()
 end
 
+function SWEP:OnBlocked()
+	if not LSCS.ComboInterupt[ self.LastAttack ] then return end
+
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return false end
+
+	timer.Simple( 0.1, function()
+		if not IsValid( ply ) or not IsValid( self ) then return end
+		self:CancelCombo( 0.2 )
+		ply:lscsSetTimedMove()
+		ply:lscsPlayAnimation( LSCS.ComboInterupt[ self.LastAttack ] )
+	end )
+end
+
 function SWEP:Block( dmginfo )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return false end
+
+	if self:CanPlayDeflectAnim() then
+		ply:lscsPlayAnimation( "block"..math.random(1,3) )
+
+		if dmginfo:IsDamageType( DMG_ENERGYBEAM ) then
+			ply:EmitSound( "saber_block" )
+		else
+			ply:EmitSound( "saber_pblock" )
+		end
+
+		self:SetNextDeflectAnim( CurTime() + 0.1 )
+	end
+	dmginfo:SetDamage( 0 )
+
+	local pos = dmginfo:GetDamagePosition()
+	local effectdata = EffectData()
+		effectdata:SetOrigin( pos )
+		effectdata:SetNormal( Vector(0,0,1) )
+	util.Effect( "saber_block", effectdata, true, true )
+
+	return true
 end
 
 function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )

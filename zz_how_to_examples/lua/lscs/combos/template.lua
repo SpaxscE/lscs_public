@@ -6,6 +6,8 @@ COMBO.Description = "best stance that beats all other stances" -- write an essay
 COMBO.DeflectBullets = false -- false, because this style can not deflect bullets. Set to true to enable
 COMBO.AutoBlock = false -- false, because this style can only block when a perfect block is performed. Doesn't use stamina system. For any style that should not suck set to true
 
+COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deactivated
+
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
 COMBO.Attacks = {}

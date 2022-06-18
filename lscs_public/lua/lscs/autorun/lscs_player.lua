@@ -63,7 +63,7 @@ function meta:lscsGetEquipped()
 end
 
 function meta:lscsGetCombo( num )
-	if not self.m_lscs_combo then self.m_lscs_combo = {} end
+	if not istable( self.m_lscs_combo ) or table.IsEmpty( self.m_lscs_combo ) then self.m_lscs_combo = { [1] = "default" } end
 
 	if num then
 		local combo = LSCS:GetStance( self.m_lscs_combo[ num ] )
