@@ -8,10 +8,25 @@ if CLIENT then
 
 		if not ply._lscsTimedMove then ply._lscsTimedMove = {} end
 
+		local Time = CurTime()
+
+		if ply._lscsWalkTime then
+			if ply._lscsWalkTime < CurTime() then
+				ply._lscsWalkTime = nil
+			else
+				local max = ply:GetSlowWalkSpeed()
+
+				cmd:SetForwardMove( math.Clamp( cmd:GetForwardMove(), -max, max ) )
+				cmd:SetUpMove( math.Clamp( cmd:GetUpMove(), -max, max ) )
+				cmd:SetSideMove( math.Clamp( cmd:GetSideMove(), -max, max ) )
+
+				return
+			end
+		end
+
 		if ply:InVehicle() or table.IsEmpty( ply._lscsTimedMove ) then return end
 
 		local Move
-		local Time = CurTime()
 
 		for id, obj in pairs( ply._lscsTimedMove ) do
 			if (obj.start + obj.duration) <= Time then
@@ -48,7 +63,15 @@ if CLIENT then
 	end
 
 	net.Receive( "lscs_nw_movement", function( len )
-		LocalPlayer():lscsSetTimedMove( -1, CurTime(), 0.5, Vector(0,0,0) )
+		local DoWhat = net.ReadBool()
+
+		if DoWhat then
+			LocalPlayer():lscsSetTimedMove( -1, CurTime(), 0.5, Vector(0,0,0) )
+		else
+			local DoHowLong = net.ReadFloat()
+
+			LocalPlayer()._lscsWalkTime = CurTime() + DoHowLong
+		end
 	end)
 else
 	util.AddNetworkString( "lscs_nw_movement" )
@@ -57,6 +80,14 @@ else
 		if ID then return end
 
 		net.Start( "lscs_nw_movement" )
+			net.WriteBool( true )
+		net.Send( self )
+	end
+
+	function meta:lscsForceWalk( seconds )
+		net.Start( "lscs_nw_movement" )
+			net.WriteBool( false )
+			net.WriteFloat( seconds )
 		net.Send( self )
 	end
 end
@@ -74,5 +105,9 @@ end )
 function meta:lscsClearTimedMove()
 	if not self._lscsTimedMove then self._lscsTimedMove = {} end
 
-	table.Empty( self._lscsTimedMove )
+	for ID, _ in pairs( self._lscsTimedMove ) do
+		if ID ~= -1 then
+			self._lscsTimedMove[ ID ] = nil
+		end
+	end
 end

@@ -306,3 +306,17 @@ function SWEP:AimDistanceTo( _pos )
 
 	return util.DistanceToLine( Pos, EndPos, _pos )
 end
+
+function SWEP:GetBlockDistanceTo( _pos )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return 100 end
+
+	local BlockDistance = self:AimDistanceTo( _pos )
+
+	if ply:WorldToLocal( _pos ).x < 0 then
+		BlockDistance = 100
+	end
+
+	return BlockDistance
+end

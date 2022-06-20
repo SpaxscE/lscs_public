@@ -1,11 +1,4 @@
 
-local function AngleBetweenVectors( Vec1, Vec2 )
-	local clampDot = math.Clamp( Vec1:Dot( Vec2 ) ,-1,1) -- this clamp took me 1 whole day to figure out in 2014... If the dotproduct of both vectors that are supposedly 1 unit long goes above 1 this can be NAN and cause instant ctd when applied as force...
-	local rads = math.acos( clampDot ) -- rad is for nerds
-
-	return math.deg( rads ) -- degrees is what normal humans use
-end
-
 function SWEP:SetNextDeflectAnim( time )
 	self._nextDeflectAnim = time
 end
@@ -36,29 +29,48 @@ end
 
 -- defender performing block
 function SWEP:Block( dmginfo )
-	if not self:GetActive() then return false end
+	local BLOCK = LSCS_UNBLOCKED
+
+	if not self:GetActive() then return BLOCK end
 
 	local ply = self:GetOwner()
 
-	if not IsValid( ply ) then return false end
+	if not IsValid( ply ) then return BLOCK end
 
 	local a_weapon = dmginfo:GetInflictor()
 	local a_weapon_lscs = IsValid( a_weapon ) and a_weapon.LSCS
 
 	if a_weapon_lscs then
-		PrintChat( self:AimDistanceTo( a_weapon:GetBlockPos() ) )
+		local _pos = a_weapon:GetBlockPos()
+
+		local BlockDistance = self:GetBlockDistanceTo( _pos )
+
+		if BlockDistance < LSCS:GetBlockDistanceNormal() then
+			if BlockDistance < LSCS:GetBlockDistancePerfect() then
+				BLOCK = LSCS_BLOCK_PERFECT
+			else
+				BLOCK = LSCS_BLOCK_NORMAL
+			end
+		else
+			return BLOCK
+			--BLOCK = LSCS_BLOCK
+		end
+	else
+		BLOCK = LSCS_BLOCK
 	end
 
 	if self:CanPlayDeflectAnim() then
 		ply:lscsPlayAnimation( "block"..math.random(1,3) )
 
-		if a_weapon_lscs then
-			ply:EmitSound( "saber_block" )
-		else
-			ply:EmitSound( "saber_pblock" )
-		end
-
 		self:SetNextDeflectAnim( CurTime() + 0.1 )
+
+		if BLOCK > LSCS_UNBLOCKED then
+			if BLOCK == LSCS_BLOCK_PERFECT then
+				ply:EmitSound( "saber_pblock" )
+			else
+				ply:EmitSound( "saber_block" )
+			end
+		end
 	end
 
 	dmginfo:SetDamage( 0 )
@@ -69,7 +81,7 @@ function SWEP:Block( dmginfo )
 		effectdata:SetNormal( Vector(0,0,1) )
 	util.Effect( "saber_block", effectdata, true, true )
 
-	return true
+	return BLOCK
 end
 
 function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
@@ -82,7 +94,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	local Forward = ply:EyeAngles():Forward()
 	local BulletForward = bullet.Dir
 
-	if AngleBetweenVectors( Forward, bullet.Dir ) < 60 then
+	if LSCS:AngleBetweenVectors( Forward, bullet.Dir ) < 60 then
 		ply:lscsSetShouldBleed( true )
 
 		return
@@ -165,17 +177,22 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 end
 
 -- attacker cancel attack
-function SWEP:OnBlocked()
+function SWEP:OnBlocked( BLOCK )
 	if not LSCS.ComboInterupt[ self.LastAttack ] then return end
 
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return false end
 
-	timer.Simple( 0.1, function()
-		if not IsValid( ply ) or not IsValid( self ) then return end
-		self:CancelCombo( 0.2 )
-		ply:lscsSetTimedMove()
+	if BLOCK == LSCS_BLOCK_PERFECT then
+		self:CancelCombo( 1 )
+		ply:lscsForceWalk( 1 )
 		ply:lscsPlayAnimation( LSCS.ComboInterupt[ self.LastAttack ] )
-	end )
+	else
+		if BLOCK == LSCS_BLOCK_NORMAL then
+			ply:lscsForceWalk( 0.2 )
+		else
+			ply:lscsForceWalk( 0.1 )
+		end
+	end
 end

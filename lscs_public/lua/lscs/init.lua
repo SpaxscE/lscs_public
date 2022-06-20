@@ -7,6 +7,13 @@ end
 
 LSCS:RegisterDeflectableTracer( "laser_*" ) -- this should pretty much include all laser types, but you can add your own
 
+function LSCS:AngleBetweenVectors( Vec1, Vec2 )
+	local clampDot = math.Clamp( Vec1:Dot( Vec2 ) ,-1,1) -- this clamp took me 1 whole day to figure out in 2014... If the dotproduct of both vectors that are supposedly 1 unit long goes above 1 this can be NAN and cause instant ctd when applied as force...
+	local rads = math.acos( clampDot ) -- rad is for nerds
+
+	return math.deg( rads ) -- degrees is what normal humans use
+end
+
 function LSCS:SetHilt( ply, hilt_right, hilt_left )
 	if hilt_right == "" or not LSCS:GetHilt( hilt_right ) then
 		ply.m_lscs_hilt_right = nil
