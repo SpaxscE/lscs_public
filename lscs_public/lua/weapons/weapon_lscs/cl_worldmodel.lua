@@ -134,7 +134,11 @@ function SWEP:DrawWorldModelTranslucent()
 	for handID, hiltObject in pairs( self:GetHiltData() ) do
 		local WorldModel = self:GetWorldModel( handID )
 
-		if not IsValid( WorldModel ) then continue end
+		if not IsValid( WorldModel ) then 
+			self:RefreshWorldModel()
+
+			continue
+		end
 
 		local data = hiltObject.info.ParentData[ self.HAND_STRING[ handID ] ]
 
@@ -178,4 +182,11 @@ function SWEP:DrawWorldModelTranslucent()
 			BladeID = BladeID + 1
 		end
 	end
+end
+
+function SWEP:RefreshWorldModel()
+	self._oldHiltR = nil
+	self._oldHiltL = nil
+	self._oldBladeR = nil
+	self._oldBladeL = nil
 end

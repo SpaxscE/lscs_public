@@ -9,9 +9,66 @@ SWEP.SlotPos = 0
 
 language.Add( "lscsGlowstick", "Lightsaber" )
 
+local mat_xhair = Material( "sprites/hud/v_crosshair1" )
+local mat_glow = Material( "sprites/light_glow02_add" )
+function SWEP:DrawHUD()
+	local ply = LocalPlayer()
+	local Pos = ply:GetPos()
+
+	--draw.RoundedBox( 5, xpos, ypos, sizex, sizey, Color( 0, 0, 0, 200 ) )
+	--draw.RoundedBox( 5, xpos + 2, ypos + 2, ((sizex - 4) / 100) * self:GetBlockPoints(), sizey - 4, Color( 255, 0, 0, 200 ) )
+
+	for _,v in ipairs( player.GetAll() ) do
+		if (v:GetPos() - Pos):Length() > 400 then continue end
+
+		local _pos = self:GetPlayerBlockPos( v )
+
+		if _pos then
+			local Pos2D = _pos:ToScreen()
+			if not Pos2D.visible then continue end
+
+			local dist = self:AimDistanceTo( _pos )
+
+			surface.SetDrawColor( 255, 0, 0, 255 )
+
+			surface.SetMaterial( mat_glow )
+			surface.DrawTexturedRectRotated( Pos2D.x, Pos2D.y, 100, 100, 0 )
+
+			surface.SetMaterial( mat_xhair )
+			surface.DrawTexturedRectRotated( Pos2D.x, Pos2D.y, 32, 32, 0 )
+		end
+	end
+end
+
+function SWEP:GetPlayerBlockPos( ply )
+	if not IsValid( ply ) or not ply.GetActiveWeapon then return false end
+
+	local wep = ply:GetActiveWeapon()
+
+	if not IsValid( wep ) or not wep.LSCS or not wep.GetBlockPos then return false end
+
+	return wep:GetBlockPos()
+end
+
+local circle = Material( "vgui/circle" )
+local size = 5
+
 function SWEP:DoDrawCrosshair( x, y )
-	--surface.SetDrawColor( 0, 250, 255, 255 )
-	--surface.DrawOutlinedRect( x - 32, y - 32, 64, 64 )
+	local ply = LocalPlayer()
+
+	local pos = ply:lscsGetViewOrigin() + ply:EyeAngles():Forward() * 100
+
+	local scr = pos:ToScreen()
+
+	if scr.visible then
+		surface.SetMaterial( circle )
+		surface.SetDrawColor( 0, 0, 0, 255 )
+		surface.DrawTexturedRect( scr.x - size * 0.5 + 1, scr.y - size * 0.5 + 1, size, size )
+
+		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.DrawTexturedRect( scr.x - size * 0.5, scr.y - size * 0.5, size, size )
+	end
+
 	return true
 end
 
@@ -20,37 +77,11 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
-	local attachment = ply:GetAttachment( ply:LookupAttachment( "eyes" ) )
-
-	local pos = ply:GetShootPos()
-
-	if attachment then
-		pos = attachment.Pos
-	end
-
 	local view = {}
 
-	local clamped_angles = Angle( math.max( angles.p, -60 ), angles.y, angles.r )
-
-	local endpos = pos - clamped_angles:Forward() * 70 + clamped_angles:Up() * 12
-
-	local trace = util.TraceHull({
-		start = pos,
-		endpos = endpos,
-		mask = MASK_SOLID_BRUSHONLY,
-		mins = Vector(-5,-5,-5),
-		maxs = Vector(5,5,5),
-		filter = { ply },
-	})
-	
-	if (trace.HitPos - pos):Length() < 1 then
-		view.origin = endpos
-	else
-		view.origin = trace.HitPos
-	end
-
+	view.origin = pos
 	view.angles = angles
-	view.fov = 90
+	view.fov = fov
 	view.drawviewer = true
 
 	return view

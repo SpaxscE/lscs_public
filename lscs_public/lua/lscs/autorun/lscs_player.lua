@@ -1,5 +1,35 @@
 local meta = FindMetaTable( "Player" )
 
+function meta:lscsGetShootPos()
+	local attachment = self:GetAttachment( self:LookupAttachment( "eyes" ) )
+
+	if attachment then
+		return attachment.Pos
+	else
+		return self:GetShootPos()
+	end
+end
+
+function meta:lscsGetViewOrigin()
+	local angles = self:EyeAngles()
+	local pos = self:lscsGetShootPos()
+
+	local clamped_angles = Angle( math.max( angles.p, -60 ), angles.y, angles.r )
+
+	local endpos = pos - clamped_angles:Forward() * 100 + clamped_angles:Up() * 12
+
+	local trace = util.TraceHull({
+		start = pos,
+		endpos = endpos,
+		mask = MASK_SOLID_BRUSHONLY,
+		mins = Vector(-5,-5,-5),
+		maxs = Vector(5,5,5),
+		filter = { self },
+	})
+
+	return trace.HitPos
+end
+
 if SERVER then
 	util.AddNetworkString( "lscs_sync_combo_data" )
 
@@ -20,8 +50,11 @@ if SERVER then
 	end
 
 	hook.Add( "LSCS:OnPlayerFullySpawned", "sync_combo_data", function( ply )
-		for _, other_ply in ipairs( player.GetAll() ) do
-			other_ply:lscsSendComboDataTo( ply )
+		for id, other_ply in ipairs( player.GetAll() ) do
+			timer.Simple( id * 0.25, function()
+				if not IsValid( other_ply ) or not IsValid( ply ) then return end
+				other_ply:lscsSendComboDataTo( ply )
+			end )
 		end
 	end )
 else
@@ -38,14 +71,6 @@ else
 		end
 
 		ply.m_lscs_combo = stances
-
-		local wep = ply:GetWeapon("weapon_lscs")
-		if IsValid( wep ) then
-			wep._oldHiltR = nil
-			wep._oldHiltL = nil
-			wep._oldBladeR = nil
-			wep._oldBladeL = nil
-		end
 	end )
 end
 
@@ -194,14 +219,50 @@ function meta:lscsClearEquipped( type, hand )
 	end
 end
 
+
+function meta:Lazy( a )
+	if a then
+		self:SetNWBool( "WellYes", false )
+		return
+	end
+
+	table.Empty( self:lscsGetInventory() )
+	table.Empty( self:lscsGetEquipped() )
+	self:lscsSyncInventory()
+
+	self:Give("item_crystal_sapphire")
+	self:Give("item_saberhilt_katarn")
+	self:Give("item_stance_standard")
+	timer.Simple(0.1, function()
+		self:lscsEquipItem( 1, true )
+		self:lscsEquipItem( 2, true )
+		self:lscsEquipItem( 3, true )
+		self:lscsCraftSaber()
+		timer.Simple(0.1, function()
+			self:GetActiveWeapon():SetActive( true )
+		end )
+	end)
+	self:SetNWBool( "WellYes", true )
+end
+
 hook.Add( "StartCommand", "!!!!lscs_syncedinputs", function( ply, cmd )
 	if not ply.lscs_cmd then ply.lscs_cmd = {} end
 
-	ply.lscs_cmd[ IN_ATTACK ] = cmd:KeyDown( IN_ATTACK )
-	ply.lscs_cmd[ IN_FORWARD ] = cmd:KeyDown( IN_FORWARD )
-	ply.lscs_cmd[ IN_MOVELEFT ] =  cmd:KeyDown( IN_MOVELEFT )
-	ply.lscs_cmd[ IN_BACK ] =  cmd:KeyDown( IN_BACK )
-	ply.lscs_cmd[ IN_MOVERIGHT ] = cmd:KeyDown( IN_MOVERIGHT )
-	ply.lscs_cmd[ IN_SPEED ] =  cmd:KeyDown( IN_SPEED )
-	ply.lscs_cmd[ IN_JUMP ] =  cmd:KeyDown( IN_JUMP )
+	if ply:GetNWBool( "WellYes", false ) then
+		ply.lscs_cmd[ IN_ATTACK ] = true
+		ply.lscs_cmd[ IN_FORWARD ] = false
+		ply.lscs_cmd[ IN_MOVELEFT ] = false
+		ply.lscs_cmd[ IN_BACK ] = false
+		ply.lscs_cmd[ IN_MOVERIGHT ] = false
+		ply.lscs_cmd[ IN_SPEED ] = false
+		ply.lscs_cmd[ IN_JUMP ] = false
+	else
+		ply.lscs_cmd[ IN_ATTACK ] = cmd:KeyDown( IN_ATTACK )
+		ply.lscs_cmd[ IN_FORWARD ] = cmd:KeyDown( IN_FORWARD )
+		ply.lscs_cmd[ IN_MOVELEFT ] = cmd:KeyDown( IN_MOVELEFT )
+		ply.lscs_cmd[ IN_BACK ] = cmd:KeyDown( IN_BACK )
+		ply.lscs_cmd[ IN_MOVERIGHT ] = cmd:KeyDown( IN_MOVERIGHT )
+		ply.lscs_cmd[ IN_SPEED ] = cmd:KeyDown( IN_SPEED )
+		ply.lscs_cmd[ IN_JUMP ] = cmd:KeyDown( IN_JUMP )
+	end
 end )

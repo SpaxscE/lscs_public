@@ -113,6 +113,8 @@ if SERVER then
 		if not IsValid( wep ) or not wep.LSCS then return end
 		if not wep:GetDMGActive() then return end
 
+		dmg:SetInflictor( wep )
+
 		if victim:IsPlayer() then
 			local victim_wep = victim:GetActiveWeapon()
 			if IsValid( victim_wep ) and victim_wep.LSCS then

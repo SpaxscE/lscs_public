@@ -55,6 +55,9 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float",2, "Length" )
 
 	self:NetworkVar( "Int",0, "Stance" )
+	self:NetworkVar( "Int",1, "BlockPoints" )
+
+	self:NetworkVar( "Vector",0, "BlockPos" )
 
 	self:NetworkVar( "String",0, "HiltR")
 	self:NetworkVar( "String",1, "HiltL")
@@ -211,6 +214,17 @@ end
 
 function SWEP:BeginAttack()
 	self:SetDMGActive( true )
+
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	local ID = ply:LookupAttachment( "anim_attachment_RH" )
+	local att = ply:GetAttachment( ID )
+
+	if att then
+		self:SetBlockPos( att.Pos )
+	end
 end
 
 function SWEP:FinishAttack()
@@ -220,6 +234,8 @@ function SWEP:FinishAttack()
 	if IsValid( ply ) then
 		ply:lscsClearTimedMove()
 	end
+
+	self:SetBlockPos( Vector(0,0,0) )
 end
 
 function SWEP:Deploy()
@@ -280,3 +296,13 @@ function SWEP:Think()
 	self:OnTick( Active )
 end
 
+function SWEP:AimDistanceTo( _pos )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return 0 end
+
+	local Pos = ply:lscsGetViewOrigin()
+	local EndPos = Pos + ply:EyeAngles():Forward() * 500
+
+	return util.DistanceToLine( Pos, EndPos, _pos )
+end

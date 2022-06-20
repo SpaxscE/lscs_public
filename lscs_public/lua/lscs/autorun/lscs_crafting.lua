@@ -10,7 +10,7 @@ if SERVER then
 
 		-- allow updating but don't allow spawning if the gamemode forbids it
 		if not IsValid( self:GetWeapon( "weapon_lscs" ) ) then
-			if not hook.Run( "PlayerGiveSWEP", self, "weapon_lscs", weapons.Get( "weapon_lscs" ) ) then
+			if hook.Run( "PlayerGiveSWEP", self, "weapon_lscs", weapons.Get( "weapon_lscs" ) ) == false then
 				self:ChatPrint("[LSCS] - You don't have permission to spawn this SWEP.")
 
 				return

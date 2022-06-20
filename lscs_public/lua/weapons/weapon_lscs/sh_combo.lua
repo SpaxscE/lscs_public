@@ -208,14 +208,6 @@ function SWEP:DoCombo()
 
 	self.LastAttack = ATTACK_DIR
 
-	--[[
-	local BlockPos = self.BlockPos[ ATTACK_DIR ]
-	if not BlockPos then
-		BlockPos = self.BlockPos[ "____" ]
-	end
-	self:SetBlockPos( BlockPos )
-	]]
-
 	self:StartCombo( ComboObj )
 end
 
