@@ -440,6 +440,9 @@ function LSCS:BuildInventory( Frame )
 			else
 				self.menu:AddOption( "Equip", function()
 					local Item = self:GetItem()
+
+					if not Item then return end
+
 					if Item.type == "hilt" then
 						ply:lscsClearEquipped( "hilt" )
 					end
