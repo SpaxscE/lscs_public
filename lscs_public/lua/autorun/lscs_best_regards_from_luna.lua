@@ -14,5 +14,5 @@ AddCSLuaFile("lscs/init.lua")
 include("lscs/init.lua")
 
 if SERVER then
-	resource.AddWorkshop( "2821066926" )
+	--resource.AddWorkshop( "2821066926" )
 end
