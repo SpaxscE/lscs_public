@@ -26,6 +26,10 @@ else
 	end )
 end
 
+function SWEP:CurComboUnblockable()
+	return self:GetAnimHasCancelAnim()
+end
+
 function SWEP:GetCombo()
 	local ply = self:GetOwner()
 
@@ -47,6 +51,8 @@ function SWEP:GetComboObject( id )
 end
 
 function SWEP:StartCombo( ComboObj )
+	self.AttackActive = true
+
 	local Time = CurTime()
 	self.ComboStatus = 1
 	self.CurCombo = {
@@ -59,6 +65,7 @@ function SWEP:StartCombo( ComboObj )
 end
 
 function SWEP:FinishCombo()
+	self.AttackActive = nil
 	self.CurCombo = nil
 	self.ComboStatus = nil
 	self:FinishAttack()
@@ -93,7 +100,7 @@ function SWEP:HandleCombo()
 		if self.CurCombo.FinishTime <= Time then
 
 			ProtectedCall( self.CurCombo.FinishFunc( self, ply ) )
-
+			
 			self:FinishCombo()
 		end
 	end
@@ -102,6 +109,19 @@ end
 function SWEP:ComboThink()
 	if self.CurCombo and self.ComboStatus then
 		self:HandleCombo()
+		
+		local ply = self:GetOwner()
+
+		if IsValid( ply ) then
+			local ID = ply:LookupAttachment( "anim_attachment_RH" )
+			local att = ply:GetAttachment( ID )
+
+			if att then
+				self:SetBlockPos( att.Pos )
+			end
+		end
+	else
+		self:SetBlockPos( Vector(0,0,0) )
 	end
 
 	local ply = self:GetOwner()
@@ -207,6 +227,13 @@ function SWEP:DoCombo()
 	self:SetGestureTime( Time )
 
 	self.LastAttack = ATTACK_DIR
+
+	if isstring( LSCS.ComboInterupt[ ATTACK_DIR ] ) then
+		self:SetAnimHasCancelAnim( false )
+	else
+		self:SetAnimHasCancelAnim( true )
+		self:DrainBP( 15 )
+	end
 
 	self:StartCombo( ComboObj )
 end

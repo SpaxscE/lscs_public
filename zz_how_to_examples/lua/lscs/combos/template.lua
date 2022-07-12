@@ -8,6 +8,12 @@ COMBO.AutoBlock = false -- false, because this style can only block when a perfe
 
 COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deactivated
 
+--COMBO.MaxBlockPoints = 100
+--COMBO.BPDrainPerHit = 25
+
+--COMBO.BlockDistanceNormal = 60
+--COMBO.BlockDistancePerfect = 30
+
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
 COMBO.Attacks = {}

@@ -1,8 +1,10 @@
 include( "shared.lua" )
 include("sh_combo.lua")
 include("sh_animations.lua")
+include("sh_blockpoints.lua")
 include("cl_worldmodel.lua")
 include("cl_effects.lua")
+
 
 SWEP.Slot = 0
 SWEP.SlotPos = 0

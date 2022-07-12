@@ -1,25 +1,11 @@
 
 local meta = FindMetaTable( "Player" )
 
+LSCS_BLOCK_NONSABER = 4
 LSCS_BLOCK_PERFECT = 3
 LSCS_BLOCK_NORMAL = 2
 LSCS_BLOCK = 1
 LSCS_UNBLOCKED = 0
-
-local NiceText = {
-	[LSCS_BLOCK_PERFECT] = "perfect block" ,
-	[LSCS_BLOCK_NORMAL] = "good block" ,
-	[LSCS_BLOCK] = "block" ,
-	[LSCS_UNBLOCKED] = "unblocked" ,
-}
-
-function LSCS:GetBlockDistanceNormal()
-	return 55
-end
-
-function LSCS:GetBlockDistancePerfect()
-	return 15
-end
 
 function meta:lscsSuppressFalldamage( time )
 	self._lscsPreventFallDamageTill = time
@@ -140,7 +126,6 @@ if SERVER then
 			if IsValid( victim_wep ) and victim_wep.LSCS then
 				local Blocked = victim_wep:Block( dmg )
 
-				PrintChat( NiceText[Blocked] )
 				if Blocked ~= LSCS_UNBLOCKED then
 					wep:OnBlocked( Blocked )
 

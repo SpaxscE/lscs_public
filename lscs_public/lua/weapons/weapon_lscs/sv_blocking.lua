@@ -29,59 +29,6 @@ end
 
 -- defender performing block
 function SWEP:Block( dmginfo )
-	local BLOCK = LSCS_UNBLOCKED
-
-	if not self:GetActive() then return BLOCK end
-
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return BLOCK end
-
-	local a_weapon = dmginfo:GetInflictor()
-	local a_weapon_lscs = IsValid( a_weapon ) and a_weapon.LSCS
-
-	if a_weapon_lscs then
-		local _pos = a_weapon:GetBlockPos()
-
-		local BlockDistance = self:GetBlockDistanceTo( _pos )
-
-		if BlockDistance < LSCS:GetBlockDistanceNormal() then
-			if BlockDistance < LSCS:GetBlockDistancePerfect() then
-				BLOCK = LSCS_BLOCK_PERFECT
-			else
-				BLOCK = LSCS_BLOCK_NORMAL
-			end
-		else
-			return BLOCK
-			--BLOCK = LSCS_BLOCK
-		end
-	else
-		BLOCK = LSCS_BLOCK
-	end
-
-	if self:CanPlayDeflectAnim() then
-		ply:lscsPlayAnimation( "block"..math.random(1,3) )
-
-		self:SetNextDeflectAnim( CurTime() + 0.1 )
-
-		if BLOCK > LSCS_UNBLOCKED then
-			if BLOCK == LSCS_BLOCK_PERFECT then
-				ply:EmitSound( "saber_pblock" )
-			else
-				ply:EmitSound( "saber_block" )
-			end
-		end
-	end
-
-	dmginfo:SetDamage( 0 )
-
-	local pos = dmginfo:GetDamagePosition()
-	local effectdata = EffectData()
-		effectdata:SetOrigin( pos )
-		effectdata:SetNormal( Vector(0,0,1) )
-	util.Effect( "saber_block", effectdata, true, true )
-
-	return BLOCK
 end
 
 function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
@@ -127,7 +74,6 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 
 	return true
 end
-
 
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	if self:IsBrokenSaber() then -- If someone equips a saber with no hilt or blade just play animations. Its funny
@@ -176,23 +122,5 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	dmginfo:SetDamage( 0 )
 end
 
--- attacker cancel attack
 function SWEP:OnBlocked( BLOCK )
-	if not LSCS.ComboInterupt[ self.LastAttack ] then return end
-
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return false end
-
-	if BLOCK == LSCS_BLOCK_PERFECT then
-		self:CancelCombo( 1 )
-		ply:lscsForceWalk( 1 )
-		ply:lscsPlayAnimation( LSCS.ComboInterupt[ self.LastAttack ] )
-	else
-		if BLOCK == LSCS_BLOCK_NORMAL then
-			ply:lscsForceWalk( 0.2 )
-		else
-			ply:lscsForceWalk( 0.1 )
-		end
-	end
 end

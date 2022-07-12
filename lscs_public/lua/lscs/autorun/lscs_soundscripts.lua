@@ -19,6 +19,31 @@ sound.Add( {
 } )
 
 sound.Add( {
+	name = "saber_spin1",
+	channel = CHAN_STATIC,
+	volume = 0.8,
+	level = 100,
+	pitch = 100,
+	sound = "lscs/saber/saberspin1.wav"
+} )
+sound.Add( {
+	name = "saber_spin2",
+	channel = CHAN_STATIC,
+	volume = 0.8,
+	level = 100,
+	pitch = 100,
+	sound = "lscs/saber/saberspin2.wav"
+} )
+sound.Add( {
+	name = "saber_spin3",
+	channel = CHAN_STATIC,
+	volume = 0.8,
+	level = 100,
+	pitch = 100,
+	sound = "lscs/saber/saberspin3.wav"
+} )
+
+sound.Add( {
 	name = "saber_block",
 	channel = CHAN_STATIC,
 	volume = 0.5,

@@ -133,6 +133,9 @@ function LSCS:RegisterBlade( data )
 		no_trail = (data.no_trail == true),
 		sounds = {
 			Attack = (data.sounds.Attack or "saber_hup"),
+			Attack1 = (data.sounds.Attack1 or "saber_spin1"),
+			Attack2 = (data.sounds.Attack2 or "saber_spin2"),
+			Attack3 = (data.sounds.Attack3 or "saber_spin3"),
 			Activate = (data.sounds.Activate or "saber_turnon"),
 			Disable = (data.sounds.Disable or "saber_turnoff"),
 			Idle =  (data.sounds.Idle or "saber/saberhum4.wav"),
@@ -221,6 +224,10 @@ LSCS.Reload = function()
 			AutoBlock = COMBO.AutoBlock,
 			Attacks = table.Copy( COMBO.Attacks ),
 			LeftSaberActive = (COMBO.LeftSaberActive == true),
+			MaxBlockPoints = COMBO.MaxBlockPoints,
+			BPDrainPerHit = COMBO.BPDrainPerHit,
+			BlockDistanceNormal = COMBO.BlockDistanceNormal,
+			BlockDistancePerfect = COMBO.BlockDistancePerfect,
 		}
 
 		local ENT = {}

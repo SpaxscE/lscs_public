@@ -4,10 +4,12 @@ AddCSLuaFile( "cl_worldmodel.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_combo.lua" )
 AddCSLuaFile( "sh_animations.lua" )
+AddCSLuaFile( "sh_blockpoints.lua" )
 include( "shared.lua" )
 include("sh_combo.lua")
 include("sh_animations.lua")
 include("sv_blocking.lua")
+include("sh_blockpoints.lua")
 
 function SWEP:Reload()
 	if (self.NextReload or 0) > CurTime() then return end

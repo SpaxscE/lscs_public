@@ -1,7 +1,7 @@
 COMBO.id = "default"
 COMBO.PrintName = "Untrained"
 COMBO.Author = "Luna"
-COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi." -- write an essay explaining what makes your saber style the best
+COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi."
 
 COMBO.DeflectBullets = false
 COMBO.AutoBlock = false

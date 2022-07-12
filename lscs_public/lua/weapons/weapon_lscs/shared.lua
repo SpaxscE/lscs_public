@@ -11,7 +11,7 @@ SWEP.Author			= "Blu-x92 / Luna"
 SWEP.ViewModel		= "models/weapons/c_arms.mdl"
 SWEP.WorldModel		= "models/lscs/weapons/katarn.mdl"
 
-SWEP.Spawnable		= false
+SWEP.Spawnable		= true
 SWEP.AdminOnly		= false
 
 SWEP.Primary.ClipSize		= -1
@@ -41,6 +41,9 @@ SWEP.HAND_STRING = {
 }
 
 SWEP.AttackSound = ""
+SWEP.AttackSound1 = ""
+SWEP.AttackSound2 = ""
+SWEP.AttackSound3 = ""
 SWEP.ActivateSound = ""
 SWEP.DisableSound = ""
 SWEP.IdleSound = ""
@@ -48,11 +51,12 @@ SWEP.IdleSound = ""
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
 	self:NetworkVar( "Bool",1, "NWDMGActive" )
+	self:NetworkVar( "Bool",2, "AnimHasCancelAnim" )
 
 	self:NetworkVar( "Float",0, "NWNextAttack" )
 	self:NetworkVar( "Float",1, "NWGestureTime" )
-
 	self:NetworkVar( "Float",2, "Length" )
+	self:NetworkVar( "Float",3, "ComboHits" )
 
 	self:NetworkVar( "Int",0, "Stance" )
 	self:NetworkVar( "Int",1, "BlockPoints" )
@@ -66,6 +70,7 @@ function SWEP:SetupDataTables()
 
 	if SERVER then
 		self:SetStance( 1 )
+		self:SetBlockPoints( 999999 )
 	end
 end
 
@@ -132,6 +137,9 @@ function SWEP:BuildSounds()
 		local SND = data.sounds
 		if SND then
 			self.AttackSound = SND.Attack
+			self.AttackSound1 = SND.Attack1
+			self.AttackSound2 = SND.Attack2
+			self.AttackSound3 = SND.Attack3
 			self.ActivateSound = SND.Activate
 			self.DisableSound = SND.Disable
 			self.IdleSound = SND.Idle
@@ -188,10 +196,22 @@ function SWEP:SecondaryAttack()
 	self:SetStance( self:GetStance() + 1 )
 end
 
-function SWEP:DoAttackSound()
+function SWEP:DoAttackSound( N )
 	if not self:GetDMGActive() then return end
 
-	self:EmitSoundUnpredicted( self.AttackSound )
+	if not N then
+		self:EmitSoundUnpredicted( self.AttackSound )
+	else
+		if N == 1 then
+			self:EmitSoundUnpredicted( self.AttackSound1 )
+		elseif N == 2 then
+			self:EmitSoundUnpredicted( self.AttackSound2 )
+		elseif N == 3 then
+			self:EmitSoundUnpredicted( self.AttackSound3 )
+		else
+			self:EmitSoundUnpredicted( self.AttackSound )
+		end
+	end
 end
 
 function SWEP:Holster( wep )
@@ -214,17 +234,6 @@ end
 
 function SWEP:BeginAttack()
 	self:SetDMGActive( true )
-
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return end
-
-	local ID = ply:LookupAttachment( "anim_attachment_RH" )
-	local att = ply:GetAttachment( ID )
-
-	if att then
-		self:SetBlockPos( att.Pos )
-	end
 end
 
 function SWEP:FinishAttack()

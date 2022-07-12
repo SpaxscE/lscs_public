@@ -116,9 +116,12 @@ blade.dynamic_light = true
 blade.no_trail = false
 blade.sounds = {
 	Attack = "saber_hup",
+	Attack1 = "saber_spin1",
+	Attack2 = "saber_spin2",
+	Attack3 = "saber_spin3",
 	Activate = "saber_turnon",
 	Disable = "saber_turnoff",
-	Idle =  "saber/saberhum4.wav",
+	Idle =  "lscs/saber/saberhum4.wav",
 }
 LSCS:RegisterBlade( blade )
 
@@ -128,7 +131,7 @@ blade.id = "rubin"
 blade.color_blur = Color(200,0,0)
 blade.width = 0.8
 blade.widthWiggle = 0.7
-blade.sounds.Idle = "saber/saberhum2.wav"
+blade.sounds.Idle = "lscs/saber/saberhum2.wav"
 LSCS:RegisterBlade( blade ) -- then register new blade table
 
 -- repeat ^^
@@ -137,7 +140,7 @@ blade.id = "smaragd"
 blade.color_blur = Color(0,150,0)
 blade.width = 0.9
 blade.widthWiggle = 0.6
-blade.sounds.Idle = "saber/saberhum5.wav"
+blade.sounds.Idle = "lscs/saber/saberhum5.wav"
 LSCS:RegisterBlade( blade )
 
 -- repeat ^^
@@ -146,7 +149,7 @@ blade.id = "amethyst"
 blade.color_blur = Color(200,0,200)
 blade.width = 1
 blade.widthWiggle = 0.2
-blade.sounds.Idle = "saber/saberhum3.wav"
+blade.sounds.Idle = "lscs/saber/saberhum3.wav"
 LSCS:RegisterBlade( blade )
 
 -- repeat ^^
@@ -155,7 +158,7 @@ blade.id = "citrine"
 blade.color_blur = Color(200,150,0)
 blade.width = 0.9
 blade.widthWiggle = 0.6
-blade.sounds.Idle = "saber/saberhum1.wav"
+blade.sounds.Idle = "lscs/saber/saberhum1.wav"
 LSCS:RegisterBlade( blade )
 
 -- repeat ^^
@@ -164,7 +167,7 @@ blade.id = "allnatt"
 blade.color_blur = Color(200,200,0)
 blade.width = 0.65
 blade.widthWiggle = 1
-blade.sounds.Idle = "saber/saberhum3.wav"
+blade.sounds.Idle = "lscs/saber/saberhum3.wav"
 LSCS:RegisterBlade( blade )
 
 -- special case: model based blade
@@ -181,6 +184,9 @@ blade.dynamic_light = true
 blade.no_trail = false
 blade.sounds = {
 	Attack = "nanosword_hup",
+	Attack1 = "nanosword_hup",
+	Attack2 = "nanosword_hup",
+	Attack3 = "nanosword_hup",
 	Activate = "nanosword_turnon",
 	Disable = "nanosword_turnoff",
 	Idle =  "nanosword_idle",
