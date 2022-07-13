@@ -16,7 +16,7 @@ COMBO.Attacks = {
 	["SLAM"] = {
 		AttackAnim = "slashdown",
 		BeginAttack = function( weapon, ply ) 
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:Freeze( true )
 			ply:SetVelocity( Vector(0,0,200) )
 			ply:lscsSuppressFalldamage( CurTime() + 5 )
@@ -38,23 +38,23 @@ COMBO.Attacks = {
 		BeginAttack = function( weapon, ply )  
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 1 )
 			end)
 			timer.Simple(0.5, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 			timer.Simple(0.6, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 			timer.Simple(0.8, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 1 )
+				weapon:DoAttackSound( 1, 1 )
 			end)
 
 			if ply:OnGround() then
@@ -88,11 +88,11 @@ COMBO.Attacks = {
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -107,11 +107,11 @@ COMBO.Attacks = {
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -130,7 +130,7 @@ COMBO.Attacks = {
 	["-45-"] = {
 		AttackAnim = "vanguard_r_s3_t3",
 		BeginAttack = function( weapon, ply ) 
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -140,7 +140,7 @@ COMBO.Attacks = {
 	["+45+"] = {
 		AttackAnim = "a_combo4",
 		BeginAttack = function( weapon, ply ) 
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(10,0,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -150,34 +150,34 @@ COMBO.Attacks = {
 	["W_S_"] = {
 		AttackAnim = "pure_h_left_t3",
 		BeginAttack = function( weapon, ply )  
-			weapon:DoAttackSound(1)
+			weapon:DoAttackSound(1, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.4, Vector(400,0,0) )
 			ply:lscsSetTimedMove( 2, CurTime() + 0.4, 0.3, Vector(225,0,0) )
 			ply:lscsSetTimedMove( 3, CurTime() + 0.7, 0.6, Vector(0,0,0) )
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 			timer.Simple(0.5, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 1 )
 			end)
 			timer.Simple(0.6, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 2 )
 			end)
 			timer.Simple(0.8, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 2 )
+				weapon:DoAttackSound( 2, 1 )
 			end)
 			timer.Simple(1, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound()
+				weapon:DoAttackSound(nil, 1)
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -187,7 +187,7 @@ COMBO.Attacks = {
 	["__S_"] = {
 		AttackAnim = "a_combo4",
 		BeginAttack = function( weapon, ply ) 
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-10,0,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -202,15 +202,15 @@ COMBO.Attacks = {
 			ply:lscsSetTimedMove( 2, CurTime() + 0.4, 0.2, Vector(0,-80,0) )
 			ply:lscsSetTimedMove( 3, CurTime() + 0.6, 0.4, Vector(0,0,0) )
 
-			weapon:DoAttackSound( math.random(1,2) )
+			weapon:DoAttackSound( math.random(1,2), 1 )
 
 			timer.Simple(0.1, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound()
+				weapon:DoAttackSound(nil, 2)
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -225,15 +225,15 @@ COMBO.Attacks = {
 			ply:lscsSetTimedMove( 2, CurTime() + 0.4, 0.2, Vector(0,80,0) )
 			ply:lscsSetTimedMove( 3, CurTime() + 0.6, 0.4, Vector(0,0,0) )
 
-			weapon:DoAttackSound( math.random(1,2) )
+			weapon:DoAttackSound( math.random(1,2), 1 )
 
 			timer.Simple(0.1, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 2 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound()
+				weapon:DoAttackSound(nil, 1)
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -249,19 +249,19 @@ COMBO.Attacks = {
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 1 )
 			end)
 			timer.Simple(0.5, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 2 )
 			end)
 			timer.Simple(0.9, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -278,19 +278,19 @@ COMBO.Attacks = {
 
 			timer.Simple(0.2, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 			timer.Simple(0.4, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 1 )
 			end)
 			timer.Simple(0.5, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( math.random(1,2) )
+				weapon:DoAttackSound( math.random(1,2), 2 )
 			end)
 			timer.Simple(0.9, function()
 				if not IsValid( weapon ) then return end
-				weapon:DoAttackSound( 3 )
+				weapon:DoAttackSound( 3, 1 )
 			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -301,7 +301,7 @@ COMBO.Attacks = {
 		AttackAnim = "ryoku_b_s3_t1",
 		AttackAnimStart = 0.4,
 		BeginAttack = function( weapon, ply )  
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-1,1,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -311,7 +311,7 @@ COMBO.Attacks = {
 	["_AS_"] = {
 		AttackAnim = "ryoku_b_s3_t1",
 		BeginAttack = function( weapon, ply )  
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil, 1)
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(-1,-1,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
@@ -322,7 +322,7 @@ COMBO.Attacks = {
 		AttackAnim = "phalanx_b_s4_t1",
 		AttackAnimStart = 0,
 		BeginAttack = function( weapon, ply )  
-			weapon:DoAttackSound()
+			weapon:DoAttackSound(nil,1)
 			if ply:OnGround() then
 				ply:SetVelocity( Angle(0,ply:EyeAngles().y,0):Forward() * 1000 )
 			end

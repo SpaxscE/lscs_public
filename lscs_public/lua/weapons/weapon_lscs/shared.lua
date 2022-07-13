@@ -40,13 +40,26 @@ SWEP.HAND_STRING = {
 	[SWEP.HAND_LEFT] = "LH",
 }
 
-SWEP.AttackSound = ""
-SWEP.AttackSound1 = ""
-SWEP.AttackSound2 = ""
-SWEP.AttackSound3 = ""
-SWEP.ActivateSound = ""
-SWEP.DisableSound = ""
-SWEP.IdleSound = ""
+SWEP.CachedSounds = {
+	[SWEP.HAND_RIGHT]	= {
+		AttackSound = "",
+		AttackSound1 = "",
+		AttackSound2 = "",
+		AttackSound3 = "",
+		ActivateSound = "",
+		DisableSound = "",
+		IdleSound = "",
+	},
+	[SWEP.HAND_LEFT] = {
+		AttackSound = "",
+		AttackSound1 = "",
+		AttackSound2 = "",
+		AttackSound3 = "",
+		ActivateSound = "",
+		DisableSound = "",
+		IdleSound = "",
+	},
+}
 
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
@@ -133,17 +146,31 @@ end
 function SWEP:BuildSounds()
 	if self:IsBrokenSaber() then return end
 
-	for _, data in pairs( self:GetBladeData() ) do
-		local SND = data.sounds
-		if SND then
-			self.AttackSound = SND.Attack
-			self.AttackSound1 = SND.Attack1
-			self.AttackSound2 = SND.Attack2
-			self.AttackSound3 = SND.Attack3
-			self.ActivateSound = SND.Activate
-			self.DisableSound = SND.Disable
-			self.IdleSound = SND.Idle
-			break
+	for hand = 1, 2 do
+		local data = self:GetBladeData()[ hand ]
+
+		if data then
+			local SND = data.sounds
+
+			self.CachedSounds[ hand ] = {
+				AttackSound = (SND.Attack or ""),
+				AttackSound1 = (SND.Attack1 or ""),
+				AttackSound2 = (SND.Attack2 or ""),
+				AttackSound3 = (SND.Attack3 or ""),
+				ActivateSound = (SND.Activate or ""),
+				DisableSound = (SND.Disable or ""),
+				IdleSound = (SND.Idle or ""),
+			}
+		else
+			self.CachedSounds[ hand ] = {
+				AttackSound = "",
+				AttackSound1 = "",
+				AttackSound2 = "",
+				AttackSound3 = "",
+				ActivateSound = "",
+				DisableSound = "",
+				IdleSound = "",
+			}
 		end
 	end
 end
@@ -196,20 +223,42 @@ function SWEP:SecondaryAttack()
 	self:SetStance( self:GetStance() + 1 )
 end
 
-function SWEP:DoAttackSound( N )
+function SWEP:DoAttackSound( N, hand )
 	if not self:GetDMGActive() then return end
 
-	if not N then
-		self:EmitSoundUnpredicted( self.AttackSound )
-	else
-		if N == 1 then
-			self:EmitSoundUnpredicted( self.AttackSound1 )
-		elseif N == 2 then
-			self:EmitSoundUnpredicted( self.AttackSound2 )
-		elseif N == 3 then
-			self:EmitSoundUnpredicted( self.AttackSound3 )
+	if hand then
+		if hand == self.HAND_LEFT and not self:GetCombo().LeftSaberActive then return end -- this is gay
+
+		if N then
+			if N == 1 then
+				self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound1 )
+			elseif N == 2 then
+				self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound2 )
+			elseif N == 3 then
+				self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound3 )
+			else
+				self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound )
+			end
 		else
-			self:EmitSoundUnpredicted( self.AttackSound )
+			self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound )
+		end
+	else
+		for hand = self.HAND_RIGHT, self.HAND_LEFT do
+			if hand == self.HAND_LEFT and not self:GetCombo().LeftSaberActive then continue end -- this is gay
+
+			if N then
+				if N == 1 then
+					self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound1 )
+				elseif N == 2 then
+					self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound2 )
+				elseif N == 3 then
+					self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound3 )
+				else
+					self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound )
+				end
+			else
+				self:EmitSoundUnpredicted( self.CachedSounds[ hand ].AttackSound )
+			end
 		end
 	end
 end
@@ -285,10 +334,20 @@ function SWEP:Think()
 			self:BuildSounds()
 
 			self:SetHoldType( self:GetCombo().HoldType )
-			self:EmitSoundUnpredicted( self.ActivateSound )
+
+			self:EmitSoundUnpredicted( self.CachedSounds[1].ActivateSound )
+
+			if self:GetCombo().LeftSaberActive then -- this is gay
+				self:EmitSoundUnpredicted( self.CachedSounds[2].ActivateSound )
+			end
 		else
 			self:SetHoldType( "normal" )
-			self:EmitSoundUnpredicted( self.DisableSound )
+
+			self:EmitSoundUnpredicted( self.CachedSounds[1].DisableSound )
+
+			if self:GetCombo().LeftSaberActive then -- this is gay
+				self:EmitSoundUnpredicted( self.CachedSounds[2].DisableSound )
+			end
 		end
 
 		self:OnActiveChanged( self.OldActive, Active )

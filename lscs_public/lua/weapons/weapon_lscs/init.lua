@@ -22,11 +22,18 @@ end
 function SWEP:OnActiveChanged( oldActive, active )
 	if oldActive == nil then return end
 
-	if not self.IdleSound then return end
+	local IdleSound1 = self.CachedSounds[self.HAND_RIGHT].IdleSound
+	local IdleSound2 = self.CachedSounds[self.HAND_LEFT].IdleSound
 
 	if active then
-		self.SaberHumSound = CreateSound(self, self.IdleSound)
-		self.SaberHumSound:Play()
+		if IdleSound1 ~= "" then
+			self.SaberHumSound1 = CreateSound(self, IdleSound1)
+			self.SaberHumSound1:Play()
+		end
+		if IdleSound2 ~= "" then
+			self.SaberHumSound2 = CreateSound(self, IdleSound2)
+			self.SaberHumSound2:Play()
+		end
 	else
 		self:StopIdleSound()
 	end
@@ -37,20 +44,33 @@ function SWEP:OnTick( active )
 
 	if (self.Next_Think or 0) > CurTime then return end
 
-	if self.SaberHumSound then
-		local go = self:GetDMGActive()
+	local go = self:GetDMGActive()
+	local vol = go and 0 or 1, 0.4
+	local pitch = go and 140 or 100
 
-		self.SaberHumSound:ChangeVolume( go and 0 or 1, 0.4 )
-		self.SaberHumSound:ChangePitch( go and 140 or 100, 0.2 )
+	if self.SaberHumSound1 then
+		self.SaberHumSound1:ChangeVolume( vol )
+		self.SaberHumSound1:ChangePitch( pitch , 0.2 )
+	end
+
+	if self.SaberHumSound2 then
+		vol = self:GetCombo().LeftSaberActive and vol or 0 -- this is gay
+
+		self.SaberHumSound2:ChangeVolume( vol )
+		self.SaberHumSound2:ChangePitch( pitch , 0.2 )
 	end
 
 	self.Next_Think = CurTime + 0.05
 end
 
 function SWEP:StopIdleSound()
-	if self.SaberHumSound then
-		self.SaberHumSound:Stop()
-		self.SaberHumSound = nil
+	if self.SaberHumSound1 then
+		self.SaberHumSound1:Stop()
+		self.SaberHumSound1 = nil
+	end
+	if self.SaberHumSound2 then
+		self.SaberHumSound2:Stop()
+		self.SaberHumSound2 = nil
 	end
 end
 

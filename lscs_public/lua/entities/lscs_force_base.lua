@@ -7,9 +7,14 @@ ENT.Spawnable		= false
 ENT.AdminSpawnable		= false
 
 ENT.GlowMat = Material( "sprites/light_glow02_add" )
-ENT.GlowCol = Color(255,200,0,255)
+ENT.GlowCol = Color(0,127,255,255)
 
-if CLIENT then
+SERVER then
+	function ENT:Initialize()
+		BaseClass.Initialize( self )
+		self:SetColor( Color(40,40,40,255) )
+	end
+else
 	function ENT:DrawTranslucent()
 		self:DrawModel()
 	end

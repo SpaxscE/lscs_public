@@ -1,5 +1,9 @@
 local meta = FindMetaTable( "Player" )
 
+function meta:GetForcePoints()
+	return self:GetNWFloat( "force_mana", 100 ) -- gay
+end
+
 function meta:lscsGetShootPos()
 	local attachment = self:GetAttachment( self:LookupAttachment( "eyes" ) )
 
@@ -32,6 +36,18 @@ end
 
 if SERVER then
 	util.AddNetworkString( "lscs_sync_combo_data" )
+
+	function meta:SetForcePoints( num )
+		self:SetNWFloat( "force_mana", num )
+	end
+
+	function meta:TakeForcePoints( Amount )
+		self._lscsNextForceRegen = CurTime() + 2
+
+		local Force = self:GetForce() - Amount
+
+		self:SetForce( math.max( Force, 0 ) )
+	end
 
 	function meta:lscsSendComboDataTo( ply )
 		if not IsValid( ply ) then return end
@@ -219,50 +235,16 @@ function meta:lscsClearEquipped( type, hand )
 	end
 end
 
-
-function meta:Lazy( a )
-	if a then
-		self:SetNWBool( "WellYes", false )
-		return
-	end
-
-	table.Empty( self:lscsGetInventory() )
-	table.Empty( self:lscsGetEquipped() )
-	self:lscsSyncInventory()
-
-	self:Give("item_crystal_sapphire")
-	self:Give("item_saberhilt_katarn")
-	self:Give("item_stance_standard")
-	timer.Simple(0.1, function()
-		self:lscsEquipItem( 1, true )
-		self:lscsEquipItem( 2, true )
-		self:lscsEquipItem( 3, true )
-		self:lscsCraftSaber()
-		timer.Simple(0.1, function()
-			self:GetActiveWeapon():SetActive( true )
-		end )
-	end)
-	self:SetNWBool( "WellYes", true )
-end
-
 hook.Add( "StartCommand", "!!!!lscs_syncedinputs", function( ply, cmd )
 	if not ply.lscs_cmd then ply.lscs_cmd = {} end
 
-	if ply:GetNWBool( "WellYes", false ) then
-		ply.lscs_cmd[ IN_ATTACK ] = true
-		ply.lscs_cmd[ IN_FORWARD ] = false
-		ply.lscs_cmd[ IN_MOVELEFT ] = false
-		ply.lscs_cmd[ IN_BACK ] = false
-		ply.lscs_cmd[ IN_MOVERIGHT ] = false
-		ply.lscs_cmd[ IN_SPEED ] = false
-		ply.lscs_cmd[ IN_JUMP ] = false
-	else
-		ply.lscs_cmd[ IN_ATTACK ] = cmd:KeyDown( IN_ATTACK )
-		ply.lscs_cmd[ IN_FORWARD ] = cmd:KeyDown( IN_FORWARD )
-		ply.lscs_cmd[ IN_MOVELEFT ] = cmd:KeyDown( IN_MOVELEFT )
-		ply.lscs_cmd[ IN_BACK ] = cmd:KeyDown( IN_BACK )
-		ply.lscs_cmd[ IN_MOVERIGHT ] = cmd:KeyDown( IN_MOVERIGHT )
-		ply.lscs_cmd[ IN_SPEED ] = cmd:KeyDown( IN_SPEED )
-		ply.lscs_cmd[ IN_JUMP ] = cmd:KeyDown( IN_JUMP )
-	end
+	-- doing it like this works better than calling ply:KeyDown() directly in the SWEP. prediction lag compensation cancer
+
+	ply.lscs_cmd[ IN_ATTACK ] = cmd:KeyDown( IN_ATTACK )
+	ply.lscs_cmd[ IN_FORWARD ] = cmd:KeyDown( IN_FORWARD )
+	ply.lscs_cmd[ IN_MOVELEFT ] = cmd:KeyDown( IN_MOVELEFT )
+	ply.lscs_cmd[ IN_BACK ] = cmd:KeyDown( IN_BACK )
+	ply.lscs_cmd[ IN_MOVERIGHT ] = cmd:KeyDown( IN_MOVERIGHT )
+	ply.lscs_cmd[ IN_SPEED ] = cmd:KeyDown( IN_SPEED )
+	ply.lscs_cmd[ IN_JUMP ] = cmd:KeyDown( IN_JUMP )
 end )

@@ -84,6 +84,7 @@ local icon_lscs = Material("lscs/ui/icon256.png")
 local icon_inventory = Material("lscs/ui/inventory.png")
 local icon_hilt = Material("lscs/ui/hilt.png")
 local icon_stance = Material("lscs/ui/stance.png")
+local icon_force = Material("lscs/ui/force.png")
 local icon_settings = Material("lscs/ui/settings.png")
 
 local icon_check = Material("lscs/ui/check.png")
@@ -132,9 +133,9 @@ local Frame
 local FrameBarHeight = 24
 
 local FrameSizeX = 750
-local FrameSizeY = 400 + FrameBarHeight
+local FrameSizeY = 480 + FrameBarHeight
 
-local SelectorHeight = 80 * 5
+local SelectorHeight = 80 * 6
 local SelectorWidth = 80
 local SelectorWidthActive = 196
 
@@ -260,7 +261,13 @@ function LSCS:SideBar( Frame )
 		LSCS:BuildStanceMenu( Frame )
 	end
 
-	local button = CreateSideBarButton( icon_settings, 5, "Settings" )
+	local button = CreateSideBarButton( icon_force, 5, "Force" )
+		button.DoClick = function( self )
+		BaseButtonClickSB( self )
+		LSCS:BuildForceMenu( Frame )
+	end
+
+	local button = CreateSideBarButton( icon_settings, 6, "Settings" )
 		button.DoClick = function( self )
 		BaseButtonClickSB( self )
 		LSCS:BuildSettings( Frame )
@@ -594,18 +601,16 @@ function LSCS:BuildSaberMenu( Frame )
 	local HiltR, HiltL = ply:lscsGetHilt()
 	local BladeR, BladeL = ply:lscsGetBlade()
 
+	local AAA = 80
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
-		local Col = menu_light
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
+		draw.RoundedBoxEx( 8, 4, 4, w - 8, h - 8, menu_dim, false, false, false, true )
 
-		Col = menu_dim
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 5, 15, PanelSizeX - 10, PanelSizeY - 15 )
-
+		draw.SimpleText( "Information", "LSCS_FONT", 8, 14, menu_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "NOTE: For this to work you need a Hilt and a Blade-Crystal in your Inventory and you must have permission to spawn SWEP's", "LSCS_FONT_SMALL", 8, 30, menu_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 
 		if IsValid( self.Main ) and self.Main:IsHovered() then
 			local Col = menu_white_dim
@@ -613,28 +618,28 @@ function LSCS:BuildSaberMenu( Frame )
 				Col = menu_white
 			end
 			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,35+64,0) )
-			surface.DrawLine( 163, 99, PanelSizeX * 0.5 - 64,35+64 )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY - 54,0), Vector(PanelSizeX * 0.5 + 64,35+64+AAA,0) )
+			surface.DrawLine( 163, 99+AAA, PanelSizeX * 0.5 - 64,35+64+AAA )
 			Col = menu_white_dim
-			if HiltL and BladeR then
+			if HiltL and BladeL then
 				Col = menu_white
 			end
 			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY - 54,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
 			surface.DrawLine( 163, PanelSizeY - 64 - 35, PanelSizeX * 0.5 - 64,PanelSizeY - 64 - 35 )
 		else
 			local Col = menu_white_dim
 			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,35+64,0) )
-			surface.DrawLine( 163, 99, PanelSizeX * 0.5 - 64,35+64 )
-			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY * 0.5,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY - 54,0), Vector(PanelSizeX * 0.5 + 64,35+64+AAA,0) )
+			surface.DrawLine( 163, 99+AAA, PanelSizeX * 0.5 - 64,35+64+AAA )
+			DrawBezier( Vector(PanelSizeX - 125,PanelSizeY - 54,0), Vector(PanelSizeX * 0.5 + 64,PanelSizeY - 64 - 35,0) )
 			surface.DrawLine( 163, PanelSizeY - 64 - 35, PanelSizeX * 0.5 - 64,PanelSizeY - 64 - 35 )
 		end
 	end
 
 	local Main = vgui.Create( "DButton", Panel )
 	Main:SetText( "" )
-	Main:SetPos( PanelSizeX - 125,  PanelSizeY * 0.5 - 50 )
+	Main:SetPos( PanelSizeX - 125, PanelSizeY - 104 )
 	Main:SetSize( 100, 100 )
 	Main.Paint = function(self, w, h )
 		local Col = menu_dark
@@ -642,9 +647,13 @@ function LSCS:BuildSaberMenu( Frame )
 		surface.DrawRect( 0, 0, w, h )
 
 		Col = DrawButtonClick( self, w, h )
+		local Col2 = Col
 
 		surface.SetMaterial( icon_check )
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		if self:IsHovered() then
+			Col2 = Color(0,255,0)
+		end
+		surface.SetDrawColor( Col2.r, Col2.g, Col2.b, Col2.a )
 		surface.DrawTexturedRect( 18, 18, w - 36, h - 36 )
 
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
@@ -658,26 +667,10 @@ function LSCS:BuildSaberMenu( Frame )
 	Panel.Main = Main
 
 	-- RIGHT
-	local Clear = vgui.Create( "Button", Panel )
-	Clear:SetText( "" )	
-	Clear:SetSize( 46,  46 )
-	Clear:SetPos( PanelSizeX - 185, 79 )
-	Clear.DoClick = function( self )
-		BaseButtonClick( self )
-		ply:lscsClearEquipped( "hilt", true )
-		ply:lscsClearEquipped( "crystal", true )
-	end
-	Clear.Paint = function(self, w, h )
-		local Col = DrawButtonClick( self, w, h )
-		surface.SetMaterial( icon_rhand )
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawTexturedRect( 0, 0, w, h )
-	end
-
 	local ButtonHilt = vgui.Create( "DButton", Panel )
-	ButtonHilt.InfoText = "Hilt"
+	ButtonHilt.InfoText = "Hilt [RH]"
 	ButtonHilt:SetText( "" )
-	ButtonHilt:SetPos( PanelSizeX * 0.5 - 64, 35 )
+	ButtonHilt:SetPos( PanelSizeX * 0.5 - 64, 35 + AAA )
 	ButtonHilt:SetSize( 128, 128 )
 	ButtonHilt.Item = LSCS:GetHilt( HiltR )
 	ButtonHilt.Paint = CrafterButtonPaint
@@ -714,9 +707,9 @@ function LSCS:BuildSaberMenu( Frame )
 	ButtonHilt.Main = Main
 
 	local ButtonBlade = vgui.Create( "DButton", Panel )
-	ButtonBlade.InfoText = "Crystal"
+	ButtonBlade.InfoText = "Crystal [RH]"
 	ButtonBlade:SetText( "" )
-	ButtonBlade:SetPos( 35, 35 )
+	ButtonBlade:SetPos( 35, 35+AAA )
 	ButtonBlade:SetSize( 128, 128 )
 	ButtonBlade.Item = LSCS:GetBlade( BladeR )
 	ButtonBlade.Paint = CrafterButtonPaint
@@ -754,24 +747,8 @@ function LSCS:BuildSaberMenu( Frame )
 	ButtonBlade.Main = Main
 
 	-- LEFT
-	local Clear = vgui.Create( "Button", Panel )
-	Clear:SetText( "" )	
-	Clear:SetSize( 46,  46 )
-	Clear:SetPos( PanelSizeX - 185, PanelSizeY - 119 )
-	Clear.DoClick = function( self )
-		BaseButtonClick( self )
-		ply:lscsClearEquipped( "hilt", false )
-		ply:lscsClearEquipped( "crystal", false )
-	end
-	Clear.Paint = function(self, w, h )
-		local Col = DrawButtonClick( self, w, h )
-		surface.SetMaterial( icon_lhand )
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawTexturedRect( 0, 0, w, h )
-	end
-
 	local ButtonHilt = vgui.Create( "DButton", Panel )
-	ButtonHilt.InfoText = "Hilt"
+	ButtonHilt.InfoText = "Hilt [LH]"
 	ButtonHilt:SetText( "" )
 	ButtonHilt:SetPos( PanelSizeX * 0.5 - 64, PanelSizeY - 128 - 35 )
 	ButtonHilt:SetSize( 128, 128 )
@@ -810,7 +787,7 @@ function LSCS:BuildSaberMenu( Frame )
 	ButtonHilt.Main = Main
 
 	local ButtonBlade = vgui.Create( "DButton", Panel )
-	ButtonBlade.InfoText = "Crystal"
+	ButtonBlade.InfoText = "Crystal [LH]"
 	ButtonBlade:SetText( "" )
 	ButtonBlade:SetPos( 35, PanelSizeY - 128 - 35 )
 	ButtonBlade:SetSize( 128, 128 )
@@ -962,37 +939,9 @@ function LSCS:BuildStanceMenu( Frame )
 
 	end
 
-	local description = vgui.Create( "DPanel", Panel )
-	description:SetSize( 0, 180 )
-	description:Dock( TOP )
-	description:DockMargin( 4, 4, 0, 0 )
-	description.Paint = function(self, w, h ) 
-		local Col = menu_dim
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
-	end
-	local richtext = vgui.Create( "RichText", description )
-	richtext:Dock( FILL )
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Name:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.name or combo.id).."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Description:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.description or "").."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	richtext:AppendText("Author:\n")
-	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	richtext:AppendText((combo.author or "").."\n\n")
-	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	--richtext:AppendText("Internal-ID:\n")
-	--richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	--richtext:AppendText(combo.id)
-
 	local SPB = vgui.Create( "DPanel", Panel )
-	SPB:SetSize( 276, 0 )
-	SPB:Dock( RIGHT )
+	SPB:SetSize( 0, 280 )
+	SPB:Dock( BOTTOM )
 	SPB:DockMargin( 4, 4, 0, 4 )
 	SPB.Paint = function(self, w, h )
 		local Col = menu_dim
@@ -1072,12 +1021,50 @@ function LSCS:BuildStanceMenu( Frame )
 		end
 	end
 
+	local description = vgui.Create( "DPanel", Panel )
+	description:SetSize( 275, 0 )
+	description:Dock( LEFT )
+	description:DockMargin( 4, 4, 0, 0 )
+	description.Paint = function(self, w, h ) 
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+	local richtext = vgui.Create( "RichText", description )
+	richtext:Dock( FILL )
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Name:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.name or combo.id).."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	richtext:AppendText("Description:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.description or "").."\n\n")
+
+	if combo.LeftSaberActive then
+		richtext:InsertColorChange( 0,255,0,255 )
+		richtext:AppendText("This Stance supports Left Hand Sabers\n\n")
+	else
+		richtext:InsertColorChange( 255,200,0,255 )
+		richtext:AppendText("This Stance does not support Left Hand Sabers\n\n")
+	end
+
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+
+	richtext:AppendText("Author:\n")
+	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	richtext:AppendText((combo.author or "").."\n\n")
+	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	--richtext:AppendText("Internal-ID:\n")
+	--richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+	--richtext:AppendText(combo.id)
+
 	local Button = vgui.Create( "DButton", Panel )
 	Button.Item = combo
 	Button:SetText( "" )
-	Button:SetSize( 128, 0 )
+	Button:SetSize( 130, 0 )
 	Button:Dock( LEFT )
-	Button:DockMargin( 4, 4, 0, 4 )
+	Button:DockMargin( 4, 4, 4, 0 )
 	Button.Paint = CrafterButtonPaint
 	Button.DoClick = function( self )
 		BaseButtonClick( self )
@@ -1095,6 +1082,22 @@ function LSCS:BuildStanceMenu( Frame )
 	LSCS:SideBar( Frame )
 
 	Frame.ID = 4
+end
+
+function LSCS:BuildForceMenu( Frame )
+	local Panel = vgui.Create( "DPanel", Frame )
+	Panel:SetPos( PanelPosX, PanelPosY )
+	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel.Paint = function(self, w, h )
+		local Col = menu_light
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	LSCS:SetActivePanel( Panel )
+	LSCS:SideBar( Frame )
+
+	Frame.ID = 5
 end
 
 function LSCS:BuildSettings( Frame )
@@ -1133,7 +1136,7 @@ function LSCS:BuildSettings( Frame )
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
 
-	Frame.ID = 5
+	Frame.ID = 6
 end
 
 function LSCS:RefreshMenu()
@@ -1147,6 +1150,12 @@ function LSCS:RefreshMenu()
 	end
 	if Frame.ID == 4 then
 		LSCS:BuildStanceMenu( Frame )
+	end
+	if Frame.ID == 5 then
+		LSCS:BuildForceMenu( Frame )
+	end
+	if Frame.ID == 6 then
+		LSCS:BuildSettings( Frame )
 	end
 end
 
