@@ -1,4 +1,4 @@
-COMBO.id = "standard"
+COMBO.id = "yongli"
 COMBO.PrintName = "YongLi"
 COMBO.Author = "Luna"
 COMBO.Description = "Standard Sword Art. Quick to learn, hard to master, but balanced and combat proven."

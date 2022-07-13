@@ -232,7 +232,7 @@ LSCS.Reload = function()
 
 		local ENT = {}
 
-		ENT.Base = "lscs_holocron_base"
+		ENT.Base = "lscs_stance_base"
 
 		ENT.PrintName = COMBO.PrintName
 		ENT.Author = COMBO.Author
@@ -244,6 +244,14 @@ LSCS.Reload = function()
 		scripted_ents.Register( ENT, class )
 
 		table.Empty( COMBO )
+	end
+
+	-- content, such as hilts, blades, force powers
+	for _, filename in pairs( file.Find("lscs/content/*.lua", "LUA") ) do
+		if SERVER then
+			AddCSLuaFile("lscs/content/"..filename)
+		end
+		include("lscs/content/"..filename)
 	end
 end
 

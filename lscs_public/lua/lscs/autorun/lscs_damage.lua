@@ -134,7 +134,7 @@ if SERVER then
 			end
 		end
 
-		if victim:IsPlayer() or victim:IsNPC() then
+		if victim:IsPlayer() or victim:IsNPC() or victim:IsNextBot() then
 			victim:EmitSound( "saber_hit" )
 		else
 			victim:EmitSound( "saber_lighthit" )
