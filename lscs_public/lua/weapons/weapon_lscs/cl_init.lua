@@ -89,10 +89,10 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
-	local view = {}
 
-	view.origin = pos
-	view.angles = angles
+	local view = {}
+	view.origin = ply:lscsGetViewOrigin()
+	view.angles = ply:EyeAngles()
 	view.fov = fov
 	view.drawviewer = true
 

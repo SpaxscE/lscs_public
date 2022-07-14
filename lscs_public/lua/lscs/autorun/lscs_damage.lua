@@ -1,3 +1,7 @@
+-- this is where the public saber system differentiates the most from the GVP version.
+-- in GVP, since i have full control over what weapon systems to expect, the bullet or damage data is never actually messed with as blood effects, damage, tracer information ect all happen through internal communication with the weapon systems.
+-- on a public version however, it can not be done like this as we do not know what kind of weapons there are and if they rely on their callbacks ect. Generally the public version is written in alot more cancerous way, as it has to support a wide range of unknown weapon systems.
+-- so instead of preventing it all before it happens, this system just lets it happen and then tries to clean up the mess afterwards. BIG GAY
 
 local meta = FindMetaTable( "Player" )
 
@@ -20,7 +24,7 @@ function meta:lscsIsFalldamageSuppressed()
 end
 
 function meta:lscsShouldBleed()
-	return self:GetNWBool( "lscsShouldBleed", true )
+	return self:GetNWBool( "lscsShouldBleed", true ) -- gay
 end
 
 if SERVER then
@@ -40,13 +44,9 @@ if SERVER then
 
 				if not IsValid( wep ) or not wep.LSCS then return end
 
-				local Prevent = wep:DeflectBullet( att, tr, dmginfo, bullet )
+				wep:DeflectBullet( att, tr, dmginfo, bullet )
 
-				if Prevent == true then return end
-
-				if oldCallback then
-					oldCallback( att, tr, dmginfo )
-				end
+				oldCallback( att, tr, dmginfo )
 			end
 		end
 
@@ -87,22 +87,19 @@ if SERVER then
 	}
 
 	function LSCS:ApplyDamage( ply, victim, pos, dir )
-		local damage = LSCS.SaberDamage
-
 		local dmg = DamageInfo()
-		dmg:SetDamage( damage )
+		dmg:SetDamage( LSCS.SaberDamage )
 		dmg:SetAttacker( ply )
 		dmg:SetDamageForce( (victim:GetPos() - ply:GetPos()):GetNormalized() * 10000 )
 		dmg:SetDamagePosition( pos ) 
 		dmg:SetDamageType( DMG_ENERGYBEAM )
 
-		if slice[ victim:GetClass() ] then
-			victim:SetPos( victim:GetPos() + Vector(0,0,5) )
+		if slice[ victim:GetClass() ] then -- gay, because it plays metal slicing sound
+			victim:SetPos( victim:GetPos() + Vector(0,0,5) ) -- gay, because their ragdoll spawns 5 units lower than the npc is at causing ragdoll spazz...
 			dmg:SetDamageType( bit.bor( DMG_CRUSH, DMG_SLASH ) )
 		end
 
 		local startpos = ply:GetShootPos()
-		local endpos = pos + (victim:GetPos() - ply:GetPos()):GetNormalized() * 50
 
 		local trace = util.TraceLine( {
 			start = startpos,
@@ -112,6 +109,8 @@ if SERVER then
 			end
 		} )
 
+		-- HOW FAR do we trust our client's? ;), ideally this would check for actual blade location during time of detected hit or call lag compensation. TODO maybe?
+		-- Oh well, Since we have a defined time in which damage can happen and a defined range in which damage can be done this shouldn't be a huge problem. It is a small problem with PING as i have noticed but prediction and melee combat is always gay, like this entire lscs_damage.lua file
 		if (trace.HitPos - startpos):Length() > 100 then return end
 
 		local wep = ply:GetActiveWeapon()
@@ -124,17 +123,17 @@ if SERVER then
 		if victim:IsPlayer() then
 			local victim_wep = victim:GetActiveWeapon()
 			if IsValid( victim_wep ) and victim_wep.LSCS then
-				local Blocked = victim_wep:Block( dmg )
+				local Blocked = victim_wep:Block( dmg ) -- this will modify dmginfo internally
 
 				if Blocked ~= LSCS_UNBLOCKED then
-					wep:OnBlocked( Blocked )
+					wep:OnBlocked( Blocked ) -- callback function
 
 					return
 				end
 			end
 		end
 
-		if victim:IsPlayer() or victim:IsNPC() or victim:IsNextBot() then
+		if victim:IsPlayer() or victim:IsNPC() or victim:IsNextBot() then -- or victim:IsGay() or lscs_damage.lua:IsGay() then
 			victim:EmitSound( "saber_hit" )
 		else
 			victim:EmitSound( "saber_lighthit" )
@@ -142,6 +141,7 @@ if SERVER then
 
 		victim:TakeDamageInfo( dmg )
 
+		-- net. vs internal EmitSound networking. Ready,Set, GO! Wohever reaches the client first wins
 		net.Start( "lscs_saberdamage" )
 			net.WriteVector( pos )
 			net.WriteVector( dir )
@@ -201,7 +201,7 @@ else
 		end
 	end)
 
-	-- for some reason ply:RemoveAllDecals() doesnt work on players when called serverside... bug?
+	-- for some reason ply:RemoveAllDecals() doesnt work on players when called serverside... bug? It's gay because every line lscs_damage.lua is gay
 	net.Receive( "lscs_clearblood", function( len )
 		local ply = net.ReadEntity()
 		if not IsValid( ply ) then return end
