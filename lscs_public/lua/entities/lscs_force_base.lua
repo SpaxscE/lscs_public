@@ -9,7 +9,7 @@ ENT.AdminSpawnable		= false
 ENT.GlowMat = Material( "sprites/light_glow02_add" )
 ENT.GlowCol = Color(0,127,255,255)
 
-SERVER then
+if SERVER then
 	function ENT:Initialize()
 		BaseClass.Initialize( self )
 		self:SetColor( Color(40,40,40,255) )

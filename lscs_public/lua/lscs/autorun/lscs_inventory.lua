@@ -10,7 +10,7 @@ if SERVER then
 		local item = entity:GetClass()
 
 		local index = 1 -- start at 1
-		for i,_ in ipairs( self:lscsGetInventory() ) do
+		for _,_ in ipairs( self:lscsGetInventory() ) do
 			index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
 		end
 
@@ -126,6 +126,20 @@ if SERVER then
 			net.WriteInt( id, 8 )
 		net.Send( self )
 
+		if self:lscsGetEquipped()[ id ] then -- we dropped a equipped item
+			local _item = LSCS:ClassToItem( item ) -- convert item from inventory which is a class to actual item data
+			if _item.type =="hilt" or _item.type == "crystal" then -- the item is a crystal or hilt which means we have to craft a lightsaber so it actually takes these parts out
+
+				-- this garbage has to be called before crafting because it pulls stuff out of the inventory
+				self:lscsGetInventory()[ id ] = nil
+				self:lscsGetEquipped()[ id ] = nil
+				self:lscsBuildPlayerInfo()
+
+				-- craft the saber
+				self:lscsCraftSaber()
+			end
+		end
+
 		self:lscsGetInventory()[ id ] = nil
 		self:lscsGetEquipped()[ id ] = nil
 
@@ -220,6 +234,8 @@ else
 
 		self:lscsGetInventory()[ id ] = nil
 		self:lscsGetEquipped()[ id ] = nil
+
+		self:lscsBuildPlayerInfo()
 	end
 
 	function meta:lscsEquipItem( index, hand )

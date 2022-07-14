@@ -1,7 +1,7 @@
 local meta = FindMetaTable( "Player" )
 
-function meta:GetForcePoints()
-	return self:GetNWFloat( "force_mana", 100 ) -- gay
+function meta:lscsGetForce()
+	return self:GetNWFloat( "lscs_force_mana", 100 ) -- gay
 end
 
 function meta:lscsGetShootPos()
@@ -37,16 +37,23 @@ end
 if SERVER then
 	util.AddNetworkString( "lscs_sync_combo_data" )
 
-	function meta:SetForcePoints( num )
-		self:SetNWFloat( "force_mana", num )
+	function meta:lscsIsValid()
+		local HiltR, HiltL = self:lscsGetHilt()
+		local BladeR, BladeL = self:lscsGetBlade()
+
+		return (HiltR and BladeR and HiltR ~= "" and BladeR ~= "") or (HiltL and BladeL and HiltL ~= "" and BladeL ~= "")
 	end
 
-	function meta:TakeForcePoints( Amount )
+	function meta:lscsSetForce( num )
+		self:SetNWFloat( "lscs_force_mana", num )
+	end
+
+	function meta:lscsTakeForce( Amount )
 		self._lscsNextForceRegen = CurTime() + 2
 
-		local Force = self:GetForce() - Amount
+		local Force = self:lscsGetForce() - Amount
 
-		self:SetForce( math.max( Force, 0 ) )
+		self:lscsSetForce( math.max( Force, 0 ) )
 	end
 
 	function meta:lscsSendComboDataTo( ply )
@@ -72,6 +79,12 @@ if SERVER then
 				other_ply:lscsSendComboDataTo( ply )
 			end )
 		end
+	end )
+
+	hook.Add( "PlayerSpawn", "!!!!!lscs_auto_equip", function( ply )
+		if not ply:lscsIsValid() then return end
+
+		ply:lscsCraftSaber( true )
 	end )
 else
 	net.Receive( "lscs_sync_combo_data", function( len )

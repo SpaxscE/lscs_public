@@ -54,6 +54,10 @@ function LSCS:GetStance( name )
 	return LSCS.Stance[ name ]
 end
 
+function LSCS:GetForce( name )
+	return LSCS.Force[ name ]
+end
+
 function LSCS:ClassToItem( class )
 	if not isstring( class ) then return end
 
@@ -69,6 +73,9 @@ function LSCS:ClassToItem( class )
 	end
 	if type == "stance" then
 		return LSCS.Stance[ id ]
+	end
+	if type == "force" then
+		return LSCS.ForcePower[ id ]
 	end
 
 	return false

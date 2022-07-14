@@ -11,7 +11,7 @@ SWEP.Author			= "Blu-x92 / Luna"
 SWEP.ViewModel		= "models/weapons/c_arms.mdl"
 SWEP.WorldModel		= "models/lscs/weapons/katarn.mdl"
 
-SWEP.Spawnable		= true
+SWEP.Spawnable		= false
 SWEP.AdminOnly		= false
 
 SWEP.Primary.ClipSize		= -1
@@ -214,6 +214,7 @@ end
 function SWEP:Initialize()
 	self:SetHoldType( "normal" )
 	self:DrawShadow( false )
+	self:SetNextPrimaryAttack( CurTime() + 1 )
 end
 
 function SWEP:PrimaryAttack()

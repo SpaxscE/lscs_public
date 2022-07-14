@@ -4,7 +4,7 @@ local meta = FindMetaTable( "Player" )
 if SERVER then
 	util.AddNetworkString( "lscs_craft_saber" )
 
-	function meta:lscsCraftSaber()
+	function meta:lscsCraftSaber( dont_mess_with_pickup_notifications )
 		local HiltR, HiltL = self:lscsGetHilt()
 		local BladeR, BladeL = self:lscsGetBlade()
 
@@ -19,9 +19,9 @@ if SERVER then
 
 		self:StripWeapon( "weapon_lscs" )
 
-		self:SetSuppressPickupNotices( true )
+		if not dont_mess_with_pickup_notifications then self:SetSuppressPickupNotices( true ) end
 		self:Give("weapon_lscs")
-		self:SetSuppressPickupNotices( false )
+		if not dont_mess_with_pickup_notifications then self:SetSuppressPickupNotices( false) end
 
 		self:SelectWeapon( "weapon_lscs" )
 

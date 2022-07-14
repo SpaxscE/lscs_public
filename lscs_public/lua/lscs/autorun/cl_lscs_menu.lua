@@ -442,7 +442,16 @@ function LSCS:BuildInventory( Frame )
 			self.menu = DermaMenu()
 			if isbool( ply:lscsGetEquipped()[ self:GetID() ] ) then
 				self.menu:AddOption( "Unequip", function()
-					ply:lscsEquipItem( self:GetID(), nil )
+					local Item = self:GetItem()
+
+					if not Item then return end
+
+					if Item.type == "hilt" or Item.type == "crystal" then
+						ply:lscsEquipItem( self:GetID(), nil )
+						ply:lscsCraftSaber()
+					else
+						ply:lscsEquipItem( self:GetID(), nil )
+					end
 				end )
 			else
 				self.menu:AddOption( "Equip", function()
@@ -607,6 +616,11 @@ function LSCS:BuildSaberMenu( Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
 	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( 150,150,150,150 )
+		local X, Y = self:CursorPos()
+		surface.DrawTexturedRectRotated( X, Y, 512, 512, 0 )
+
 		draw.RoundedBoxEx( 8, 4, 4, w - 8, h - 8, menu_dim, false, false, false, true )
 
 		draw.SimpleText( "Information", "LSCS_FONT", 8, 14, menu_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
@@ -680,6 +694,7 @@ function LSCS:BuildSaberMenu( Frame )
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
 				ply:lscsClearEquipped( "hilt", true )
+				ply:lscsCraftSaber()
 			end )
 			self.menu:Open()
 		else
@@ -720,6 +735,7 @@ function LSCS:BuildSaberMenu( Frame )
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
 				ply:lscsClearEquipped( "crystal", true )
+				ply:lscsCraftSaber()
 			end )
 			self.menu:Open()
 		else
@@ -760,6 +776,7 @@ function LSCS:BuildSaberMenu( Frame )
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
 				ply:lscsClearEquipped( "hilt", false )
+				ply:lscsCraftSaber()
 			end )
 			self.menu:Open()
 		else
@@ -799,6 +816,7 @@ function LSCS:BuildSaberMenu( Frame )
 			self.menu = DermaMenu()
 			self.menu:AddOption( "Unequip", function()
 				ply:lscsClearEquipped( "crystal", false )
+				ply:lscsCraftSaber()
 			end )
 			self.menu:Open()
 		else
@@ -850,6 +868,11 @@ function LSCS:BuildStanceMenu( Frame )
 	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
 		draw.RoundedBoxEx( 8, 0, 0, w, h, menu_light, false, false, false, true )
+
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( 150,150,150,150 )
+		local X, Y = self:CursorPos()
+		surface.DrawTexturedRectRotated( X, Y, 512, 512, 0 )
 	end
 
 	local mdl = vgui.Create( "DModelPanel", Panel )
@@ -1065,15 +1088,65 @@ function LSCS:BuildStanceMenu( Frame )
 	Button:SetSize( 130, 0 )
 	Button:Dock( LEFT )
 	Button:DockMargin( 4, 4, 4, 0 )
-	Button.Paint = CrafterButtonPaint
+	Button.Paint = function( self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		CrafterButtonPaint( self, w, h )
+	end
 	Button.DoClick = function( self )
 		BaseButtonClick( self )
 
-		StanceNum = StanceNum + 1
-		if StanceNum > #ply:lscsGetCombo() then
-			StanceNum = 1
+		local NumCombo = #ply:lscsGetCombo()
+
+		self.menu = DermaMenu()
+
+		self.menu:AddOption( "view next", function()
+			StanceNum = StanceNum + 1
+			if StanceNum > NumCombo then
+				StanceNum = 1
+			end
+			combo = ply:lscsGetCombo( StanceNum )
+			self.menu:Remove()
+			LSCS:RefreshMenu()
+		end )
+		self.menu:AddOption( "view previous", function()
+			StanceNum = StanceNum - 1
+			if StanceNum <= 0 then
+				StanceNum = NumCombo
+			end
+			combo = ply:lscsGetCombo( StanceNum )
+			self.menu:Remove()
+			LSCS:RefreshMenu()
+		end )
+
+		local subMenu = self.menu:AddSubMenu("equip")
+
+		local Num = 0
+		for k, v in pairs( ply:lscsGetInventory() ) do
+			if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
+			local item = LSCS:ClassToItem( v )
+			if item.type == "stance" then
+				Num = Num + 1
+				subMenu:AddOption( item.name, function()
+					ply:lscsEquipItem( k, true )
+				end )
+			end
 		end
 
+		self.menu:Open()
+	end
+	Button.DoRightClick = function( self )
+		BaseButtonClick( self )
+
+		local NumCombo = #ply:lscsGetCombo()
+
+		StanceNum = StanceNum + 1
+		if StanceNum > NumCombo then
+			StanceNum = 1
+		end
 		combo = ply:lscsGetCombo( StanceNum )
 		LSCS:RefreshMenu()
 	end
