@@ -87,19 +87,11 @@ function SWEP:Block( dmginfo )
 	if not IsValid( ply ) then return BLOCK end
 
 	if not dmginfo:IsDamageType( DMG_ENERGYBEAM )
-		and not dmginfo:IsDamageType( DMG_BULLET )
-		and not dmginfo:IsDamageType( DMG_PLASMA )
-		and not dmginfo:IsDamageType( DMG_DIRECT )
-		and not dmginfo:IsDamageType( DMG_SNIPER )
 		and not dmginfo:IsDamageType( DMG_CLUB )
-		and not dmginfo:IsDamageType( DMG_SLASH )
-		and not dmginfo:IsDamageType( DMG_AIRBOAT )
-		or dmginfo:IsDamageType( DMG_DISSOLVE )
-		or dmginfo:IsDamageType( DMG_SHOCK ) then 
+		and not dmginfo:IsDamageType( DMG_SLASH ) then
 
 		return BLOCK
 	end
-
 
 	local a_ = dmginfo:GetAttacker()
 	local a_weapon = dmginfo:GetInflictor()
@@ -167,6 +159,11 @@ function SWEP:Block( dmginfo )
 		BLOCK = LSCS_BLOCK_NONSABER
 	end
 
+	if BLOCK == LSCS_BLOCK_NONSABER and self:GetBlockPoints() <= 0 then
+		BLOCK = LSCS_UNBLOCKED
+		BLOCK_ANIM = BLOCKED_STAGGER
+	end
+
 	if self:CanPlayDeflectAnim() then
 		if BLOCK_ANIM == BLOCKED_STANDARD then
 			ply:lscsPlayAnimation( "block"..math.random(1,3) )
@@ -198,8 +195,6 @@ function SWEP:Block( dmginfo )
 		dmginfo:SetDamage( math.max(damage - self:GetBlockPoints(),0) )
 
 		self:DrainBP( damage )
-		
-		if self:GetBlockPoints() <= 0 then BLOCK = LSCS_UNBLOCKED end
 	else
 		dmginfo:SetDamage( 0 )
 	end
@@ -225,7 +220,14 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	if LSCS:AngleBetweenVectors( Forward, bullet.Dir ) < 60 then
 		ply:lscsSetShouldBleed( true )
 
-		return -- LSCS_UNBLOCKED -- gvp's method is not used on public version
+		return
+	end
+
+	if ply:lscsGetForce() <= 0 then
+		ply:lscsSetShouldBleed( true )
+		ply:lscsTakeForce() -- prevent regeneration while under fire
+
+		return
 	end
 
 	local att = dmginfo:GetAttacker()
@@ -246,10 +248,10 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 		else
 			ply:lscsSetShouldBleed( true )
 
-			--return LSCS_UNBLOCKED
+			return
 		end
 
-		return -- LSCS_UNBLOCKED
+		return
 	end
 
 	if self:CanPlayDeflectAnim() then
@@ -258,7 +260,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 
 	self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 
-	return true --return self:PingPongBullet( ply, dmginfo, BulletForward )
+	return true
 end
 
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
@@ -266,6 +268,8 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 		ply:lscsSetShouldBleed( true )
 		return
 	end
+
+	ply:lscsTakeForce( math.max(dmginfo:GetDamage() / 10,1) ) -- probably needs a convar at some point
 
 	ply:lscsSetShouldBleed( false )
 
@@ -286,7 +290,7 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 					effectdata:SetStart( pos )
 					effectdata:SetOrigin( aimpos )
 					effectdata:SetEntity( self )
-				util.Effect( bullet.TracerName, effectdata )
+				util.Effect( bullet.TracerName, effectdata, true, true )
 
 				timer.Simple(0.05, function() -- dont deflect at the same frame. Prevent infinite loop when saber v saber bullet deflecting
 					if not IsValid( ply ) or not IsValid( self ) then return end
@@ -301,6 +305,8 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 
 					ply:FireBullets( bullet )
 				end)
+
+				break -- we got him
 			end
 		end
 	end

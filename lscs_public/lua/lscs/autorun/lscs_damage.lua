@@ -34,6 +34,19 @@ if SERVER then
 		end
 	end)
 
+	-- engine stuff doesnt come with the correct callbacks, tracer name and whatnot
+	-- so this must be done manually
+	local ClassDeflectable = {
+		["npc_turret_floor"] = true,
+		["npc_strider"] = true,
+		["npc_helicopter"] = true,
+		["npc_combinegunship"] = true,
+	}
+	local AmmoTypeDeflectable = {
+		["CombineCannon"] = true, -- dropship container gun, the container gives a NULL entity as attacker and inflictor... amazing stuff
+		["AR2"] = true, -- AR2
+	}
+
 	hook.Add( "EntityFireBullets", "!!!lscs_deflecting", function( entity, bullet )
 		local oldCallback = bullet.Callback
 		bullet.Callback = function(att, tr, dmginfo)
@@ -44,9 +57,23 @@ if SERVER then
 
 				if not IsValid( wep ) or not wep.LSCS then return end
 
+				local DeflectHack = not bullet.TracerName and AmmoTypeDeflectable[ bullet.AmmoType ] -- if this is true its most likely the AR2 or the dropship container
+
+				if IsValid( bullet.Attacker ) and ClassDeflectable[ bullet.Attacker:GetClass() ] then -- this is for everything else that uses that similar to AR2 plasma bullet type
+					DeflectHack = true
+				end
+
+				if DeflectHack  then
+					bullet.TracerName = "ar2tracer_custom" -- inject a tracer, since i couldnt get vanilla ar2tracer to work i just made my own
+				end
+
 				wep:DeflectBullet( att, tr, dmginfo, bullet )
 
-				if oldCallback then -- source weapons dont have a callback
+				if DeflectHack then
+					bullet.TracerName = nil -- remove the tracer when we are done to avoid conflicts
+				end
+
+				if oldCallback then -- engine weapons dont have a callback <sometimes> so this check is needed
 					oldCallback( att, tr, dmginfo )
 				end
 			end
