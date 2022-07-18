@@ -66,8 +66,6 @@ local function DrawBezier( startPos, endPos )
 		surface.DrawLine( sp.x, sp.y, ep.x, ep.y )
 	end
 end
-local test1 = Material("entities/item_saberhilt_katarn.png")
-local test2 = Material("entities/item_crystal_sapphire.png")
 
 local Gradient = Material("vgui/gradient-l")
 local ClickMat = Material("sun/overlay")

@@ -1,0 +1,99 @@
+ALL ADDITIONAL LSCS SCRIPTS SHOULD GO INTO lua/lscs/content TO MAKE SURE THEY ARE LOADED AFTER THE BASESCRIPT IS LOADED. CONTENT IS ALWAYS SHARED
+
+
+# base stuff
+
+
+LSCS:RegisterDeflectableTracer( "tracer_" ) -- MUST BE CALLED SHARED.
+					    -- register all bullets with the tracername "tracer_" to be able to be deflected.
+					    -- Internaly it just calls string.match() on this name so you dont have to register hundreds of tracers with different colors
+					    -- Most likely not all tracers will visually deflect. Really depends on how they are coded.
+					    -- All non registered tracers are still blockable but not deflectable.
+
+data = LSCS:ClassToItem( entity_class ) -- gets the item-data of given class such as item_crystal_amethyst. Works Shared.
+
+-- alternative you can call this directly if you already know what you are looking for:
+data = LSCS:GetHilt( name_id )
+data = LSCS:GetBlade( name_id )
+data = LSCS:GetStance( name_id )
+data = LSCS:GetForce( name_id )
+
+
+LSCS:OpenMenu() -- opens the menu, only works clientside. Menu can be opened using console command "lscs_openmenu" aswell
+LSCS:RefreshMenu() -- refreshes the menu if open. Only works clientside. Needs to be called everytime something is removed, added or equipped/unequipped
+
+
+
+
+
+# SERVER
+
+-- this is called when the player is fully loaded and ready. This hook is used internally to send a full inventory sync
+hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
+	print("hello")
+end )
+
+ply:lscsAddInventory( entity ) -- add a entity to the players inventory. Only supports sents.
+				-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")
+
+ply:lscsEquipItem( index, equip_right_hand ) -- equip a item from inventory, if equip_right_hand = false it will equip to left hand
+
+ply:lscsSyncInventory()-- send a full sync to the client. This should never be needed as the inventory makes sure by itself it stays sync.
+
+ply:lscsRemoveItem( id ) -- just remove given id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
+
+ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber?
+
+ply:lscsSetForce( num ) -- set players force points
+
+ply:lscsSetMaxForce( num ) -- set players MAX force points
+
+ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and add a delay before regenerating can happen
+
+ply:lscsSendComboDataTo( other_ply ) -- this is used internally to send the combo data to other players. You should never need this.
+
+ply:lscsForceWalk( seconds ) -- will force the player to walk for given amount of seconds
+
+ply:lscsSetShouldBleed( bool_should_bleed ) -- enable disable bleeding. Probably does nothing as the saber will constantly call it.
+
+ply:lscsClearBlood() -- does exactly what it says. Workaround for a gmod bug where ply:RemoveAllDecals() doesnt do anything when called on SERVER
+
+
+
+
+# SHARED
+
+ply:lscsCraftSaber() -- craft's a lightsaber out of the equipped items. When called on client will only send a crafting request.
+			--This only works if the player has permission to spawn SWEP's. If they don't have permission you need to call ply:Give("weapon_lscs") first
+
+ply:lscsDropItem( id ) -- drop given id from inventory as physical object on the floor. This will also unequip automatically. Will only send a drop request to server when called on client
+
+inventory = ply:lscsGetInventory() -- returns the inventory of given player. NOTE: On client this is only synced to LocalPlayer()
+
+equipped = ply:lscsGetEquipped() -- returns the equipped list of given player. NOTE: On client this os only synced to LocalPlayer()
+
+keydown = ply:lscsKeyDown( IN_KEY ) -- similar to ply:KeyDown() except synced. Useful if you write your own combo inside a combo
+
+combodata = ply:lscsGetCombo( num ) -- returns given num-id combo if the player has it equipped. Will fall back to default stance if invalid num-id
+
+hilt_right, hilt_left = ply:lscsGetHilt() -- gets EQUIPPED HILT, NOT THE CRAFTED ONE FROM THE SABER
+
+blade_right, blade_left = ply:lscsGetBlade() -- gets EQUIPPED CRYSTAL, NOT THE CRAFTED ONE FROM THE SABER
+
+ply:lscsBuildPlayerInfo() -- build player data and network it to all clients. NOTE: This will only build for LocalPlayer() if called on client. Another NOTE: This should never be called.
+
+ply:lscsClearEquipped( type, is_right_hand ) -- unequip all items of given type. type can be "hilt" "crystal" "force" or "stance". 
+						--will only unequip right or left hand if given a bool to is_right_hand
+
+ply:lscsClearTimedMove() -- clears the restricted movement
+
+ply:lscsSetTimedMove( ID, time_start, time_duration, vector_movement ) -- see combo files for useage
+
+ply:lscsSuppressFalldamage( time_seconds ) -- suppresses falldamage for given amount of seconds. Does nothing on client
+
+is_suppressed = ply:lscsIsFalldamageSuppressed() -- returns if falldamage is disabled
+
+shoot_pos = ply:lscsGetShootPos() -- returns "eyes" attachment pos or ply:GetShootPos() if no attachment is found
+
+view_pos = ply:lscsGetViewOrigin() -- returns the view camera position. If you need EyeAngles it's just vanilla ply:EyeAngles()
+

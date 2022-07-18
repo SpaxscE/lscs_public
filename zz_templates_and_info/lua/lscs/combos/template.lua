@@ -8,11 +8,11 @@ COMBO.AutoBlock = false -- false, because this style can only block when a perfe
 
 COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deactivated
 
---COMBO.MaxBlockPoints = 100
---COMBO.BPDrainPerHit = 25
+--COMBO.MaxBlockPoints = 100 -- use this to make op boss saber stances. Avoid using this. Only uncomment if you really need it.
+--COMBO.BPDrainPerHit = 25 -- how much bp damage this saber stance should be doing. Avoid using this. Only uncomment if you really need it.
 
---COMBO.BlockDistanceNormal = 60
---COMBO.BlockDistancePerfect = 30
+--COMBO.BlockDistanceNormal = 60 -- distance crosshair to block pos until  a normal block is detected with this stance. Avoid using this. Only uncomment if you really need it.
+--COMBO.BlockDistancePerfect = 20 -- distance crosshair to block pos until  a perfect block is detected with this stance. Avoid using this. Only uncomment if you really need it.
 
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
@@ -54,4 +54,5 @@ COMBO.Attacks["____"] = {
 	"W___"			// order always has to be W A S D
 ]]--
 
---LSCS:Reload() -- calling LSCS:Reload() is actually not needed but it helps alot while working on a combo file. Its so you dont have to reload the map all the time. Once you are finished you should comment it out to avoid hundreds of files spamming refresh on the basescript
+--LSCS:Reload() -- calling LSCS:Reload() is actually not needed but it helps alot while working on a combo file. 
+-- Its so you dont have to reload the map all the time. Once you are finished you should comment it out to avoid hundreds of files spamming refresh on the basescript. If this function is called twice or on gamestartup the basescript will actually refuse to reload. So PLEASE remove it when you release your stuff.
