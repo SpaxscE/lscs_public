@@ -42,7 +42,7 @@ ply:lscsSyncInventory()-- send a full sync to the client. This should never be n
 
 ply:lscsRemoveItem( id ) -- just remove given id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
 
-ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber?
+stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber?
 
 ply:lscsSetForce( num ) -- set players force points
 
