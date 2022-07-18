@@ -14,7 +14,7 @@ function SWEP:GetBlockDistanceNormal()
 end
 
 function SWEP:GetBlockDistancePerfect()
-	return (self:GetCombo().BlockDistancePerfect or 30)
+	return (self:GetCombo().BlockDistancePerfect or 20)
 end
 
 function SWEP:DrainBP( amount )
@@ -39,7 +39,7 @@ if SERVER then
 			self.NextBPr = CurTime + 0.3
 
 			local MaxVal = self:GetMaxBlockPoints()
-			if self:GetGestureTime() < CurTime and ply:OnGround() and ply:GetVelocity():Length() < 225 and not ply:HasJetpack() then
+			if self:GetGestureTime() < CurTime and ply:OnGround() and ply:GetVelocity():Length() < 225 then
 				self:SetBlockPoints( self:GetBlockPoints() + math.min(MaxVal - self:GetBlockPoints(),3) )
 			else
 				if not ply:OnGround() then
@@ -50,7 +50,7 @@ if SERVER then
 
 		if self._ResetHitTime and self._ResetHitTime < CurTime then
 			self._ResetHitTime = CurTime + 1
-	
+
 			self:AddHit( -0.1 )
 		end
 	end

@@ -1,7 +1,11 @@
 local meta = FindMetaTable( "Player" )
 
 function meta:lscsGetForce()
-	return self:GetNWFloat( "lscs_force_mana", 100 ) -- gay
+	return self:GetNWFloat( "lscs_force_mana", self:lscsGetMaxForce() ) -- gay
+end
+
+function meta:lscsGetMaxForce()
+	return self:GetNWFloat( "lscs_force_mana_max", 100 ) -- gay
 end
 
 function meta:lscsGetShootPos()
@@ -48,7 +52,13 @@ if SERVER then
 		self:SetNWFloat( "lscs_force_mana", num )
 	end
 
+	function meta:lscsSetMaxForce( num )
+		self:SetNWFloat( "lscs_force_mana_max", num )
+	end
+
 	function meta:lscsTakeForce( Amount )
+		if not Amount then Amount = 0 end
+
 		self._lscsNextForceRegen = CurTime() + 2
 
 		local Force = self:lscsGetForce() - Amount

@@ -75,10 +75,42 @@ function LSCS:ClassToItem( class )
 		return LSCS.Stance[ id ]
 	end
 	if type == "force" then
-		return LSCS.ForcePower[ id ]
+		return LSCS.Force[ id ]
 	end
 
 	return false
+end
+
+function LSCS:RegisterForce( data )
+	if not data.id then return end
+
+	local id = string.lower( data.id )
+	local class = "item_force_"..id
+	local fallback = function( ply ) end
+
+	LSCS.Force[ id ] = {
+		id = id,
+		name = data.PrintName,
+		type = "force",
+		Type = "Force",
+		class = class,
+		Equip = (data.Equip or fallback),
+		UnEquip = (data.UnEquip or fallback),
+		OnUse = (data.OnUse or fallback),
+	}
+
+	local ENT = {}
+
+	ENT.Base = "lscs_force_base"
+
+	ENT.PrintName = data.PrintName
+	ENT.Author = data.Author
+	ENT.Category = "[LSCS] - Force"
+
+	ENT.Spawnable       = true
+	ENT.AdminSpawnable  = false
+
+	scripted_ents.Register( ENT, class )
 end
 
 function LSCS:RegisterHilt( data )

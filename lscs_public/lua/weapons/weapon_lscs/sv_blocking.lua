@@ -27,8 +27,189 @@ function SWEP:CanBlock()
 	return (self._nextBlock or 0) < CurTime()
 end
 
+function SWEP:OnPerfectBlock( ply, a_, a_weapon )
+	ply:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect3.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+
+	if a_weapon:CurComboUnblockable() then
+		self:DrainBP( a_weapon:GetBPDrainPerHit() * a_weapon:GetComboHits() )
+	else
+		a_weapon:AddHit( -0.25 )
+
+		self._ResetHitTime = CurTime() + 5
+		self:AddHit( 0.1 )
+	end
+end
+
+function SWEP:OnNormalBlock( ply, a_, a_weapon )
+	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect1.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+
+	a_weapon._ResetHitTime = CurTime() + 10
+	if not a_weapon:CurComboUnblockable() then
+		a_weapon:AddHit( 0.05 )
+	end
+
+	self:DrainBP( a_weapon:GetBPDrainPerHit() * a_weapon:GetComboHits() )
+end
+
+function SWEP:OnBlock( ply, a_, a_weapon )
+	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect2.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+
+	a_weapon._ResetHitTime = CurTime() + 10
+	if a_weapon:CurComboUnblockable() then
+		a_weapon:AddHit( 0.05 )
+	else
+		a_weapon:AddHit( 0.1 )
+	end
+
+	self:DrainBP( a_weapon:GetBPDrainPerHit() * a_weapon:GetComboHits() )
+end
+
+function SWEP:AddHit( num )
+	self:SetComboHits( math.Clamp(self:GetComboHits() + num,0,1) )
+
+	if self:GetComboHits() == 0 then
+		self._ResetHitTime = nil
+	end
+end
+
+local BLOCKED_STANDARD = 1
+local BLOCKED_STAGGER = 2
+local BLOCKED_NOANIM = 3
+
 -- defender performing block
 function SWEP:Block( dmginfo )
+	local BLOCK = LSCS_UNBLOCKED
+
+	if not self:GetActive() then return BLOCK end
+
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return BLOCK end
+
+	if not dmginfo:IsDamageType( DMG_ENERGYBEAM )
+		and not dmginfo:IsDamageType( DMG_BULLET )
+		and not dmginfo:IsDamageType( DMG_PLASMA )
+		and not dmginfo:IsDamageType( DMG_DIRECT )
+		and not dmginfo:IsDamageType( DMG_SNIPER )
+		and not dmginfo:IsDamageType( DMG_CLUB )
+		and not dmginfo:IsDamageType( DMG_SLASH )
+		and not dmginfo:IsDamageType( DMG_AIRBOAT )
+		or dmginfo:IsDamageType( DMG_DISSOLVE )
+		or dmginfo:IsDamageType( DMG_SHOCK ) then 
+
+		return BLOCK
+	end
+
+
+	local a_ = dmginfo:GetAttacker()
+	local a_weapon = dmginfo:GetInflictor()
+	local a_weapon_lscs = IsValid( a_weapon ) and a_weapon.LSCS
+
+	local BLOCK_ANIM = BLOCKED_STANDARD
+
+	if a_weapon_lscs and IsValid( a_ ) then
+		local _pos = a_weapon:GetBlockPos()
+
+		local BlockDistance = self:GetBlockDistanceTo( _pos )
+
+		local AutoBlock = self:GetCombo().AutoBlock
+
+		if self:IsComboActive() then
+			if AutoBlock then
+				if self:GetBlockPoints() <= 0 then self:DrainBP() return LSCS_UNBLOCKED end
+
+				self:OnBlock( ply, a_, a_weapon )
+
+				BLOCK = LSCS_BLOCK
+				BLOCK_ANIM = BLOCKED_NOANIM
+			else
+				return LSCS_UNBLOCKED
+			end
+		else
+			if BlockDistance < self:GetBlockDistanceNormal() then
+				if BlockDistance < self:GetBlockDistancePerfect() then
+
+					local effectdata = EffectData()
+						effectdata:SetOrigin( dmginfo:GetDamagePosition())
+						effectdata:SetNormal( Vector(0,0,1) )
+						effectdata:SetRadius( 1 )
+					util.Effect( "cball_bounce", effectdata, true, true )
+
+					self:OnPerfectBlock( ply, a_, a_weapon )
+
+					BLOCK = LSCS_BLOCK_PERFECT
+				else
+					if AutoBlock then
+						if self:GetBlockPoints() <= 0 then self:DrainBP() return LSCS_UNBLOCKED end
+
+						self:OnNormalBlock( ply, a_, a_weapon )
+
+						BLOCK = LSCS_BLOCK_NORMAL
+						BLOCK_ANIM = BLOCKED_STAGGER
+					else
+						return LSCS_UNBLOCKED
+					end
+				end
+			else
+				if AutoBlock then
+					if self:GetBlockPoints() <= 0 then self:DrainBP() return LSCS_UNBLOCKED end
+
+					self:OnBlock( ply, a_, a_weapon )
+
+					BLOCK = LSCS_BLOCK
+					BLOCK_ANIM = BLOCKED_STAGGER
+				else
+					return LSCS_UNBLOCKED
+				end
+			end
+		end
+	else
+		BLOCK = LSCS_BLOCK_NONSABER
+	end
+
+	if self:CanPlayDeflectAnim() then
+		if BLOCK_ANIM == BLOCKED_STANDARD then
+			ply:lscsPlayAnimation( "block"..math.random(1,3) )
+
+		elseif BLOCK_ANIM == BLOCKED_STAGGER then
+			ply:lscsPlayAnimation( table.Random( LSCS.ComboInterupt ) )
+		else
+			-- dont do shit
+		end
+
+		self:SetNextDeflectAnim( CurTime() + 0.1 )
+
+		if BLOCK > LSCS_UNBLOCKED then
+			if BLOCK == LSCS_BLOCK_PERFECT then
+				ply:EmitSound( "saber_pblock" )
+			else
+				if BLOCK == LSCS_BLOCK_NONSABER then
+					ply:EmitSound( "saber_lighthit" )
+				else
+					ply:EmitSound( "saber_block" )
+				end
+			end
+		end
+	end
+
+	if BLOCK == LSCS_BLOCK_NONSABER then
+		local damage = dmginfo:GetDamage()
+
+		dmginfo:SetDamage( math.max(damage - self:GetBlockPoints(),0) )
+
+		self:DrainBP( damage )
+		
+		if self:GetBlockPoints() <= 0 then BLOCK = LSCS_UNBLOCKED end
+	else
+		dmginfo:SetDamage( 0 )
+	end
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( dmginfo:GetDamagePosition() )
+		effectdata:SetNormal( Vector(0,0,1) )
+	util.Effect( "saber_block", effectdata, true, true )
+
+	return BLOCK
 end
 
 function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )

@@ -42,6 +42,8 @@ end
 function SWEP:OnTick( active )
 	local CurTime = CurTime()
 
+	self:CalcBPRegen( CurTime )
+
 	if (self.Next_Think or 0) > CurTime then return end
 
 	local go = self:GetDMGActive()

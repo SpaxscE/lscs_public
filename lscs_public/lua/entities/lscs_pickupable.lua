@@ -9,7 +9,19 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 
 ENT.DoNotDuplicate = true
 
+ENT.AutomaticFrameAdvance = true
+
 function ENT:SetupDataTables()
+end
+
+function ENT:PlayAnimation( animation, playbackrate )
+	playbackrate = playbackrate or 1
+
+	local sequence = self:LookupSequence( animation )
+
+	self:ResetSequence( sequence )
+	self:SetPlaybackRate( playbackrate )
+	self:SetSequence( sequence )
 end
 
 if SERVER then

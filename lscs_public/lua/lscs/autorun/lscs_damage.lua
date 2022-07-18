@@ -46,7 +46,9 @@ if SERVER then
 
 				wep:DeflectBullet( att, tr, dmginfo, bullet )
 
-				oldCallback( att, tr, dmginfo )
+				if oldCallback then -- source weapons dont have a callback
+					oldCallback( att, tr, dmginfo )
+				end
 			end
 		end
 
