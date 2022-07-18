@@ -35,6 +35,8 @@ if SERVER then
 			weapon:SetBladeR( BladeR or "" )
 			weapon:SetBladeL( BladeL or "" )
 		end
+
+		hook.Run( "LSCS:OnPlayerCraftedSaber", self, weapon )
 	end
 
 	net.Receive( "lscs_craft_saber", function( len, ply )

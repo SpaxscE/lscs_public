@@ -33,6 +33,19 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	print("hello")
 end )
 
+-- when a player drops an item from the inventory it calls this hook. 
+hook.Add( "LSCS:OnPlayerDroppedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item_entity )
+
+	item_entity:Remove() -- lets just remove it in this example
+
+end )
+
+-- when a player finished crafting a lightsaber this hook is called. This is also called everytime a player spawns with a lightsaber as it just auto-crafts it after it has been crafted once.
+hook.Add( "LSCS:OnPlayerCraftedSaber", "ANY_HOOK_NAME_YOU_WANT", function( ply, weapon_entity )
+
+end )
+
+
 ply:lscsAddInventory( entity ) -- add a entity to the players inventory. Only supports sents.
 				-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")
 

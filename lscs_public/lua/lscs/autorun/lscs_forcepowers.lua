@@ -88,6 +88,7 @@ else
 		FP_BG:SetColor( Color(0, 0, 0, 200 * smAlpha) )
 		FP:SetColor( Color(0, 127, 255, 255 * smAlpha) )
 
+		-- the way im using circles is probably not ideal...  but fuck it, it looks so awesome.  This is probably the thing that will pop up in your profiler
 		local Offset = 150
 		for A = 0, 260 - segmentDist, segmentDist do
 			local Start = Offset + A

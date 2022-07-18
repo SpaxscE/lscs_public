@@ -28,7 +28,7 @@ function SWEP:CanBlock()
 end
 
 function SWEP:OnPerfectBlock( ply, a_, a_weapon )
-	ply:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect3.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+	ply:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect3.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
 
 	if a_weapon:CurComboUnblockable() then
 		self:DrainBP( a_weapon:GetBPDrainPerHit() * a_weapon:GetComboHits() )
@@ -41,7 +41,7 @@ function SWEP:OnPerfectBlock( ply, a_, a_weapon )
 end
 
 function SWEP:OnNormalBlock( ply, a_, a_weapon )
-	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect1.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect1.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
 
 	a_weapon._ResetHitTime = CurTime() + 10
 	if not a_weapon:CurComboUnblockable() then
@@ -52,7 +52,7 @@ function SWEP:OnNormalBlock( ply, a_, a_weapon )
 end
 
 function SWEP:OnBlock( ply, a_, a_weapon )
-	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect2.mp3]], 140, 100, 1, CHAN_ITEM2 )" )
+	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect2.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
 
 	a_weapon._ResetHitTime = CurTime() + 10
 	if a_weapon:CurComboUnblockable() then
@@ -225,10 +225,13 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	if LSCS:AngleBetweenVectors( Forward, bullet.Dir ) < 60 then
 		ply:lscsSetShouldBleed( true )
 
-		return
+		return -- LSCS_UNBLOCKED -- gvp's method is not used on public version
 	end
+
+	local att = dmginfo:GetAttacker()
+
 	if self:IsComboActive() then
-		if LSCS.ComboInterupt[ self.LastAttack ] and ply:lscsKeyDown( IN_ATTACK ) then
+		if LSCS.ComboInterupt[ self.LastAttack ] and ply:lscsKeyDown( IN_ATTACK ) and IsValid( att ) and att:IsPlayer() then
 			ply:lscsSetShouldBleed( false )
 
 			self:CancelCombo( 0.3 )
@@ -242,9 +245,11 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 			self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 		else
 			ply:lscsSetShouldBleed( true )
+
+			--return LSCS_UNBLOCKED
 		end
 
-		return
+		return -- LSCS_UNBLOCKED
 	end
 
 	if self:CanPlayDeflectAnim() then
@@ -253,7 +258,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 
 	self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )
 
-	return true
+	return true --return self:PingPongBullet( ply, dmginfo, BulletForward )
 end
 
 function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
@@ -303,5 +308,6 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	dmginfo:SetDamage( 0 )
 end
 
+-- callback function. This should maybe call a hook or something i dont know yet. Keeping it in in case the entire saber system will be reworked to support interrupting again
 function SWEP:OnBlocked( BLOCK )
 end

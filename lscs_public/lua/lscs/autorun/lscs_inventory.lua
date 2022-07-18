@@ -131,8 +131,7 @@ if SERVER then
 			if _item.type =="hilt" or _item.type == "crystal" then -- the item is a crystal or hilt which means we have to craft a lightsaber so it actually takes these parts out
 
 				-- this garbage has to be called before crafting because it pulls stuff out of the inventory
-				self:lscsGetInventory()[ id ] = nil
-				self:lscsGetEquipped()[ id ] = nil
+				self:lscsRemoveItem( id )
 				self:lscsBuildPlayerInfo()
 
 				-- craft the saber
@@ -140,8 +139,7 @@ if SERVER then
 			end
 		end
 
-		self:lscsGetInventory()[ id ] = nil
-		self:lscsGetEquipped()[ id ] = nil
+		self:lscsRemoveItem( id )
 
 		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent )
 	end

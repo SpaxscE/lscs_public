@@ -12,17 +12,28 @@ language.Add( "lscsGlowstick", "Lightsaber" )
 
 local circles = include("lscs/autorun/cl_circles.lua")
 
+local X = ScrW() - 110
+local Y = ScrH() - 100
+
 local BP_BG = circles.New(CIRCLE_OUTLINED, 126, 0, 0, 12)
 BP_BG:SetColor( Color(0, 0, 0, 200) )
+BP_BG:SetX( X )
+BP_BG:SetY( Y )
 
 local BP = circles.New(CIRCLE_OUTLINED, 125, 0, 0, 10)
 BP:SetColor( Color(255, 0, 0, 255) )
+BP:SetX( X )
+BP:SetY( Y )
 
 local CH_BG = circles.New(CIRCLE_OUTLINED, 106, 0, 0, 12)
 CH_BG:SetColor( Color(0, 0, 0, 200) )
+CH_BG:SetX( X )
+CH_BG:SetY( Y )
 
 local CH = circles.New(CIRCLE_OUTLINED, 105, 0, 0, 10)
 CH:SetColor( Color(255, 200, 0, 255) )
+CH:SetX( X )
+CH:SetY( Y )
 
 local mat_xhair = Material( "sprites/hud/v_crosshair1" )
 local mat_glow = Material( "sprites/light_glow02_add" )
@@ -39,9 +50,6 @@ local OldCombo
 local ComboIcon = Material("entities/item_stance_yongli.png")
 
 function SWEP:DrawHUD()
-	local X = ScrW() - 110
-	local Y = ScrH() - 100
-
 	local ply = LocalPlayer()
 
 	local combo = self:GetCombo()
@@ -68,21 +76,9 @@ function SWEP:DrawHUD()
 	end
 	draw.SimpleText( combo.name, "LSCS_FONT", X - 170, Y + 80, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
-	-- this could have been cached
-	BP_BG:SetX( X )
-	BP_BG:SetY( Y )
-
-	CH_BG:SetX( X )
-	CH_BG:SetY( Y )
-
-	BP:SetX( X )
-	BP:SetY( Y )
-
-	CH:SetX( X )
-	CH:SetY( Y )
-
 	draw.NoTexture()
 
+	-- the way im using circles is probably not ideal...  but fuck it, it looks so awesome.  This is probably the thing that will pop up in your profiler
 	local Offset = 150
 	for A = 0, 160 - segmentDist, segmentDist do
 		local Start = Offset + A
@@ -114,7 +110,7 @@ function SWEP:DrawHUD()
 
 	if self:IsComboActive() then return end	
 
-	for _,v in ipairs( player.GetAll() ) do
+	for _,v in ipairs( player.GetAll() ) do -- oh no he did it again... How else would you do it tho?
 		if v == ply or (v:GetPos() - Pos):Length() > 400 then continue end
 
 		local _pos = self:GetPlayerBlockPos( v )
@@ -129,12 +125,12 @@ function SWEP:DrawHUD()
 
 			if BlockDistance < self:GetBlockDistanceNormal() then
 				if BlockDistance < self:GetBlockDistancePerfect() then
-					Col = Color( 0, 255, 0, 255 )
+					Col = Color( 0, 255, 0, 255 ) -- why
 				else
-					Col = Color( 255, 255, 0, 255 )
+					Col = Color( 255, 255, 0, 255 ) -- am i not
 				end
 			else
-				Col = Color( 255, 0, 0, 255 )
+				Col = Color( 255, 0, 0, 255 ) -- caching these?
 			end
 
 			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
