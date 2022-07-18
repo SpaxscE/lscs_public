@@ -1,5 +1,5 @@
 
--- this will auto equip a blue lightsaber with yongli stance to the player. How you gonna do the saving... is up to you. I will not force a system down your throat
+-- this will auto equip a blue lightsaber with yongli stance to the player. How you gonna do the saving... is up to you. I will not force a system down your throat. Suggestions for hooks do on GitHub
 
 if CLIENT then return end
 
