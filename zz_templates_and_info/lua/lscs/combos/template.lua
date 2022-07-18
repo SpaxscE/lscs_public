@@ -23,18 +23,23 @@ COMBO.Attacks["____"] = {
 	--AttackAnimMenu = "seq_baton_swing", -- OPTIONAL, only used for menu, added this because dModelPanel limitations with displaying animations. Its just so it looks nice in the menu
 
 	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
+		weapon:DoAttackSound() -- this will play the "Attack" sound from your equipped blade on BOTH sabers, assuming the left hand saber is equipped and active
+		--weapon:DoAttackSound(1) -- this would play the "Attack1" sound on both sabers
+		--weapon:DoAttackSound(2, weapon.LEFT_HAND) -- this would play the "Attack2" sound on your LEFT light saber, assuming its equipped and active.  weapon.RIGHT_HAND would be for right hand
+		--weapon:DoAttackSound(3 ....    "Attack3", same logic as everything above
 
 		-- do whatever extra things you want to do when the attack is triggered. Please note this is run on both server and client
 	end,
 	FinishAttack = function( weapon, ply )  
-		-- do whatever extra things you want to do when the attack is finished. Please note this is run on both server and client
+		-- do whatever extra things you want to do when the attack is finished. Please note this is run on both server and client. It does also get called when,  during a attack,  the saber is switched away from or when the player dies
 	end,
 	Delay = 0, -- how long to wait until dmg is active and BeginAttack is called. This can be used to exclude the windup animation from causing damage
 	Duration = 0.25,	-- Actual duration after keypress is Delay + Duration. After this time the gesture will be faded out, Damage will be disabled and all ply:lscsSetTimedMove's will be removed
 }
 
---[[
+
+--[[ -- list of valid COMBO.Attacks
+
 	"____"			// standing still or fallback. Every saber style MUST HAVE THIS or the combo file will error.
 	"SLAM"			// pressing attack after doing BACKFLIP
 	"FRONT_DASH"		// when holding w + jump while in air and then pressing mouse1 (while still holding w + jump)
@@ -52,6 +57,7 @@ COMBO.Attacks["____"] = {
 	"__SD"
 	"_AS_"
 	"W___"			// order always has to be W A S D
+
 ]]--
 
 --LSCS:Reload() -- calling LSCS:Reload() is actually not needed but it helps alot while working on a combo file. 
