@@ -1165,6 +1165,17 @@ function LSCS:BuildForceMenu( Frame )
 		surface.DrawRect( 0, 0, w, h  )
 	end
 
+	local binder = vgui.Create( "DBinder", Panel)
+	binder:SetPos( 25, 25 )
+	binder:SetSize( 200, 30 )
+	--binder:SetValue( setdefault )
+	function binder:SetSelectedNumber( num )
+		self.m_iSelectedNumber = num
+		self:ConVarChanged( num ) 
+		self:UpdateText() 
+		self:OnChange( num ) 
+	end
+
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
 

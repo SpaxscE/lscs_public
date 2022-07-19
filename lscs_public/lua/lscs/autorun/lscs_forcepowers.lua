@@ -1,5 +1,4 @@
 
-
 if SERVER then
 	local NEXT_THINK = 0
 	hook.Add( "Think", "!!!!lscs_unforgiveable_playerGetAll_loop_in_think_hook", function()
@@ -40,9 +39,6 @@ else
 
 	hook.Add( "HUDPaint", "!!!!lscs_ShowForceMana", function()
 		local ply = LocalPlayer()
-
-		local X = ScrW() - 110
-		local Y = ScrH() - 100
 
 		local Time = CurTime()
 

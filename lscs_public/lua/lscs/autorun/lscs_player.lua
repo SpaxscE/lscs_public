@@ -134,6 +134,12 @@ function meta:lscsGetEquipped()
 	return self.m_equipped_lscs
 end
 
+function meta:lscsGetForceAbilities()
+	if not self.m_equipped_force_lscs then self.m_equipped_force_lscs = {} end
+
+	return self.m_equipped_force_lscs
+end
+
 function meta:lscsGetCombo( num )
 	if not istable( self.m_lscs_combo ) or table.IsEmpty( self.m_lscs_combo ) then self.m_lscs_combo = { [1] = "default" } end
 
@@ -161,6 +167,9 @@ end
 function meta:lscsBuildPlayerInfo()
 	local inventory = self:lscsGetInventory()
 	local equipped = self:lscsGetEquipped()
+	local forcepowers = self:lscsGetForceAbilities()
+
+	table.Empty( forcepowers ) -- all gone poof
 
 	local stances = {}
 	local hilt_right
@@ -208,9 +217,21 @@ function meta:lscsBuildPlayerInfo()
 			end
 			continue
 		end
+		if type == "force" then
+			local data = {}
+			data.inventoryID = index
+			data.item = object
+			if CLIENT then data.icon = Material("entities/"..object.class..".png") end
+
+			table.insert( forcepowers, data )
+			continue
+		end
 	end
 
+	table.SortByMember( forcepowers, "inventoryID", true )
+
 	self.m_lscs_combo = stances
+
 	LSCS:SetBlade( self, blade_right, blade_left )
 	LSCS:SetHilt( self, hilt_right, hilt_left )
 
