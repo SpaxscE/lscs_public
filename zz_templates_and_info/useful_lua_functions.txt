@@ -46,12 +46,24 @@ hook.Add( "LSCS:OnPlayerCraftedSaber", "ANY_HOOK_NAME_YOU_WANT", function( ply, 
 end )
 
 
-ply:lscsAddInventory( entity ) -- add a entity to the players inventory. Only supports sents.
-				-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")
 
-ply:lscsEquipItem( index, equip_right_hand ) -- equip a item from inventory, if equip_right_hand = false it will equip to left hand
+ply:lscsAddInventory( entity, equip_to_hand ) -- add a entity to the players inventory. Only supports sents.
+						-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")  this will automatically equip the item to your right hand.
+				equip_to_hand = 
+					 	true -- equip to right hand
+						false -- equip to left hand
+					 	nil -- don't equip
 
-ply:lscsSyncInventory()-- send a full sync to the client. This should never be needed as the inventory makes sure by itself it stays sync.
+
+
+ply:lscsEquipItem( index, equip_to_hand ) -- equip a item from inventory
+				equip_to_hand = 
+					 	true -- equip to right hand
+						false -- equip to left hand
+					 	nil -- unequip
+
+
+ply:lscsSyncInventory() -- send a full sync to the client. Should never be needed.
 
 ply:lscsRemoveItem( id ) -- just remove given id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
 
@@ -81,28 +93,31 @@ ply:lscsCraftSaber() -- craft's a lightsaber out of the equipped items. When cal
 
 ply:lscsDropItem( id ) -- drop given id from inventory as physical object on the floor. This will also unequip automatically. Will only send a drop request to server when called on client
 
+item = ply:lscsGetInventoryItem( id ) -- convenience function. Does the same as LSCS:ClassToItem( ply:lscsGetInventory()[ id ] )
+					-- returns the item behind given id in the inventory. NOTE: On client this is only synced to LocalPlayer()
+
 inventory = ply:lscsGetInventory() -- returns the inventory of given player. NOTE: On client this is only synced to LocalPlayer()
 
 equipped = ply:lscsGetEquipped() -- returns the equipped list of given player. NOTE: On client this os only synced to LocalPlayer()
 
-keydown = ply:lscsKeyDown( IN_KEY ) -- similar to ply:KeyDown() except synced. Useful if you write your own combo inside a combo
+keydown = ply:lscsKeyDown( IN_KEY ) -- similar to ply:KeyDown() except properly synced. Useful if you write your own combo inside a combo
 
 forcepowers = ply:lscsGetForceAbilities() -- returns a table of equipped force powers. NOTE: On client this os only synced to LocalPlayer()
 
 combodata = ply:lscsGetCombo( num ) -- returns given num-id combo if the player has it equipped. Will fall back to default stance if invalid num-id
 
-hilt_right, hilt_left = ply:lscsGetHilt() -- gets EQUIPPED HILT, NOT THE CRAFTED ONE FROM THE SABER
+hilt_right, hilt_left = ply:lscsGetHilt() -- gets the EQUIPPED HILT in the menu, NOT THE CRAFTED ONE FROM THE SABER THAT YOU ARE HOLDING IN YOUR HANDS
 
-blade_right, blade_left = ply:lscsGetBlade() -- gets EQUIPPED CRYSTAL, NOT THE CRAFTED ONE FROM THE SABER
+blade_right, blade_left = ply:lscsGetBlade() -- gets the EQUIPPED CRYSTAL in the menu, NOT THE CRAFTED ONE FROM THE SABER THAT YOU ARE HOLDING IN YOUR HANDS
 
-ply:lscsBuildPlayerInfo() -- build player data and network it to all clients. NOTE: This will only build for LocalPlayer() if called on client. Another NOTE: This should never be called.
+ply:lscsBuildPlayerInfo() -- build player data and network it to all clients. NOTE: This will only build for LocalPlayer() if called on client. Another NOTE: This should never have to be called
 
 ply:lscsClearEquipped( type, is_right_hand ) -- unequip all items of given type. type can be "hilt" "crystal" "force" or "stance". 
-						--will only unequip right or left hand if given a bool to is_right_hand
+						-- if is_right_hand = true/false  will only unequip  right/left hand
 
 ply:lscsClearTimedMove() -- clears the restricted movement
 
-ply:lscsSetTimedMove( ID, time_start, time_duration, vector_movement ) -- see combo files for useage
+ply:lscsSetTimedMove( ID, time_start, time_duration, vector_movement ) -- see combo files for how-to-use
 
 ply:lscsSuppressFalldamage( time_seconds ) -- suppresses falldamage for given amount of seconds. Does nothing on client
 
@@ -110,5 +125,5 @@ is_suppressed = ply:lscsIsFalldamageSuppressed() -- returns if falldamage is dis
 
 shoot_pos = ply:lscsGetShootPos() -- returns "eyes" attachment pos or ply:GetShootPos() if no attachment is found
 
-view_pos = ply:lscsGetViewOrigin() -- returns the view camera position. If you need EyeAngles it's just vanilla ply:EyeAngles()
+view_pos = ply:lscsGetViewOrigin() -- returns the view camera position. EyeAngles in LSCS is just vanilla ply:EyeAngles()
 

@@ -5,7 +5,7 @@ if SERVER then
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
 
-	function meta:lscsAddInventory( entity )
+	function meta:lscsAddInventory( entity, equip )
 
 		local item = entity:GetClass()
 
@@ -21,7 +21,17 @@ if SERVER then
 		net.Send( self )
 
 		self:lscsGetInventory()[ index ] = item
-		self:lscsGetEquipped()[ index ] = nil
+
+		if isbool( equip ) then -- this makes sure we can not equip two hilts or blades in one hand
+			local object = LSCS:ClassToItem( item )
+			local type = object.type
+
+			if type == "hilt" or type == "crystal" then
+				self:lscsClearEquipped( type, equip )
+			end
+		end
+
+		self:lscsEquipItem( index, equip )
 
 		entity:Remove()
 	end
@@ -97,6 +107,15 @@ if SERVER then
 				net.WriteString( item )
 			end
 		net.Send( self )
+	end
+
+	function meta:lscsWipeInventory()
+		table.Empty( self:lscsGetInventory() )
+		table.Empty( self:lscsGetEquipped() )
+
+		self:lscsBuildPlayerInfo()
+
+		self:lscsSyncInventory()
 	end
 
 	function meta:lscsDropItem( id )

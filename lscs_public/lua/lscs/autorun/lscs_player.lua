@@ -236,7 +236,7 @@ function meta:lscsBuildPlayerInfo()
 	LSCS:SetHilt( self, hilt_right, hilt_left )
 
 	if SERVER then
-		self:SendLua( "LSCS:RefreshMenu()" )
+		self:SendLua( "LSCS:RefreshMenu() LocalPlayer():lscsBuildPlayerInfo()" )
 
 		for _, ply in pairs( player.GetAll() ) do
 			if ply == self then continue end
@@ -254,6 +254,7 @@ function meta:lscsBuildPlayerInfo()
 	end
 end
 
+-- clear all items of this type in this hand
 function meta:lscsClearEquipped( type, hand )
 	local inventory = self:lscsGetInventory()
 	local equipped = self:lscsGetEquipped()
