@@ -1,3 +1,5 @@
+local blur = Material("pp/blurscreen")
+
 local SelectorWidth = 410
 local SelectorItemHeight = 64
 local SelectedItemHeight = 72
@@ -42,6 +44,17 @@ local function CreateSelector()
 		if smAlpha == 0 then return end
 
 		local fading_white = Color(255,255,255,smAlpha * 255)
+		local fading_blue = Color(0, 127, 255, smAlpha * 255)
+
+		local pX, pY = self:GetPos()
+		surface.SetMaterial( blur )
+		blur:SetFloat( "$blur", 3 )
+		blur:Recompute()
+		if render then render.UpdateScreenEffectTexture() end
+		surface.SetDrawColor( 255, 255, 255, fading_white.a )
+		surface.DrawTexturedRect( -pX, -pY, ScrW(), ScrH() )
+		surface.SetDrawColor( 0, 0, 0, 100 * smAlpha )
+		surface.DrawRect( 0, 0, w, h )
 
 		local StartX = w * 0.5 + smOffset
 
@@ -52,7 +65,7 @@ local function CreateSelector()
 
 		local Rate = RealFrameTime() * 450
 
-		smOffset = math.Clamp(smOffset - math.Clamp(smOffset,-Rate,Rate),-xh,xh)
+		smOffset = math.Clamp(smOffset - math.Clamp(smOffset,-Rate,Rate),-xh * 0.6,xh * 0.6)
 		local ForcePowers = ply:lscsGetForceAbilities()
 
 		local Selection = ForcePowers[ Selected ]
@@ -105,15 +118,15 @@ local function CreateSelector()
 			subX = subX - xh
 		end
 
+		surface.DrawRect( 0, 0, FrameThickness, h )
+		surface.DrawRect( w - FrameThickness, 0, FrameThickness, h )
+
+		surface.SetDrawColor( fading_blue )
 		local fXstat = w * 0.5 - SelectedItemHalfHeight
 		surface.DrawRect( fXstat, 0, SelectedItemHeight, FrameThickness )
 		surface.DrawRect( fXstat, yh - FrameThickness, SelectedItemHeight, FrameThickness )
-
 		surface.DrawRect( fXstat, FrameThickness, FrameThickness, yh - 2 * FrameThickness )
 		surface.DrawRect( fXstat + SelectedItemHeight - FrameThickness, FrameThickness, FrameThickness, yh - 2 * FrameThickness )
-
-		surface.DrawRect( 0, yh - xh, FrameThickness, xh )
-		surface.DrawRect( w - FrameThickness, yh - xh, FrameThickness, xh )
 	end
 
 	LSCS.ForceSelector.Selector = ForceSelector

@@ -44,7 +44,7 @@ local COLOR_WHITE = Color( 255, 255, 255, 255 )
 local VECTOR_NULL = Vector(0,0,0)
 
 local segmentLength = 5
-local segmentSpace = 5
+local segmentSpace = 10
 
 local OldCombo
 local ComboIcon = Material("entities/item_stance_yongli.png")
@@ -80,7 +80,7 @@ function SWEP:DrawHUD()
 
 	-- the way im using circles is probably not ideal...  but fuck it, it looks so awesome.  This is probably the thing that will pop up in your profiler
 	local Offset = 150
-	for A = 0, 160 - segmentDist, segmentDist do
+	for A = 0, 170 - segmentDist, segmentDist do
 		local Start = Offset + A
 
 		CH_BG:SetStartAngle( Start - 1 )

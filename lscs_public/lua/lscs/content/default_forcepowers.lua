@@ -81,7 +81,9 @@ force.StartUse = function( ply )
 		ply._lscsForceJumpTime = CurTime() + 2
 	end
 end
-force.StopUse = function( ply ) ply._lscsForceJumpTime = nil end
+force.StopUse = function( ply )
+	ply._lscsForceJumpTime = nil
+end
 LSCS:RegisterForce( force )
 
 local force = {}
@@ -183,6 +185,7 @@ force.PrintName = "Sense"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Augmented Vision. See through the lies of the Jedi."
 force.id = "sense"
+force.UnEquip = function( ply ) ply:SetNWBool( "_lscsForceSense", false ) end
 force.StartUse = function( ply )
 	local Time = CurTime()
 
@@ -227,8 +230,6 @@ force.StartUse = function( ply )
 	if need > 0 and available >= 5 then
 		local take = math.min( need, available, 25 )
 
-		PrintChat( take )
-
 		ply:lscsTakeForce( take )
 		ply:SetHealth( math.min(ply:Health() + take ) )
 
@@ -248,7 +249,7 @@ force.Author = "Blu-x92 / Luna"
 force.Description = "Incoming Force Power attacks are absorbed and regain Force Points. Also gives a permanent immunity against incoming Force Powers as long your own Force Points are above 50% even when this Power is not activated"
 force.id = "immunity"
 force.Equip = function( ply ) ply._lscsForceResistant = true end
-force.UnEquip = function( ply ) ply._lscsForceResistant = nil end
+force.UnEquip = function( ply ) ply._lscsForceResistant = nil ply:GetNWBool( "_lscsForceProtect", false ) end
 force.StartUse = function( ply )
 	local Time = CurTime()
 
@@ -279,7 +280,7 @@ if SERVER then
 	hook.Add( "LSCS:PlayerCanManipulate", "!!!lscs_forceblocking", function( ply, target_ent )
 		if not target_ent.IsPlayer or not target_ent:IsPlayer() then return end
 
-		if target_ent._lscsForceBlockActive then
+		if target_ent:GetNWBool( "_lscsForceProtect", false ) then
 			target_ent:lscsSetForce( math.min(target_ent:lscsGetForce() + 15, target_ent:lscsGetMaxForce()) )
 
 			local effectdata = EffectData()
