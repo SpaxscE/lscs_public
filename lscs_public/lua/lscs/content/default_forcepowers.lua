@@ -355,7 +355,7 @@ else
 		render.SetStencilEnable( false )
 	end
 
-	hook.Add("PostDrawOpaqueRenderables", "playertracker.DrawMarkers", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
+	hook.Add("PostDrawOpaqueRenderables", "!!!!lscs_playertrackerwallhack", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
 		if isDraw3DSkybox then return end
 
 		local ply = LocalPlayer()

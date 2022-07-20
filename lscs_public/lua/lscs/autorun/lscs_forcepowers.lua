@@ -130,29 +130,21 @@ if SERVER then
 		if not name then return end
 
 		if Activate then
-			ProtectedCall( function() 
-				LSCS.Force[ name ].StartUse( ply )
-			end )
+			ProtectedCall( LSCS.Force[ name ].StartUse( ply ) )
 		else
-			ProtectedCall( function() 
-				LSCS.Force[ name ].StopUse( ply )
-			end )
+			ProtectedCall( LSCS.Force[ name ].StopUse( ply ) )
 		end
 	end )
 
 	hook.Add( "LSCS:OnPlayerEquippedItem", "!!!!lscs_forcepower_equip_handler", function( ply, item )
 		if item.type == "force" then
-			ProtectedCall( function() 
-				LSCS.Force[ item.id ].Equip( ply )
-			end)
+			ProtectedCall( LSCS.Force[ item.id ].Equip( ply ) )
 		end
 	end)
 
 	hook.Add( "LSCS:OnPlayerUnEquippedItem", "!!!!lscs_forcepower_unequip_handler", function( ply, item )
 		if item.type == "force" then
-			ProtectedCall( function() 
-				LSCS.Force[ item.id ].UnEquip( ply )
-			end)
+			ProtectedCall( LSCS.Force[ item.id ].UnEquip( ply ) )
 		end
 	end)
 else
