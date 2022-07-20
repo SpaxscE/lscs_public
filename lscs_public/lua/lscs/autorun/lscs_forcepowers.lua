@@ -61,7 +61,18 @@ if SERVER then
 							end
 						end
 					else
-						Phys:SetVelocity( Vel )
+						if Ent:IsNPC() and Ent:GetMoveType() == MOVETYPE_STEP then
+							local d = DamageInfo()
+							d:SetDamage( 50 )
+							d:SetDamageForce( Vel * 100 )
+							d:SetAttacker( att )
+							d:SetDamageType( DMG_CRUSH ) 
+							d:SetDamagePosition( EndPos )
+
+							Ent:TakeDamageInfo( d )
+						else
+							Phys:SetVelocity( Vel )
+						end
 					end
 
 					local effectdata = EffectData()

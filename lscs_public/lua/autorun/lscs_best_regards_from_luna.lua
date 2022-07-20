@@ -19,8 +19,12 @@ function LSCS:GetVersion()
 end
 
 function LSCS:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LunasFlightSchool/master/lfs_base/lua/autorun/lfs_basescript.lua", function(contents,size) 
-		LSCS.VERSION_GITHUB = tonumber( string.match( string.match( contents, "simfphys.LFS.VERSION%s=%s%d+" ) , "%d+" ) ) or 0
+	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/lscs_public/lua/autorun/lscs_best_regards_from_luna.lua", function(contents,size) 
+		local Entry = string.match( contents, "LSCS.VERSION%s=%s%d+" )
+
+		if Entry then
+			LSCS.VERSION_GITHUB = tonumber( string.match( Entry , "%d+" ) ) or 0
+		end
 
 		if LSCS.VERSION_GITHUB == 0 then
 			print("[LSCS] latest version could not be detected, You have Version: "..LSCS:GetVersion())
@@ -47,6 +51,7 @@ include("lscs/init.lua")
 if SERVER then
 	resource.AddWorkshop( "2837856621" )
 end
+
 hook.Add( "InitPostEntity", "!!!lscscheckupdates", function()
 	timer.Simple(20, function() LSCS:CheckUpdates() end)
 end )
