@@ -45,7 +45,7 @@ AddCSLuaFile("lscs/init.lua")
 include("lscs/init.lua")
 
 if SERVER then
-	--resource.AddWorkshop( "2821066926" )
+	resource.AddWorkshop( "2837856621" )
 end
 hook.Add( "InitPostEntity", "!!!lscscheckupdates", function()
 	timer.Simple(20, function() LSCS:CheckUpdates() end)
