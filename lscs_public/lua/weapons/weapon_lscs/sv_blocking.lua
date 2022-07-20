@@ -196,6 +196,10 @@ function SWEP:Block( dmginfo )
 
 		self:DrainBP( damage )
 	else
+		if BLOCK == LSCS_UNBLOCKED then
+			return BLOCK
+		end
+
 		dmginfo:SetDamage( 0 )
 	end
 
