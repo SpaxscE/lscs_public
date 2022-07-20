@@ -73,7 +73,7 @@ if SERVER then
 					bullet.TracerName = nil -- remove the tracer when we are done to avoid conflicts
 				end
 
-				if oldCallback then -- engine weapons dont have a callback <sometimes> so this check is needed
+				if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
 					oldCallback( att, tr, dmginfo )
 				end
 			end

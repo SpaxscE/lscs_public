@@ -2,6 +2,7 @@ local meta = FindMetaTable( "Player" )
 
 if SERVER then
 	util.AddNetworkString( "lscs_inventory" )
+	util.AddNetworkString( "lscs_inventory_refresh" )
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
 
@@ -37,8 +38,10 @@ if SERVER then
 	end
 
 	function meta:lscsEquipItem( index, hand )
-		if not self:lscsGetInventory()[ index ] then return end
+		local class = self:lscsGetInventory()[ index ]
+		if not class then return end
 
+		local WasEquipped = self:lscsGetEquipped()[ index ]
 		self:lscsGetEquipped()[ index ] = hand
 
 		net.Start( "lscs_equip" )
@@ -53,6 +56,14 @@ if SERVER then
 		net.Send( self )
 
 		self:lscsBuildPlayerInfo()
+
+		if isbool( hand ) then
+			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ) )
+		else
+			if WasEquipped then
+				hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
+			end
+		end
 	end
 
 	net.Receive( "lscs_equip", function( len, ply )
@@ -82,6 +93,12 @@ if SERVER then
 		end
 
 		ply:lscsBuildPlayerInfo()
+
+		if equip == 0 or equip == 1 then
+			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
+		else
+			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
+		end
 	end )
 
 	function meta:lscsSyncInventory()
@@ -109,13 +126,34 @@ if SERVER then
 		net.Send( self )
 	end
 
-	function meta:lscsWipeInventory()
-		table.Empty( self:lscsGetInventory() )
-		table.Empty( self:lscsGetEquipped() )
+	function meta:lscsWipeInventory( wipe_unequipped )
+		if wipe_unequipped then
+			local inv = self:lscsGetInventory()
+			local eq = self:lscsGetEquipped()
 
-		self:lscsBuildPlayerInfo()
+			for id, item in pairs( inv ) do
+				if eq[ id ] == nil then
+					inv[ id ] = nil
+				end
+			end
+		else
+			local inv = self:lscsGetInventory()
+			local eq = self:lscsGetEquipped()
+
+			self:StripWeapon( "weapon_lscs" )
+
+			for id, class in pairs( self:lscsGetInventory() ) do
+				if isbool( eq[ id ] ) then
+					hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
+				end
+			end
+
+			table.Empty( inv )
+			table.Empty( eq )
+		end
 
 		self:lscsSyncInventory()
+		self:lscsBuildPlayerInfo()
 	end
 
 	function meta:lscsDropItem( id )
@@ -156,6 +194,8 @@ if SERVER then
 				-- craft the saber
 				self:lscsCraftSaber()
 			end
+
+			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, _item )
 		end
 
 		self:lscsRemoveItem( id )
@@ -189,6 +229,31 @@ if SERVER then
 
 		hook.Run( "LSCS:OnPlayerFullySpawned", ply )
 	end )
+
+	net.Receive( "lscs_inventory_refresh", function( len, ply )
+		local Wipe = net.ReadBool()
+
+		if Wipe then
+			ply:lscsWipeInventory( net.ReadBool() )
+		else
+			ply._lscsInvRefNext = ply._lscsInvRefNext or 0
+
+			local Time = CurTime()
+
+			if ply._lscsInvRefNext > Time then
+				ply._lscsInvRefNext = ply._lscsInvRefNext + 1 -- add 1 second penality
+				ply:ChatPrint("[LSCS] - Please wait ".. math.Round(ply._lscsInvRefNext-Time,0) .." seconds before refreshing your Inventory again")
+				return
+			end
+
+			ply._lscsInvRefNext = Time + 10
+
+			ply:lscsSyncInventory()
+			ply:lscsBuildPlayerInfo()
+
+			ply:ChatPrint("[LSCS] - Inventory Refreshed")
+		end
+	end)
 else
 	hook.Add( "InitPostEntity", "!!!lscsPlayerReady", function()
 		net.Start( "lscs_sync" )

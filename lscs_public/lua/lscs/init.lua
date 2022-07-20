@@ -1,4 +1,22 @@
 
+
+if CLIENT then
+	LSCS.KeyToForce = LSCS.KeyToForce or {}
+
+	function LSCS:RefreshKeys() -- we don't know how many forcepowers we gonna expect, so a lookup table might be a good idea.
+		table.Empty( LSCS.KeyToForce )
+		for name, entry in pairs( LSCS.Force ) do
+			local ID = entry.cmd:GetInt()
+
+			if not LSCS.KeyToForce[ ID ] then
+				LSCS.KeyToForce[ ID ] = {}
+			end
+
+			table.insert( LSCS.KeyToForce[ ID ], name ) -- it must be done like this so we can bind multiple forcepowers to the same key
+		end
+	end
+end
+
 function LSCS:RegisterDeflectableTracer( tracername )
 	if not table.HasValue( LSCS.BulletTracerDeflectable, tracername ) then
 		table.insert( LSCS.BulletTracerDeflectable, tracername )
@@ -92,13 +110,21 @@ function LSCS:RegisterForce( data )
 	LSCS.Force[ id ] = {
 		id = id,
 		name = data.PrintName,
+		description = data.Description,
+		author = data.Author,
 		type = "force",
 		Type = "Force",
 		class = class,
 		Equip = (data.Equip or fallback),
 		UnEquip = (data.UnEquip or fallback),
-		OnUse = (data.OnUse or fallback),
+		StartUse = (data.StartUse or fallback),
+		StopUse = (data.StopUse or fallback),
 	}
+
+	if CLIENT then
+		LSCS.Force[ id ].cmd = CreateClientConVar( "lscs_key_force_"..id, KEY_NONE, true, true )
+		LSCS:RefreshKeys()
+	end
 
 	local ENT = {}
 

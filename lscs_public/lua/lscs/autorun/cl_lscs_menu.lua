@@ -95,6 +95,8 @@ local icon_rhand = Material("lscs/ui/hand_r.png")
 local zoom_mat = Material( "vgui/zoom" )
 
 local function BaseButtonClick( self, sound )
+	if not self:IsEnabled() then return end
+
 	sound = sound or "ui/buttonclick.wav"
 
 	surface.PlaySound( sound )
@@ -105,6 +107,9 @@ local function DrawButtonClick( self, w, h )
 	local Col = menu_white_dim
 	if self:IsHovered() then
 		Col = menu_white
+	end
+	if not self:IsEnabled() then
+		Col = menu_text
 	end
 
 	self.smScale = self.smScale or 0
@@ -125,6 +130,7 @@ local function DrawButtonClick( self, w, h )
 	return Col
 end
 
+local ForceNum = 1
 local StanceNum = 1
 local Frame
 
@@ -293,12 +299,8 @@ function LSCS:BuildInventory( Frame )
 
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
-		local Col = menu_light
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
-
 		surface.SetMaterial( ClickMat )
 		surface.SetDrawColor( 255, 255, 255, 255 )
 		local X, Y = self:CursorPos()
@@ -309,8 +311,144 @@ function LSCS:BuildInventory( Frame )
 		surface.DrawRect( 0, 0, w, h  )
 	end
 
+	local ToolBar = vgui.Create( "DPanel", Panel )
+	ToolBar:SetSize( PanelSizeX, 50 )
+	ToolBar:Dock( BOTTOM )
+	ToolBar:DockMargin( 10, 4, 24, 10 )
+	ToolBar.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+	end
+
+	local Refresh = vgui.Create( "DButton", ToolBar )
+	Refresh:SetText("")
+	Refresh:SetSize( 130, 100 )
+	Refresh:Dock( RIGHT )
+	Refresh:DockMargin( 4, 4, 4, 4 )
+	Refresh.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		draw.SimpleText( "REFRESH", "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+
+		DrawFrame( w, h, 0, 2 )
+	end
+	Refresh.DoClick = function( self )
+		BaseButtonClick( self )
+
+		self:SetEnabled( false )
+
+		timer.Simple( 0.2, function()
+			if not IsValid( self ) then return end
+			self:SetEnabled( true )
+			net.Start("lscs_inventory_refresh")
+				net.WriteBool( false )
+			net.SendToServer()
+		end )
+	end
+
+	local DropAll = vgui.Create( "DButton", ToolBar )
+	DropAll:SetText("")
+	DropAll:SetSize( 180, 100 )
+	DropAll:Dock( LEFT )
+	DropAll:DockMargin( 4, 4, 4, 4 )
+	DropAll.SafetyEnabled = 1
+	DropAll.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		if self.SafetyEnabled == 1 then
+			draw.SimpleText( "DROP ALL", "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		elseif self.SafetyEnabled == 2 then
+			draw.SimpleText( "ARE YOU SURE??", "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		else
+			Col = Color(255, 0, 0, 255)
+			surface.SetMaterial( ClickMat )
+			surface.SetDrawColor( 150, 0, 0, 255 )
+			surface.DrawTexturedRect( 0, 0, w, h )
+
+			draw.SimpleText( "!!DROP ALL!!", "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+
+		DrawFrame( w, h, 0, 2 )
+	end
+	DropAll.DoClick = function( self )
+		BaseButtonClick( self )
+
+		if self.SafetyEnabled < 3 then
+			self:SetEnabled( false )
+
+			timer.Simple( 1, function()
+				if not IsValid( self ) then return end
+				self:SetEnabled( true )
+				self.SafetyEnabled = self.SafetyEnabled + 1
+			end )
+		else
+			self:SetEnabled( false )
+
+			net.Start("lscs_inventory_refresh")
+				net.WriteBool( true )
+				net.WriteBool( false )
+			net.SendToServer()
+		end
+	end
+
+	local DropUnEq = vgui.Create( "DButton", ToolBar )
+	DropUnEq:SetText("")
+	DropUnEq:SetSize( 180, 100 )
+	DropUnEq:Dock( LEFT )
+	DropUnEq:DockMargin( 4, 4, 4, 4 )
+	DropUnEq.SafetyEnabled = 1
+	DropUnEq.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		if self.SafetyEnabled == 1 then
+			draw.SimpleText( "DROP", "LSCS_FONT", w * 0.5, h * 0.5 + 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "UNEQUIPPED", "LSCS_FONT", w * 0.5, h * 0.5 - 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		elseif self.SafetyEnabled == 2 then
+			draw.SimpleText( "ARE YOU SURE??", "LSCS_FONT", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		else
+			Col = Color(255, 0, 0, 255)
+			surface.SetMaterial( ClickMat )
+			surface.SetDrawColor( 150, 0, 0, 255 )
+			surface.DrawTexturedRect( 0, 0, w, h )
+
+			draw.SimpleText( "!!DROP!!", "LSCS_FONT", w * 0.5, h * 0.5 + 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "!!UNEQUIPPED!!", "LSCS_FONT", w * 0.5, h * 0.5 - 2, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		end
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+
+		DrawFrame( w, h, 0, 2 )
+	end
+	DropUnEq.DoClick = function( self )
+		BaseButtonClick( self )
+
+		if self.SafetyEnabled < 3 then
+			self:SetEnabled( false )
+
+			timer.Simple( 1, function()
+				if not IsValid( self ) then return end
+				self:SetEnabled( true )
+				self.SafetyEnabled = self.SafetyEnabled + 1
+			end )
+		else
+			self:SetEnabled( false )
+
+			net.Start("lscs_inventory_refresh")
+				net.WriteBool( true )
+				net.WriteBool( true )
+			net.SendToServer()
+		end
+	end
+
 	local DScrollPanel = vgui.Create( "DScrollPanel", Panel )
-	DScrollPanel:Dock( FILL )
+	DScrollPanel:SetSize( PanelSizeX, PanelSizeY - 40 )
+	DScrollPanel:Dock( BOTTOM )
 
 	local Inventory = LocalPlayer():lscsGetInventory()
 
@@ -1076,9 +1214,6 @@ function LSCS:BuildStanceMenu( Frame )
 	richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
 	richtext:AppendText((combo.author or "").."\n\n")
 	richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
-	--richtext:AppendText("Internal-ID:\n")
-	--richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
-	--richtext:AppendText(combo.id)
 
 	local Button = vgui.Create( "DButton", Panel )
 	Button.Item = combo
@@ -1156,24 +1291,303 @@ function LSCS:BuildStanceMenu( Frame )
 end
 
 function LSCS:BuildForceMenu( Frame )
+	local ply = LocalPlayer()
+	local ForceAbilities = ply:lscsGetForceAbilities()
+
+	if ForceNum > #ForceAbilities then
+		ForceNum = 1
+	end
+
+	local Force = ForceAbilities[ ForceNum ] and ForceAbilities[ ForceNum ].item or false
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
-		local Col = menu_light
+	end
+
+	local L = vgui.Create( "DPanel", Panel )
+	L:SetSize( PanelSizeX - 208, 800 )
+	L:Dock( LEFT )
+	L:DockMargin( 0, 0, 0, 0 )
+	L.Paint = function(self, w, h )
+	end
+
+	local descriptionHeader = vgui.Create( "DPanel", L )
+	descriptionHeader:Dock( TOP )
+	descriptionHeader:DockMargin( 4, 4, 0, 0 )
+	descriptionHeader.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+		draw.SimpleText( "Information", "LSCS_FONT", w * 0.5, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	local SelectBind = vgui.Create( "DPanel", L )
+	SelectBind:SetSize( 0, 280 )
+	SelectBind:Dock( BOTTOM )
+	SelectBind:DockMargin( 4, 4, 0, 4 )
+	SelectBind.Paint = function(self, w, h )
+		local Col = menu_dim
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
 		surface.DrawRect( 0, 0, w, h  )
 	end
 
-	local binder = vgui.Create( "DBinder", Panel)
-	binder:SetPos( 25, 25 )
-	binder:SetSize( 200, 30 )
-	--binder:SetValue( setdefault )
-	function binder:SetSelectedNumber( num )
-		self.m_iSelectedNumber = num
-		self:ConVarChanged( num ) 
-		self:UpdateText() 
-		self:OnChange( num ) 
+	local description = vgui.Create( "DPanel", L )
+	description:SetSize( 324, 0 )
+	description:Dock( LEFT )
+	description:DockMargin( 4, 4, 0, 0 )
+	description.Paint = function(self, w, h ) 
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	local ColHead = menu_text
+	local ColText = menu_white
+
+	local richtext = vgui.Create( "RichText", description )
+	richtext:Dock( FILL )
+	if Force then
+		richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+		richtext:AppendText("Name:\n")
+
+		richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+		richtext:AppendText("Force "..(Force.name or Force.id).."\n\n")
+
+		richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+		richtext:AppendText("Description:\n")
+		richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+		richtext:AppendText((Force.description or "").."\n\n")
+		richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+		richtext:AppendText("Author:\n")
+		richtext:InsertColorChange( ColText.r, ColText.g, ColText.b, ColText.a )
+		richtext:AppendText((Force.author or "").."\n\n")
+		richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+	else
+		richtext:InsertColorChange( ColHead.r, ColHead.g, ColHead.b, ColHead.a )
+		richtext:AppendText("You don't have any Force Powers")
+	end
+
+	local Button = vgui.Create( "DButton", L )
+	Button.Item = Force
+	Button.InfoText = "N/A"
+	Button:SetText( "" )
+	Button:SetSize( 130, 0 )
+	Button:Dock( LEFT )
+	Button:DockMargin( 4, 4, 4, 0 )
+	Button.Paint = function( self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		CrafterButtonPaint( self, w, h )
+	end
+	Button.DoClick = function( self )
+		BaseButtonClick( self )
+
+		local NumForce = #ForceAbilities
+
+		self.menu = DermaMenu()
+
+		self.menu:AddOption( "view next", function()
+			ForceNum = ForceNum + 1
+			if ForceNum > NumForce then
+				ForceNum = 1
+			end
+			self.menu:Remove()
+			LSCS:RefreshMenu()
+		end )
+		self.menu:AddOption( "view previous", function()
+			ForceNum = ForceNum - 1
+			if ForceNum <= 0 then
+				ForceNum = NumForce
+			end
+			self.menu:Remove()
+			LSCS:RefreshMenu()
+		end )
+
+		local subMenu = self.menu:AddSubMenu("equip")
+
+		local Num = 0
+		for k, v in pairs( ply:lscsGetInventory() ) do
+			if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
+
+			local item = LSCS:ClassToItem( v )
+			if item.type == "force" then
+				Num = Num + 1
+				subMenu:AddOption( item.name, function()
+					ply:lscsEquipItem( k, true )
+				end )
+			end
+		end
+
+		self.menu:Open()
+	end
+	Button.DoRightClick = function( self )
+		BaseButtonClick( self )
+
+		local NumForce = #ForceAbilities
+
+		ForceNum = ForceNum + 1
+		if ForceNum > NumForce then
+			ForceNum = 1
+		end
+		LSCS:RefreshMenu()
+	end
+
+
+	local descriptionHeader = vgui.Create( "DPanel", SelectBind )
+	descriptionHeader:Dock( TOP )
+	descriptionHeader:DockMargin( 4, 4, 0, 0 )
+	descriptionHeader.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+		draw.SimpleText( "Force Selector Keybinding", "LSCS_FONT", w * 0.5, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	local ActivatorBG = vgui.Create( "DPanel", SelectBind )
+	ActivatorBG:SetSize( 250, 30 )
+	ActivatorBG:Dock( TOP )
+	ActivatorBG:DockMargin( 4, 4, 4, 0 )
+	ActivatorBG.Paint = function(self, w, h )
+		local Col = menu_light
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		draw.SimpleText( "Mouse Override (LMB to use Force, Scroll Wheel to select)", "LSCS_FONT_SMALL", (w - 100) * 0.5, h * 0.5 - 1, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+	local ActivatorBinder = vgui.Create( "DBinder", ActivatorBG )
+	ActivatorBinder:SetSize( 100, 30 )
+	ActivatorBinder:Dock( RIGHT )
+	ActivatorBinder:DockMargin( 2, 2, 2, 2 )
+	ActivatorBinder:SetValue( LSCS.ForceSelector.KeyActivate:GetInt() )
+	ActivatorBinder.OnChange = function( self, num )
+		LSCS.ForceSelector.KeyActivate:SetInt( num )
+	end
+
+	local Next = vgui.Create( "DPanel", SelectBind )
+	Next:SetSize( 250, 30 )
+	Next:Dock( TOP )
+	Next:DockMargin( 4, 4, 4, 0 )
+	Next.Paint = function(self, w, h )
+		local Col = menu_light
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		draw.SimpleText( "Next", "LSCS_FONT_SMALL", (w - 100) * 0.5, h * 0.5 - 1, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+	local Binder = vgui.Create( "DBinder", Next )
+	Binder:SetSize( 100, 30 )
+	Binder:Dock( RIGHT )
+	Binder:DockMargin( 2, 2, 2, 2 )
+	Binder:SetValue( LSCS.ForceSelector.KeyNext:GetInt() )
+	Binder.OnChange = function( self, num )
+		LSCS.ForceSelector.KeyNext:SetInt( num )
+	end
+
+	local Prev = vgui.Create( "DPanel", SelectBind )
+	Prev:SetSize( 250, 30 )
+	Prev:Dock( TOP )
+	Prev:DockMargin( 4, 4, 4, 0 )
+	Prev.Paint = function(self, w, h )
+		local Col = menu_light
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		draw.SimpleText( "Previous", "LSCS_FONT_SMALL", (w - 100) * 0.5, h * 0.5 - 1, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+	local Binder = vgui.Create( "DBinder", Prev )
+	Binder:SetSize( 100, 30 )
+	Binder:Dock( RIGHT )
+	Binder:DockMargin( 2, 2, 2, 2 )
+	Binder:SetValue( LSCS.ForceSelector.KeyPrev:GetInt() )
+	Binder.OnChange = function( self, num )
+		LSCS.ForceSelector.KeyPrev:SetInt( num )
+	end
+
+
+	local Use = vgui.Create( "DPanel", SelectBind )
+	Use:SetSize( 250, 30 )
+	Use:Dock( TOP )
+	Use:DockMargin( 4, 4, 4, 0 )
+	Use.Paint = function(self, w, h )
+		local Col = menu_light
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		draw.SimpleText( "Use", "LSCS_FONT_SMALL", (w - 100) * 0.5, h * 0.5 - 1, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+	local Binder = vgui.Create( "DBinder", Use )
+	Binder:SetSize( 100, 30 )
+	Binder:Dock( RIGHT )
+	Binder:DockMargin( 2, 2, 2, 2 )
+	Binder:SetValue( LSCS.ForceSelector.KeyUse:GetInt() )
+	Binder.OnChange = function( self, num )
+		LSCS.ForceSelector.KeyUse:SetInt( num )
+	end
+
+
+	local SPH = vgui.Create( "DPanel", Panel )
+	SPH:SetSize( 0, 50 )
+	SPH:Dock( TOP )
+	SPH:DockMargin( 4, 4, 4, 0 )
+	SPH.Paint = function(self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+
+		draw.SimpleText( "Force Power", "LSCS_FONT", w * 0.5, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( "Direct Key Binding", "LSCS_FONT", w * 0.5, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	end
+
+	local SPB = vgui.Create( "DPanel", Panel )
+	SPB:SetSize( 200, 0 )
+	SPB:Dock( RIGHT )
+	SPB:DockMargin( 0, 4, 4, 4 )
+	SPB.Paint = function(self, w, h )
+		local Col = menu_dim
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h  )
+	end
+
+	local DScrollPanel = vgui.Create( "DScrollPanel", SPB )
+	DScrollPanel:Dock( FILL )
+
+	for ID, item in pairs( LSCS.Force ) do
+		local P = DScrollPanel:Add( "DPanel" )
+		P:SetSize( 250, 30 )
+		P:Dock( TOP )
+		P:DockMargin( 4, 4, 4, 0 )
+		P.Paint = function(self, w, h )
+			local Col = menu_light
+
+			if Force and Force.id == ID then
+				Col = menu_text
+			end
+
+			surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+			surface.DrawRect( 0, 0, w, h  )
+
+			draw.SimpleText( item.name, "LSCS_FONT_SMALL", (w - 100) * 0.5, h * 0.5 - 1, menu_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+		local B = vgui.Create( "DBinder", P )
+		
+		B:SetSize( 100, 30 )
+		B:Dock( RIGHT )
+		B:DockMargin( 2, 2, 2, 2 )
+		B:SetValue( item.cmd:GetInt() )
+		B.OnChange = function( self, num )
+			item.cmd:SetInt( num )
+			LSCS:RefreshKeys()
+		end
 	end
 
 	LSCS:SetActivePanel( Panel )

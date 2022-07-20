@@ -28,7 +28,7 @@ LSCS:RefreshMenu() -- refreshes the menu if open. Only works clientside. Needs t
 
 # SERVER
 
--- this is called when the player is fully loaded and ready. This hook is used internally to send a full inventory sync
+-- this is called when the player is fully loaded and ready
 hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	print("hello")
 end )
@@ -45,6 +45,13 @@ hook.Add( "LSCS:OnPlayerCraftedSaber", "ANY_HOOK_NAME_YOU_WANT", function( ply, 
 
 end )
 
+-- called whenever a player equips an item
+hook.Add( "LSCS:OnPlayerEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
+end)
+
+-- called whenever a player unequips an item
+hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
+end)
 
 
 ply:lscsAddInventory( entity, equip_to_hand ) -- add a entity to the players inventory. Only supports sents.
@@ -64,6 +71,8 @@ ply:lscsEquipItem( index, equip_to_hand ) -- equip a item from inventory
 
 
 ply:lscsSyncInventory() -- send a full sync to the client. Should never be needed.
+
+ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe_unequipped = true will only clear unequipped items from inventory
 
 ply:lscsRemoveItem( id ) -- just remove given id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
 
