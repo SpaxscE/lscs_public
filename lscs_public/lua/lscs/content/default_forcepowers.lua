@@ -316,9 +316,9 @@ else
 				for _, ent in pairs( ents.GetAll() ) do
 					if ent == ply then continue end
 
-					if not ent.IsNPC or not ent.IsNextBot or not ent.IsBot or not ent.IsPlayer then continue end
+					if not ent.IsNPC or not ent.IsNextBot or not ent.IsPlayer then continue end
 
-					if not ent:IsNPC() and not ent:IsNextBot() and not ent:IsBot() and not ent:IsPlayer() then continue end
+					if not ent:IsNPC() and not ent:IsNextBot() and not ent:IsPlayer() then continue end
 
 					ent:DrawModel()
 				end

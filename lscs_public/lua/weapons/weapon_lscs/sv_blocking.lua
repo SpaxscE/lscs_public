@@ -82,13 +82,16 @@ function SWEP:Block( dmginfo )
 
 	if not self:GetActive() then return BLOCK end
 
+	if self:IsBrokenSaber() then return BLOCK end
+
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return BLOCK end
 
 	if not dmginfo:IsDamageType( DMG_ENERGYBEAM )
 		and not dmginfo:IsDamageType( DMG_CLUB )
-		and not dmginfo:IsDamageType( DMG_SLASH ) then
+		and not dmginfo:IsDamageType( DMG_SLASH )
+		and dmginfo:GetDamageType() ~= DMG_GENERIC then
 
 		return BLOCK
 	end

@@ -779,9 +779,13 @@ function LSCS:BuildInventory( Frame )
 		end
 		DButton.DoClick = function( self )
 			BaseButtonClick( self )
+
 			self.menu = DermaMenu()
+
 			if isbool( ply:lscsGetEquipped()[ self:GetID() ] ) then
 				self.menu:AddOption( "Unequip", function()
+					if not self.GetItem then return end -- what happened ?
+
 					local Item = self:GetItem()
 
 					if not Item then return end
@@ -795,6 +799,8 @@ function LSCS:BuildInventory( Frame )
 				end )
 			else
 				self.menu:AddOption( "Equip", function()
+					if not self.GetItem then return end -- what happened ?
+
 					local Item = self:GetItem()
 
 					if not Item then return end
@@ -1623,6 +1629,7 @@ function LSCS:BuildForceMenu( Frame )
 			if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
 
 			local item = LSCS:ClassToItem( v )
+
 			if item.type == "force" then
 				Num = Num + 1
 				subMenu:AddOption( item.name, function()

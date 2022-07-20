@@ -48,12 +48,12 @@ local function CreateSelector()
 
 		local pX, pY = self:GetPos()
 		surface.SetMaterial( blur )
-		blur:SetFloat( "$blur", 3 )
+		blur:SetFloat( "$blur", 5 )
 		blur:Recompute()
 		if render then render.UpdateScreenEffectTexture() end
 		surface.SetDrawColor( 255, 255, 255, fading_white.a )
 		surface.DrawTexturedRect( -pX, -pY, ScrW(), ScrH() )
-		surface.SetDrawColor( 0, 0, 0, 100 * smAlpha )
+		surface.SetDrawColor( 0, 0, 0, 200 * smAlpha )
 		surface.DrawRect( 0, 0, w, h )
 
 		local StartX = w * 0.5 + smOffset
@@ -122,11 +122,14 @@ local function CreateSelector()
 		surface.DrawRect( w - FrameThickness, 0, FrameThickness, h )
 
 		surface.SetDrawColor( fading_blue )
+
+		local Thickness = (smOffset ~= 0) and (3 + math.floor( math.abs( math.cos( CurTime() * 100 ) * 6 )) ) or FrameThickness -- looks cool
+
 		local fXstat = w * 0.5 - SelectedItemHalfHeight
-		surface.DrawRect( fXstat, 0, SelectedItemHeight, FrameThickness )
-		surface.DrawRect( fXstat, yh - FrameThickness, SelectedItemHeight, FrameThickness )
-		surface.DrawRect( fXstat, FrameThickness, FrameThickness, yh - 2 * FrameThickness )
-		surface.DrawRect( fXstat + SelectedItemHeight - FrameThickness, FrameThickness, FrameThickness, yh - 2 * FrameThickness )
+		surface.DrawRect( fXstat, 0, SelectedItemHeight, Thickness )
+		surface.DrawRect( fXstat, yh - Thickness, SelectedItemHeight, Thickness )
+		surface.DrawRect( fXstat, Thickness, Thickness, yh - 2 * Thickness )
+		surface.DrawRect( fXstat + SelectedItemHeight - Thickness, Thickness, Thickness, yh - 2 * Thickness )
 	end
 
 	LSCS.ForceSelector.Selector = ForceSelector
@@ -146,8 +149,14 @@ local function StopUse( ID )
 	net.SendToServer()
 end
 
-local function Prev()
+local NextNav = 0
+
+local function Prev( dont_set_time )
 	if not IsValid( LSCS.ForceSelector.Selector ) then CreateSelector() end
+
+	local Time = CurTime()
+	if NextNav > Time then return end
+	NextNav = Time + 0.01
 
 	local ply = LocalPlayer()
 	local ForcePowers = ply:lscsGetForceAbilities()
@@ -164,11 +173,17 @@ local function Prev()
 
 	smOffset = smOffset + SelectorItemHeight
 
+	if dont_set_time then return end
+
 	FadeTimer = CurTime() + 2
 end
 
-local function Next()
+local function Next( dont_set_time )
 	if not IsValid( LSCS.ForceSelector.Selector ) then CreateSelector() end
+
+	local Time = CurTime()
+	if NextNav > Time then return end
+	NextNav = Time + 0.01
 
 	local ply = LocalPlayer()
 	local ForcePowers = ply:lscsGetForceAbilities()
@@ -184,6 +199,8 @@ local function Next()
 	end
 
 	smOffset = smOffset - SelectorItemHeight
+
+	if dont_set_time then return end
 
 	FadeTimer = CurTime() + 2
 end
@@ -251,14 +268,14 @@ hook.Add( "PlayerBindPress", "PlayerBindPressExample", function( ply, bind, pres
 
 	if bind == "invprev" then
 		if pressed then
-			Prev()
+			Prev( true )
 		end
 
 		return true
 	end
 	if bind == "invnext" then
 		if pressed then
-			Next()
+			Next( true )
 		end
 
 		return true

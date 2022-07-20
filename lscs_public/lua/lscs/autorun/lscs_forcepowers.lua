@@ -204,24 +204,30 @@ if SERVER then
 		local Activate = net.ReadBool()
 		local ForcePowers = ply:lscsGetForceAbilities()
 
-		local name = ForcePowers[ ID ].item.id
+		local selectedF = ForcePowers[ ID ]
 
-		if not name then return end
+		if not selectedF then return end
+
+		local item = selectedF.item
+
+		if not item then return end
 
 		if Activate then
-			ProtectedCall( LSCS.Force[ name ].StartUse( ply ) )
+			ProtectedCall( LSCS.Force[ item.id ].StartUse( ply ) )
 		else
-			ProtectedCall( LSCS.Force[ name ].StopUse( ply ) )
+			ProtectedCall( LSCS.Force[ item.id ].StopUse( ply ) )
 		end
 	end )
 
 	hook.Add( "LSCS:OnPlayerEquippedItem", "!!!!lscs_forcepower_equip_handler", function( ply, item )
+		if not IsValid( ply ) then return end
 		if item.type == "force" then
 			ProtectedCall( LSCS.Force[ item.id ].Equip( ply ) )
 		end
 	end)
 
 	hook.Add( "LSCS:OnPlayerUnEquippedItem", "!!!!lscs_forcepower_unequip_handler", function( ply, item )
+		if not IsValid( ply ) then return end
 		if item.type == "force" then
 			ProtectedCall( LSCS.Force[ item.id ].UnEquip( ply ) )
 		end

@@ -119,13 +119,36 @@ COMBO.Attacks = {
 		Duration = 0.7,
 	},
 	["____"] = {
-		AttackAnim = "flourish_bow_basic",
+		AttackAnim = "pure_b_right_t1",
 		BeginAttack = function( weapon, ply )  
-			weapon:DoAttackSound()
+			ply:lscsSetTimedMove( 1, CurTime(), 0.5, Vector(4500,0,0) )
+			ply:lscsSetTimedMove( 2, CurTime() + 0.5, 0.4, Vector(0,0,0) )
+
+			weapon:DoAttackSound(1, 1)
+			timer.Simple(0.1, function()
+				if not IsValid( weapon ) then return end
+				weapon:DoAttackSound( 1, 2 )
+			end)
+			timer.Simple(0.2, function()
+				if not IsValid( weapon ) then return end
+				weapon:DoAttackSound( 3, 1 )
+			end)
+			timer.Simple(0.4, function()
+				if not IsValid( weapon ) then return end
+				weapon:DoAttackSound( 3, 2 )
+			end)
+			timer.Simple(0.5, function()
+				if not IsValid( weapon ) then return end
+				weapon:DoAttackSound( 1, 1 )
+			end)
+			timer.Simple(0.6, function()
+				if not IsValid( weapon ) then return end
+				weapon:DoAttackSound( 1, 2 )
+			end)
 		end,
 		FinishAttack = function( weapon, ply ) end,
-		Delay = 0.2,
-		Duration = 0.6,
+		Delay = 0,
+		Duration = 0.9,
 	},
 	["-45-"] = {
 		AttackAnim = "vanguard_r_s3_t3",
