@@ -10,9 +10,43 @@ best regards luna
 
 LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {}, Force = {},BulletTracerDeflectable = {} }
 
+LSCS.VERSION = 94
+LSCS.VERSION_GITHUB = 0
+LSCS.VERSION_TYPE = ".wip"
+
+function LSCS:GetVersion()
+	return LSCS.VERSION
+end
+
+function LSCS:CheckUpdates()
+	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LunasFlightSchool/master/lfs_base/lua/autorun/lfs_basescript.lua", function(contents,size) 
+		LSCS.VERSION_GITHUB = tonumber( string.match( string.match( contents, "simfphys.LFS.VERSION%s=%s%d+" ) , "%d+" ) ) or 0
+
+		if LSCS.VERSION_GITHUB == 0 then
+			print("[LSCS] latest version could not be detected, You have Version: "..LSCS:GetVersion())
+		else
+			if  LSCS:GetVersion() >= LSCS.VERSION_GITHUB then
+				print("[LSCS] is up to date, Version: "..LSCS:GetVersion())
+			else
+				print("[LSCS] a newer version is available! Version: "..LSCS.VERSION_GITHUB..", You have Version: "..LSCS:GetVersion())
+				print("[LSCS] get the latest version at https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM")
+
+				if CLIENT then 
+					timer.Simple(18, function() 
+						chat.AddText( Color( 255, 0, 0 ), "[LSCS] a newer version is available!" )
+					end)
+				end
+			end
+		end
+	end)
+end
+
 AddCSLuaFile("lscs/init.lua")
 include("lscs/init.lua")
 
 if SERVER then
 	--resource.AddWorkshop( "2821066926" )
 end
+hook.Add( "InitPostEntity", "!!!lscscheckupdates", function()
+	timer.Simple(20, function() LSCS:CheckUpdates() end)
+end )

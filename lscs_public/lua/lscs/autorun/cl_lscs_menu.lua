@@ -1,4 +1,4 @@
-surface.CreateFont( "LSCS_FONT", {
+local THE_FONT = {
 	font = "Verdana",
 	extended = false,
 	size = 20,
@@ -14,25 +14,17 @@ surface.CreateFont( "LSCS_FONT", {
 	shadow = true,
 	additive = false,
 	outline = false,
-} )
+}
+surface.CreateFont( "LSCS_FONT", THE_FONT )
 
-surface.CreateFont( "LSCS_FONT_SMALL", {
-	font = "Verdana",
-	extended = false,
-	size = 12,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = true,
-	additive = false,
-	outline = false,
-} )
+THE_FONT.size = 12
+THE_FONT.weight = 500
+surface.CreateFont( "LSCS_FONT_SMALL", THE_FONT )
+
+THE_FONT.font = "Ink Free"
+THE_FONT.size = 16
+THE_FONT.weight = 1000
+surface.CreateFont( "LSCS_VERSION", THE_FONT )
 
 local function bezier(p0, p1, p2, p3, t)
 	local e = p0 + t * (p1 - p0)
@@ -79,6 +71,7 @@ local menu_black = Color(31,31,31,255)
 local menu_text = Color(0,127,255,255)
 
 local icon_lscs = Material("lscs/ui/icon256.png")
+
 local icon_inventory = Material("lscs/ui/inventory.png")
 local icon_hilt = Material("lscs/ui/hilt.png")
 local icon_stance = Material("lscs/ui/stance.png")
@@ -91,6 +84,14 @@ local icon_cross = Material("lscs/ui/cross.png")
 local icon_hand = Material("lscs/ui/hand.png")
 local icon_lhand = Material("lscs/ui/hand_l.png")
 local icon_rhand = Material("lscs/ui/hand_r.png")
+
+local icon_load_version = Material("gui/html/refresh")
+
+local icon_invert = Material( "lscs/ui/logo_invert.png")
+local icon_steam = Material("lscs/ui/steam.png")
+local icon_youtube = Material("lscs/ui/youtube.png")
+local icon_discord = Material("lscs/ui/discord.png")
+local icon_github = Material("lscs/ui/github.png")
 
 local zoom_mat = Material( "vgui/zoom" )
 
@@ -279,13 +280,210 @@ function LSCS:SideBar( Frame )
 end
 
 function LSCS:BuildMainMenu( Frame )
+	local smMove = 0
+
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
+		local Col = Color( 255, 191, 0, 255 ) 
+
+		if LSCS.VERSION_GITHUB == 0 then
+			surface.SetMaterial( icon_load_version )
+			surface.SetDrawColor( Col )
+			surface.DrawTexturedRectRotated( w - 14, h - 14, 16, 16, -CurTime() * 200 )
+
+			draw.SimpleText( "v"..LSCS:GetVersion()..LSCS.VERSION_TYPE, "LSCS_VERSION", w - 23, h - 14, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		else
+			local Current = LSCS:GetVersion()
+			local Latest = LSCS.VERSION_GITHUB
+
+			local Pref = "v"
+
+			if Current >= Latest then
+				Col = Color(0,255,0,255)
+			else
+				Col = Color(255,0,0,255)
+				Pref = "OUTDATED v"
+			end
+
+			draw.SimpleText( Pref..LSCS:GetVersion()..LSCS.VERSION_TYPE, "LSCS_VERSION", w - 7, h - 14, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		end
+	end
+
+	local Header = vgui.Create( "DPanel", Panel )
+	Header:SetSize( 0, 136 )
+	Header:Dock( TOP )
+	Header.Paint = function(self, w, h )
+		-- showoff lmao
 		local Col = menu_light
+
 		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
+		surface.DrawRect( 0, 0, w, h )
+
+		local A = math.rad( CurTime() * 150 )
+		local X = math.cos( A ) * w * 0.5
+		local Y = math.sin( A ) * h * 0.5
+
+		surface.SetDrawColor( menu_dim )
+		surface.DrawRect( w - 132, 4, 128, 128 )
+
+		
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( menu_text )
+
+		surface.DrawTexturedRectRotated( w * 0.5 + X, h * 0.5 + Y * 1.5, 200, 200, 0 )
+		surface.DrawTexturedRectRotated( w * 0.5 + X, h * 0.5, 128, 128, 0 )
+
+		surface.SetDrawColor( menu_dim )
+		surface.SetMaterial( icon_invert )
+		surface.DrawTexturedRect( w - 132, 4, 128, 128 )
+		surface.DrawRect( 4, 4, w - 136, 128 )
+
+		draw.SimpleText( "THANK YOU FOR USING", "LSCS_FONT_MAXIMUM", 250, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( "LSCS", "LSCS_FONT_MAXIMUM", 250, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	end
+
+	local Bar = vgui.Create( "DPanel", Panel )
+	Bar:SetSize( 0, 136 )
+	Bar:Dock( TOP )
+	Bar:DockMargin( 4, 0, 4, 4 )
+	Bar.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+	end
+
+	local B = vgui.Create( "DButton", Bar )
+	B:SetText("")
+	B:SetSize( PanelSizeX * 0.45 , 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 4, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		draw.SimpleText( "PROBLEMS?", "LSCS_FONT_MAXIMUM", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( "REPORT HERE", "LSCS_FONT_MAXIMUM", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM" )
+		end )
+	end
+
+	local B = vgui.Create( "DButton", Bar )
+	B:SetText("")
+	B:SetSize( PanelSizeX * 0.5 , 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 4, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		draw.SimpleText( "THIS PROJECT", "LSCS_FONT_MAXIMUM", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( "ON STEAM", "LSCS_FONT_MAXIMUM", w * 0.5, h * 0.5, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://steamcommunity.com/sharedfiles/filedetails/?id=1571918906" )
+		end )
+	end
+
+	local ToolBar = vgui.Create( "DPanel", Panel )
+	ToolBar:SetSize( 0, 136 )
+	ToolBar:Dock( TOP )
+	ToolBar:DockMargin( 4, 0, 4, 4 )
+	ToolBar.Paint = function(self, w, h )
+		local Col = menu_dim
+
+		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
+		surface.DrawRect( 0, 0, w, h )
+	end
+
+	local B = vgui.Create( "DButton", ToolBar )
+	B:SetText("")
+	B:SetSize( 128, 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 60, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_steam )
+		surface.SetDrawColor( Col )
+		surface.DrawTexturedRectRotated( w * 0.5, h * 0.5, w, h, 0 )
+
+		draw.SimpleText( "STEAM", "LSCS_FONT", w * 0.5, h - 4, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://steamcommunity.com/id/Blu-x92/myworkshopfiles/" )
+		end )
+	end
+
+	local B = vgui.Create( "DButton", ToolBar )
+	B:SetText("")
+	B:SetSize( 128, 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 4, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_discord )
+		surface.SetDrawColor( Col )
+		surface.DrawTexturedRectRotated( w * 0.5, h * 0.5, w, h, 0 )
+
+		draw.SimpleText( "DISCORD", "LSCS_FONT", w * 0.5, h - 4, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://discord.gg/p7pzJcmVUq" )
+		end )
+	end
+
+	local B = vgui.Create( "DButton", ToolBar )
+	B:SetText("")
+	B:SetSize( 128, 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 4, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_youtube )
+		surface.SetDrawColor( Col )
+		surface.DrawTexturedRectRotated( w * 0.5, h * 0.5, w, h, 0 )
+
+		draw.SimpleText( "YOUTUBE", "LSCS_FONT", w * 0.5, h - 4, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://www.youtube.com/channel/UCflA9ujvDtzwHr91U4XXOvw" )
+		end )
+	end
+
+	local B = vgui.Create( "DButton", ToolBar )
+	B:SetText("")
+	B:SetSize( 128, 128 )
+	B:Dock( LEFT )
+	B:DockMargin( 4, 4, 4, 4 )
+	B.Paint = function(self, w, h )
+		local Col = DrawButtonClick( self, w, h )
+
+		surface.SetMaterial( icon_github )
+		surface.SetDrawColor( Col )
+		surface.DrawTexturedRectRotated( w * 0.5, h * 0.5, w, h, 0 )
+
+		draw.SimpleText( "GITHUB", "LSCS_FONT", w * 0.5, h - 4, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	end
+	B.DoClick = function( self )
+		BaseButtonClick( self )
+		timer.Simple( 0.5, function()
+			gui.OpenURL( "https://github.com/Blu-x92" )
+		end )
 	end
 
 	LSCS:SetActivePanel( Panel )
