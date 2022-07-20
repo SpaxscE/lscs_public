@@ -18,6 +18,74 @@ if SERVER then
 		ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_GRENADE, ply:LookupSequence( anim ), start, true )
 	end
 
+	function LSCS:ForceApply( Ent, Vel, att )
+		if Ent.Alive and not Ent:Alive() then return end
+		if Ent.GetObserverMode and Ent:GetObserverMode() ~= OBS_MODE_NONE then return end
+
+		if hook.Run( "LSCS:PlayerCanManipulate", att, Ent ) then return end
+
+		local StartPos = att:GetShootPos()
+		local EndPos = Ent:LocalToWorld( Ent:OBBCenter() )
+
+		local tr = util.TraceLine( {
+			start = StartPos,
+			endpos = EndPos,
+			mask = MASK_SHOT,
+			filter = att,
+		} )
+
+		if tr.Entity ~= Ent then return end
+
+		if Ent.loco then
+			Ent:SetPos( Ent:GetPos() + Vector(0,0,50) )
+			Ent.loco:SetVelocity( Vel )
+			local effectdata = EffectData()
+				effectdata:SetOrigin( Ent:GetPos() )
+				effectdata:SetEntity( Ent )
+			util.Effect( "force_effects", effectdata, true, true )
+		else
+			local Phys = Ent:GetPhysicsObject()
+
+			if IsValid( Phys ) and not Ent:IsPlayer() then
+				Ent:SetPhysicsAttacker( att, 5 )
+
+				if Phys:IsMotionEnabled() and Ent:GetMoveType() ~= MOVETYPE_NONE then
+					Phys:Wake()
+
+					if Ent:GetClass() == "prop_ragdoll" then
+						for i = 1, Ent:GetPhysicsObjectCount() do
+							local bone = Ent:GetPhysicsObjectNum( i )
+
+							if bone and bone.IsValid and bone:IsValid() then
+								bone:AddVelocity(  Vel )
+							end
+						end
+					else
+						Phys:SetVelocity( Vel )
+					end
+
+					local effectdata = EffectData()
+						effectdata:SetOrigin( Ent:GetPos() )
+						effectdata:SetEntity( Ent )
+					util.Effect( "force_effects", effectdata, true, true )
+				end
+			else
+				if Ent.IsPlayer and Ent:IsPlayer() then
+					local effectdata = EffectData()
+						effectdata:SetOrigin( Ent:GetPos() )
+						effectdata:SetEntity( Ent )
+					util.Effect( "force_effects", effectdata, true, true )
+
+					if Ent:OnGround() then
+						Ent:SetPos( Ent:GetPos() + Vector(0,0,10) )
+					end
+
+					Ent:SetVelocity( Vel )
+				end
+			end
+		end
+	end
+
 	local function Jump( ply, TIME )
 		if not ply._lscsAssistedJump then return end
 
