@@ -26,6 +26,10 @@ THE_FONT.size = 16
 THE_FONT.weight = 1000
 surface.CreateFont( "LSCS_VERSION", THE_FONT )
 
+THE_FONT.size = 40
+THE_FONT.weight = 1000
+surface.CreateFont( "LSCS_FONT_MAXIMUM", THE_FONT )
+
 local function bezier(p0, p1, p2, p3, t)
 	local e = p0 + t * (p1 - p0)
 	local f = p1 + t * (p2 - p1)
@@ -288,6 +292,9 @@ function LSCS:BuildMainMenu( Frame )
 	Panel.Paint = function(self, w, h )
 		local Col = Color( 255, 191, 0, 255 ) 
 
+		surface.SetDrawColor( menu_dim )
+		surface.DrawRect( 4, h - 64, w - 8, 60 )
+
 		if LSCS.VERSION_GITHUB == 0 then
 			surface.SetMaterial( icon_load_version )
 			surface.SetDrawColor( Col )
@@ -332,16 +339,15 @@ function LSCS:BuildMainMenu( Frame )
 		surface.SetMaterial( ClickMat )
 		surface.SetDrawColor( menu_text )
 
-		surface.DrawTexturedRectRotated( w * 0.5 + X, h * 0.5 + Y * 1.5, 200, 200, 0 )
-		surface.DrawTexturedRectRotated( w * 0.5 + X, h * 0.5, 128, 128, 0 )
+		surface.DrawTexturedRectRotated( w * 0.5 + X - 5, h * 0.5 + Y, 150, 150, 0 )
 
 		surface.SetDrawColor( menu_dim )
 		surface.SetMaterial( icon_invert )
 		surface.DrawTexturedRect( w - 132, 4, 128, 128 )
 		surface.DrawRect( 4, 4, w - 136, 128 )
 
-		draw.SimpleText( "THANK YOU FOR USING", "LSCS_FONT_MAXIMUM", 250, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		draw.SimpleText( "LSCS", "LSCS_FONT_MAXIMUM", 250, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		draw.SimpleText( "THANK YOU FOR USING", "LSCS_FONT_MAXIMUM", w * 0.5 - 18, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( "LSCS", "LSCS_FONT_MAXIMUM", w * 0.5 - 18, h * 0.5, menu_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 	end
 
 	local Bar = vgui.Create( "DPanel", Panel )
@@ -1502,6 +1508,10 @@ function LSCS:BuildForceMenu( Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
 	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( 150,150,150,150 )
+		local X, Y = self:CursorPos()
+		surface.DrawTexturedRectRotated( X, Y, 512, 512, 0 )
 	end
 
 	local L = vgui.Create( "DPanel", Panel )
@@ -1797,28 +1807,46 @@ end
 function LSCS:BuildSettings( Frame )
 	local Panel = vgui.Create( "DPanel", Frame )
 	Panel:SetPos( PanelPosX, PanelPosY )
-	Panel:SetSize( PanelSizeX, PanelSizeY )
+	Panel:SetSize( PanelSizeX, PanelSizeY + FrameBarHeight )
 	Panel.Paint = function(self, w, h )
-		local Col = menu_light
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-		surface.DrawRect( 0, 0, w, h  )
+		surface.SetMaterial( ClickMat )
+		surface.SetDrawColor( 150,150,150,150 )
+		local X, Y = self:CursorPos()
+		surface.DrawTexturedRectRotated( X, Y, 512, 512, 0 )
 	end
 
-	local DCheckbox = vgui.Create( "DCheckBoxLabel", Panel )
+	local PerfSettings = vgui.Create( "DPanel", Panel )
+	PerfSettings:SetSize( 0, 136 )
+	PerfSettings:DockMargin( 4, 4, 4, 4 )
+	PerfSettings:Dock( TOP )
+	PerfSettings.Paint = function(self, w, h )
+		surface.SetDrawColor( menu_dim )
+		surface.DrawRect( 0, 0, w, h )
+	end
+
+	local Header = vgui.Create( "DPanel", PerfSettings )
+	Header:SetSize( 0, 40 )
+	Header:DockMargin( 4, 4, 4, 4 )
+	Header:Dock( TOP )
+	Header.Paint = function(self, w, h )
+		draw.SimpleText( "Client Settings", "LSCS_FONT", 4, h * 0.5, menu_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	end
+
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", PerfSettings )
 	DCheckbox:Dock( TOP )
 	DCheckbox:DockMargin( 4, 4, 0, 0 )
 	DCheckbox:SetText("Dynamic Light")	
 	DCheckbox:SetConVar("lscs_dynamiclight")
 	DCheckbox:SizeToContents()
 
-	local DCheckbox = vgui.Create( "DCheckBoxLabel", Panel )
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", PerfSettings )
 	DCheckbox:Dock( TOP )
 	DCheckbox:DockMargin( 4, 4, 0, 0 )
 	DCheckbox:SetText("High Quality Impact Effects")	
 	DCheckbox:SetConVar("lscs_impacteffects")
 	DCheckbox:SizeToContents()
 
-	local DSlider = vgui.Create( "DNumSlider", Panel )
+	local DSlider = vgui.Create( "DNumSlider", PerfSettings )
 	DSlider:Dock( TOP )
 	DSlider:DockMargin( 4, 4, 0, 0 )
 	DSlider:SetText( "Trail Effect Detail" )
@@ -1826,6 +1854,23 @@ function LSCS:BuildSettings( Frame )
 	DSlider:SetMax( 100 )
 	DSlider:SetDecimals( 0 )
 	DSlider:SetConVar( "lscs_traildetail" )	
+
+	local SVSettings = vgui.Create( "DPanel", Panel )
+	SVSettings:SetSize( 0, 332 )
+	SVSettings:DockMargin( 4, 0, 4, 4 )
+	SVSettings:Dock( TOP )
+	SVSettings.Paint = function(self, w, h )
+		surface.SetDrawColor( menu_dim )
+		surface.DrawRect( 0, 0, w, h )
+	end
+
+	local Header = vgui.Create( "DPanel", SVSettings )
+	Header:SetSize( 0, 40 )
+	Header:DockMargin( 4, 4, 4, 4 )
+	Header:Dock( TOP )
+	Header.Paint = function(self, w, h )
+		draw.SimpleText( "Server Settings", "LSCS_FONT", 4, h * 0.5, menu_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	end
 
 	LSCS:SetActivePanel( Panel )
 	LSCS:SideBar( Frame )
