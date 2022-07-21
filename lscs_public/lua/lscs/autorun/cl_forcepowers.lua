@@ -205,7 +205,7 @@ local function Next( dont_set_time )
 	FadeTimer = CurTime() + 2
 end
 
-hook.Add( "PlayerButtonDown", "!!!!lscs_buttondownstuff", function( ply, button )
+local function PlayerButtonDown( ply, button )
 	local selector = LSCS.ForceSelector
 
 	-- this needs to be reworked at some point to the same method used as direct inputs
@@ -238,9 +238,9 @@ hook.Add( "PlayerButtonDown", "!!!!lscs_buttondownstuff", function( ply, button 
 			end
 		end
 	end
-end)
+end
 
-hook.Add( "PlayerButtonUp", "!!!!lscs_buttonupstuff", function( ply, button )
+local function PlayerButtonUp( ply, button )
 	if button == LSCS.ForceSelector.KeyActivate:GetInt() then
 		MouseWheelScroller = false
 		FadeTimer = 0
@@ -259,7 +259,75 @@ hook.Add( "PlayerButtonUp", "!!!!lscs_buttonupstuff", function( ply, button )
 			end
 		end
 	end
-end)
+end
+
+if game.SinglePlayer() then -- holy shit i hate gmod so much why dont these hooks run in SP holy fucking shit
+	local IS_MOUSE_ENUM = {
+		[MOUSE_LEFT] = true,
+		[MOUSE_RIGHT] = true,
+		[MOUSE_MIDDLE] = true,
+		[MOUSE_4] = true,
+		[MOUSE_5] = true,
+		[MOUSE_WHEEL_UP] = true,
+		[MOUSE_WHEEL_DOWN] = true,
+	}
+
+	local function InputPressed( key )
+		if IS_MOUSE_ENUM[ Key ] then
+			return input.IsMouseDown( key ) 
+		else
+			return input.IsKeyDown( key ) 
+		end
+	end
+
+	local OldPressed = {false, false,false,false}
+	local OldPressedForce = {}
+
+	hook.Add( "Think", "!!!lscs_gmods_prediction_system_is_cancer", function()
+		local ply = LocalPlayer()
+
+		local selector = LSCS.ForceSelector
+
+		local SelectorButtons = {selector.KeyActivate:GetInt(),selector.KeyUse:GetInt(),selector.KeyNext:GetInt(),selector.KeyPrev:GetInt()}
+
+		for id, key in pairs( SelectorButtons ) do
+			local pressed = InputPressed( key )
+
+			if OldPressed[ id ] ~= pressed then
+				OldPressed[ id ] = pressed
+				if pressed then
+					PlayerButtonDown( ply, key )
+				else
+					PlayerButtonUp( ply, key )
+				end
+			end
+		end
+
+		for _, entry in pairs( LSCS.Force ) do
+			local key = entry.cmd:GetInt()
+			if not OldPressedForce[ key ] then OldPressedForce[ key ] = false end
+	
+			local pressed = InputPressed( key )
+
+			if OldPressedForce[ key ] ~= pressed then
+				OldPressedForce[ key ] = pressed
+				if pressed then
+					PlayerButtonDown( ply, key )
+				else
+					PlayerButtonUp( ply, key )
+				end
+			end
+		end
+	end )
+else
+	hook.Add( "PlayerButtonDown", "!!!!lscs_buttondownstuff", function( ply, button )
+		PlayerButtonDown( ply, button )
+	end)
+
+	hook.Add( "PlayerButtonUp", "!!!!lscs_buttonupstuff", function( ply, button )
+		PlayerButtonUp( ply, button )
+	end)
+end
 
 hook.Add( "PlayerBindPress", "PlayerBindPressExample", function( ply, bind, pressed )
 	if not MouseWheelScroller then return end

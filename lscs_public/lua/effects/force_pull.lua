@@ -3,6 +3,7 @@
 
 EFFECT.mat = Material( "particle/warp1_warp" )
 EFFECT.mat2 = Material( "effects/select_ring" )
+EFFECT.mat3 = Material( "particle/smokesprites_0001" )
 
 function EFFECT:Init( data )
 	self.Ent = data:GetEntity()

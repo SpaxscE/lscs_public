@@ -367,6 +367,10 @@ else
 
 					if not ent:IsNPC() and not ent:IsNextBot() and not ent:IsPlayer() then continue end
 
+					if ent.Alive and not ent:Alive() then continue end -- doesnt do shit on npc's ...
+					if ent.Health and ent:Health() <= 0 then continue end -- doesnt do shit on npc's ...
+					if ent.GetMoveType and ent:GetMoveType() == MOVETYPE_NONE then continue end -- this works for npc's
+
 					ent:DrawModel()
 				end
 			end,
