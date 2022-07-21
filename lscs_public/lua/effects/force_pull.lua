@@ -19,6 +19,8 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Think()
+	if not IsValid( self.Ent ) then false return end
+
 	if self.DieTime < CurTime() then 
 		return false
 	end
@@ -27,6 +29,8 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
+	if not IsValid( self.Ent ) then return end
+
 	local Scale = (self.DieTime - CurTime()) / self.LifeTime
 	local InvScale =  (1 - Scale)
 
