@@ -111,7 +111,7 @@ equipped = ply:lscsGetEquipped() -- returns the equipped list of given player. N
 
 keydown = ply:lscsKeyDown( IN_KEY ) -- similar to ply:KeyDown() except properly synced. Useful if you write your own combo inside a combo
 
-forcepowers = ply:lscsGetForceAbilities() -- returns a table of equipped force powers. NOTE: On client this os only synced to LocalPlayer()
+forcepowers = ply:lscsGetForceAbilities() -- returns a table of equipped force powers. NOTE: On client this is only synced to LocalPlayer()
 
 combodata = ply:lscsGetCombo( num ) -- returns given num-id combo if the player has it equipped. Will fall back to default stance if invalid num-id
 

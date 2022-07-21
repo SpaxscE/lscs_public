@@ -19,7 +19,7 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Think()
-	if not IsValid( self.Ent ) then false return end
+	if not IsValid( self.Ent ) then return false end
 
 	if self.DieTime < CurTime() then 
 		return false
