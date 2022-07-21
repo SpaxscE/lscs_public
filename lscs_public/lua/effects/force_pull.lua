@@ -11,17 +11,19 @@ function EFFECT:Init( data )
 	self.LifeTime = 0.4
 	self.DieTime = CurTime() + self.LifeTime
 
-	if not IsValid( self.Ent ) then return end
+	if not IsValid( self.Ent ) then self.Ready = true return end
 
 	self.Pos = self.Ent:GetAttachment( self.Ent:LookupAttachment("anim_attachment_lh") ).Pos
 	self.Dir = data:GetNormal()
 	self.mat3 = Material( "particle/smokesprites_000"..math.random(1,9) )
+
+	self.Ready = true
 end
 
 function EFFECT:Think()
-	if not IsValid( self.Ent ) then return false end
+	if not self.Ready then return true end
 
-	if self.DieTime < CurTime() then 
+	if self.DieTime < CurTime() or not IsValid( self.Ent ) then 
 		return false
 	end
 
@@ -29,7 +31,7 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
-	if not IsValid( self.Ent ) then return end
+	if not self.Ready or not IsValid( self.Ent ) then return end
 
 	local Scale = (self.DieTime - CurTime()) / self.LifeTime
 	local InvScale =  (1 - Scale)
