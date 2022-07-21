@@ -328,6 +328,7 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	end
 
 	dmginfo:SetDamage( 0 )
+	dmginfo:SetDamageType( DMG_REMOVENORAGDOLL )
 end
 
 -- callback function. This should maybe call a hook or something i dont know yet. Keeping it in in case the entire saber system will be reworked to support interrupting again

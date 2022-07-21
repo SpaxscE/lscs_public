@@ -85,7 +85,7 @@ if SERVER then
 	end)
 
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
-		if dmginfo:GetDamage() <= 0 then return true end
+		if dmginfo:GetDamage() == 0 and dmginfo:GetDamageType() == DMG_REMOVENORAGDOLL then return true end
 
 		if not ply:IsPlayer() then return end
 
@@ -97,7 +97,7 @@ if SERVER then
 
 		if not IsValid( wep ) or not wep.LSCS then return end
 
-		return wep:Block( dmginfo )
+		return wep:Block( dmginfo ) > LSCS_UNBLOCKED
 	end )
 
 	util.AddNetworkString( "lscs_saberdamage" )
