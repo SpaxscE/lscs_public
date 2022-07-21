@@ -55,9 +55,9 @@ if SERVER then
 		return TRANSMIT_ALWAYS
 	end
 
-	function ENT:DoPickup( ply, equip )
+	function ENT:DoPickup( ply )
 		ply:EmitSound( self.PickupSound )
-		ply:lscsAddInventory( self, equip )
+		ply:lscsAddInventory( self )
 	end
 
 	function ENT:OnRemove()
@@ -95,7 +95,7 @@ if SERVER then
 
 		if not IsValid( touch_ent ) or not touch_ent:IsPlayer() then return end
 
-		self:DoPickup( touch_ent, true ) -- autoequip when picked up by touching
+		self:DoPickup( touch_ent )
 	end
 
 	function ENT:EndTouch( touch_ent )
