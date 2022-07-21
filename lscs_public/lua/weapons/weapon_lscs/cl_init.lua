@@ -207,6 +207,8 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
+	if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() then return end
+
 	ply._lscsCalcViewTime = CurTime() + 0.1 -- this is used to detect if its broken
 
 	return ply:lscsGetViewOrigin(), ply:EyeAngles(), fov
