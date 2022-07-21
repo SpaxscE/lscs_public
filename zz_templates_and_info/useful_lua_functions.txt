@@ -54,7 +54,7 @@ hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply
 end)
 
 
-ply:lscsAddInventory( entity, equip_to_hand ) -- add a entity to the players inventory. Only supports sents.
+ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the players inventory. Can be given a classname instead of a entity aswell. Only supports sents.
 						-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")  this will automatically equip the item to your right hand.
 				equip_to_hand = 
 					 	true -- equip to right hand

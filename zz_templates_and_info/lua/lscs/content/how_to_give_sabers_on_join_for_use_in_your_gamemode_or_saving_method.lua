@@ -4,44 +4,16 @@
 if CLIENT then return end
 
 hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
-	local inventory = ply:lscsGetInventory()
-	local equipped = ply:lscsGetEquipped()
-
-	table.Empty( inventory ) -- clean the inventory, just in case
-	table.Empty( equipped ) -- clean the equipped list, just in case
-
-	inventory[ 1 ] = "item_saberhilt_katarn" -- put saberhilt in number 1 slot
-	equipped[ 1 ] = true -- equip number 1 slot,    false would be left hand
-
-	inventory[ 2 ] = "item_crystal_sapphire"
-	equipped[ 2 ] = true -- false would be left hand
-
-	inventory[ 3 ] = "item_stance_yongli"
-	equipped[ 3 ] = true -- a saber stance can only be right hand, and so do forcepowers
-
-	inventory[ 4 ] = "item_force_heal"
-	equipped[ 4 ] = true
-
-	inventory[ 5 ] = "item_force_immunity"
-	equipped[ 5 ] = true
-
-	inventory[ 6 ] = "item_force_jump"
-	equipped[ 6 ] = true
-
-	inventory[ 7 ] = "item_force_pull"
-	equipped[ 7 ] = true
-
-	inventory[ 8 ] = "item_force_push"
-	equipped[ 8 ] = true
-
-	inventory[ 9 ] = "item_force_replenish"
-	equipped[ 9 ] = true
-
-	inventory[ 10 ] = "item_force_sense"
-	equipped[ 10 ] = true
-
-	ply:lscsSyncInventory() -- send inventory to player
-	ply:lscsBuildPlayerInfo() -- broadcast equipped stance information to everyone and make sure the menu reads correctly
+	ply:lscsAddInventory( "item_saberhilt_katarn", true ) -- give katarn saberhilt to right hand. Left Hand would be "false"
+	ply:lscsAddInventory( "item_crystal_sapphire", true ) -- give katarn saber crystal to right hand. Left Hand would be "false"
+	ply:lscsAddInventory( "item_stance_yongli", true ) -- stances can only be "true" as they are right hand only
+	ply:lscsAddInventory( "item_force_heal", true ) -- so are forcepowers
+	ply:lscsAddInventory( "item_force_immunity", true )
+	ply:lscsAddInventory( "item_force_jump", true )
+	ply:lscsAddInventory( "item_force_pull", true )
+	ply:lscsAddInventory( "item_force_push", true )
+	ply:lscsAddInventory( "item_force_replenish", true )
+	ply:lscsAddInventory( "item_force_sense", true )
 
 	-- ply:Give("weapon_lscs") -- only needed if they dont have SWEP spawn permission from your admin mod.
 	ply:lscsCraftSaber() -- give swep if allowed and set hilt and blade
