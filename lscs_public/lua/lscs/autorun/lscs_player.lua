@@ -236,7 +236,9 @@ function meta:lscsBuildPlayerInfo()
 	LSCS:SetHilt( self, hilt_right, hilt_left )
 
 	if SERVER then
-		self:SendLua( "LSCS:RefreshMenu() LocalPlayer():lscsBuildPlayerInfo()" )
+		if self._lscsNetworkingReady then
+			self:SendLua( "LSCS:RefreshMenu() LocalPlayer():lscsBuildPlayerInfo()" )
+		end
 
 		for _, ply in pairs( player.GetAll() ) do
 			if ply == self then continue end

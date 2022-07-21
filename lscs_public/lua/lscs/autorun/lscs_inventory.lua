@@ -18,11 +18,13 @@ if SERVER then
 			index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
 		end
 
-		net.Start( "lscs_inventory" )
-			net.WriteBool( true )
-			net.WriteInt( index, 8 )
-			net.WriteString( item )
-		net.Send( self )
+		if self._lscsNetworkingReady then
+			net.Start( "lscs_inventory" )
+				net.WriteBool( true )
+				net.WriteInt( index, 8 )
+				net.WriteString( item )
+			net.Send( self )
+		end
 
 		self:lscsGetInventory()[ index ] = item
 
@@ -49,16 +51,18 @@ if SERVER then
 		local WasEquipped = self:lscsGetEquipped()[ index ]
 		self:lscsGetEquipped()[ index ] = hand
 
-		net.Start( "lscs_equip" )
-			net.WriteInt( index, 8 )
-			if hand == true then
-				net.WriteInt( 1, 3 )
-			elseif hand == false then
-				net.WriteInt( 0, 3 )
-			else
-				net.WriteInt( -1, 3 )
-			end
-		net.Send( self )
+		if self._lscsNetworkingReady then
+			net.Start( "lscs_equip" )
+				net.WriteInt( index, 8 )
+				if hand == true then
+					net.WriteInt( 1, 3 )
+				elseif hand == false then
+					net.WriteInt( 0, 3 )
+				else
+					net.WriteInt( -1, 3 )
+				end
+			net.Send( self )
+		end
 
 		self:lscsBuildPlayerInfo()
 
@@ -230,7 +234,9 @@ if SERVER then
 	net.Receive( "lscs_sync", function( len, ply )
 		-- in case someone was spamming ply:Give while the player wasnt ready for networking
 		-- this will make sure the client's inventory is 100% in sync with the server
+		ply._lscsNetworkingReady = true
 		ply:lscsSyncInventory()
+		ply:lscsBuildPlayerInfo()
 
 		hook.Run( "LSCS:OnPlayerFullySpawned", ply )
 	end )
