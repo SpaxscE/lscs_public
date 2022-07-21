@@ -28,6 +28,8 @@ function meta:lscsShouldBleed()
 end
 
 if SERVER then
+	util.AddNetworkString( "lscs_hitmarker" )
+
 	hook.Add("GetFallDamage", "!!lscs_RemoveFallDamage", function(ply, speed)
 		if ply:lscsIsFalldamageSuppressed() then
 			return 0
@@ -100,14 +102,6 @@ if SERVER then
 
 	util.AddNetworkString( "lscs_saberdamage" )
 	util.AddNetworkString( "lscs_clearblood" )
-
-	local cVar_SaberDamage = CreateConVar( "lscs_sv_saberdamage", "200", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"amount of damage per saber hit" )
-
-	LSCS.SaberDamage = cVar_SaberDamage and cVar_SaberDamage:GetInt() or 200
-
-	cvars.AddChangeCallback( "lscs_sv_saberdamage", function( convar, oldValue, newValue ) 
-		LSCS.SaberDamage = tonumber( newValue )
-	end)
 
 	local slice = {
 		["npc_zombie"] = true,
@@ -215,6 +209,12 @@ if SERVER then
 		net.Broadcast()
 	end
 else
+	net.Receive( "lscs_hitmarker", function( length )
+		local num = net.ReadInt( 4 )
+
+		LocalPlayer():EmitSound("lscs/saber/reflect"..num..".mp3", 140, 100, 1, CHAN_ITEM2 )
+	end)
+
 	net.Receive( "lscs_saberdamage", function( len )
 		local pos = net.ReadVector()
 		local dir = net.ReadVector()

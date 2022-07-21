@@ -28,7 +28,10 @@ function SWEP:CanBlock()
 end
 
 function SWEP:OnPerfectBlock( ply, a_, a_weapon )
-	ply:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect3.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
+	if net.Start("lscs_hitmarker") then
+		net.WriteInt( 3, 4 )
+		net.Send( ply )
+	end
 
 	if a_weapon:CurComboUnblockable() then
 		self:DrainBP( a_weapon:GetBPDrainPerHit() * a_weapon:GetComboHits() )
@@ -41,7 +44,10 @@ function SWEP:OnPerfectBlock( ply, a_, a_weapon )
 end
 
 function SWEP:OnNormalBlock( ply, a_, a_weapon )
-	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect1.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
+	if net.Start("lscs_hitmarker") then
+		net.WriteInt( 1, 4 )
+		net.Send( a_ )
+	end
 
 	a_weapon._ResetHitTime = CurTime() + 10
 	if not a_weapon:CurComboUnblockable() then
@@ -52,7 +58,10 @@ function SWEP:OnNormalBlock( ply, a_, a_weapon )
 end
 
 function SWEP:OnBlock( ply, a_, a_weapon )
-	a_:SendLua( "LocalPlayer():EmitSound( [[lscs/saber/reflect2.mp3]], 140, 100, 1, CHAN_ITEM2 )" ) -- gay and dirty because public servers dont have GVP's hitmarker system. Need to change this later
+	if net.Start("lscs_hitmarker") then
+		net.WriteInt( 2, 4 )
+		net.Send( a_ )
+	end
 
 	a_weapon._ResetHitTime = CurTime() + 10
 	if a_weapon:CurComboUnblockable() then
@@ -240,7 +249,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	local att = dmginfo:GetAttacker()
 
 	if self:IsComboActive() then
-		if LSCS.ComboInterupt[ self.LastAttack ] and ply:lscsKeyDown( IN_ATTACK ) and IsValid( att ) and att:IsPlayer() then
+		if LSCS.ComboInterupt[ self.LastAttack ] and ply:lscsKeyDown( IN_ATTACK ) and IsValid( att ) and att:IsPlayer() and LSCS.AttackInterruptable then
 			ply:lscsSetShouldBleed( false )
 
 			self:CancelCombo( 0.3 )
@@ -276,7 +285,7 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 		return
 	end
 
-	ply:lscsTakeForce( math.max(dmginfo:GetDamage() / 10,1) ) -- probably needs a convar at some point
+	ply:lscsTakeForce( math.Clamp(dmginfo:GetDamage() * LSCS.BulletForceDrainMul, LSCS.BulletForceDrainMin, LSCS.BulletForceDrainMax) )
 
 	ply:lscsSetShouldBleed( false )
 
