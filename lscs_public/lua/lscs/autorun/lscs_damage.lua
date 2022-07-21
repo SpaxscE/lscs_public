@@ -85,7 +85,7 @@ if SERVER then
 	end)
 
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
-		if dmginfo:GetDamage() <= 0 then return end
+		if dmginfo:GetDamage() <= 0 then return true end
 
 		if not ply:IsPlayer() then return end
 
