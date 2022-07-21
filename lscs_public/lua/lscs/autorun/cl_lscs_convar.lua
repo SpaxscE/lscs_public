@@ -21,9 +21,17 @@ end)
 -- trail detail
 local cvarSaberTrailDetail = CreateConVar( "lscs_traildetail", 100, true, false)
 
-LSCS.SaberTrailDetail  = cvarSaberTrailDetail and (cvarSaberTrailDetail:GetInt() / 100) or false
+LSCS.SaberTrailDetail  = cvarSaberTrailDetail and (cvarSaberTrailDetail:GetInt() / 100) or 1
 
 cvars.AddChangeCallback( "lscs_traildetail", function( convar, oldValue, newValue ) 
 	LSCS.SaberTrailDetail = math.Clamp( tonumber( newValue ), 0, 100 ) / 100
 end)
 
+
+local cVarTimeScale = GetConVar( "host_timescale" )
+
+LSCS.TimeScale = cVarTimeScale and cVarTimeScale:GetFloat() or 1
+
+cvars.AddChangeCallback( "host_timescale", function( convar, oldValue, newValue ) 
+	LSCS.TimeScale = tonumber( newValue )
+end)

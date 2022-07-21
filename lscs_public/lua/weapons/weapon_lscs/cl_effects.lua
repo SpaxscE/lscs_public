@@ -53,6 +53,10 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 	self:DrawTrail( cur_pos, cur_dir, CurTime, LifeTime, length, self.BladeData[HandID][BladeID].BladePositions,  bladeObject.color_core, bladeObject.color_blur, DMGActive )
 end
 
+local function OverClocked() -- if someone has host_timescale lower than default 1, chances are he wants to make a screenshot. Lets increase detail to maximum in this case for best looks.
+	return LSCS.TimeScale < 1
+end
+
 function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, ColorStart, ColorEnd, DMGActive )
 	local prev
 
@@ -63,6 +67,8 @@ function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, Col
 			time = CurTime
 		}
 	end
+
+	local LoopStep = OverClocked() and 1 or 2
 
 	local idx = 0
 	for _, cur in ipairs( Positions ) do
@@ -78,7 +84,7 @@ function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, Col
 			local direction = subtract:GetNormalized()
 			local distance = subtract:Length()
 
-			for i = 2, distance,2 do
+			for i = LoopStep, distance,LoopStep do
 				idx = idx + 1
 
 				if idx > self:GetMaxBeamElements() then
@@ -163,6 +169,9 @@ function SWEP:WallImpactEffects( pos, dir, playsound )
 end
 
 function SWEP:GetMaxBeamElements()
+	if OverClocked() then
+		return 400
+	end
 	if self:IsMe() then
 		return 200 * LSCS.SaberTrailDetail
 	else
@@ -171,6 +180,9 @@ function SWEP:GetMaxBeamElements()
 end
 
 function SWEP:GetBladeLifeTime()
+	if OverClocked() then
+		return 0.15
+	end
 	if self:IsMe() then
 		return 0.15 * LSCS.SaberTrailDetail
 	else
