@@ -329,7 +329,7 @@ else
 	end)
 end
 
-hook.Add( "PlayerBindPress", "PlayerBindPressExample", function( ply, bind, pressed )
+hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, pressed )
 	if not MouseWheelScroller then return end
 
 	local Time = CurTime()
