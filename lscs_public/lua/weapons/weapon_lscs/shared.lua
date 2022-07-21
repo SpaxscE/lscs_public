@@ -196,11 +196,8 @@ function SWEP:GetDMGActive()
 end
 
 function SWEP:SetNextPrimaryAttack( time )
-	if SERVER then
-		self:SetNWNextAttack( time )
-	else
-		self.f_NextAttack = time
-	end
+	self:SetNWNextAttack( time )
+	self.f_NextAttack = time
 end
 
 function SWEP:GetNextPrimaryAttack()
