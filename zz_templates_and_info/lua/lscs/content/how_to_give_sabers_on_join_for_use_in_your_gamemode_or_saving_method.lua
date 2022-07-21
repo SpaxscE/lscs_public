@@ -11,25 +11,33 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	table.Empty( equipped ) -- clean the equipped list, just in case
 
 	inventory[ 1 ] = "item_saberhilt_katarn"
-	inventory[ 2 ] = "item_crystal_sapphire"
-	inventory[ 3 ] = "item_stance_yongli"
-	inventory[ 4 ] = "item_force_heal"
-	inventory[ 5 ] = "item_force_immunity"
-	inventory[ 6 ] = "item_force_jump"
-	inventory[ 7 ] = "item_force_pull"
-	inventory[ 8 ] = "item_force_push"
-	inventory[ 9 ] = "item_force_replenish"
-	inventory[ 10 ] = "item_force_sense"
-
 	equipped[ 1 ] = true -- false would be left hand
+
+	inventory[ 2 ] = "item_crystal_sapphire"
 	equipped[ 2 ] = true -- false would be left hand
+
+	inventory[ 3 ] = "item_stance_yongli"
 	equipped[ 3 ] = true -- a saber stance can only be right hand, and so do forcepowers
+
+	inventory[ 4 ] = "item_force_heal"
 	equipped[ 4 ] = true
+
+	inventory[ 5 ] = "item_force_immunity"
 	equipped[ 5 ] = true
+
+	inventory[ 6 ] = "item_force_jump"
 	equipped[ 6 ] = true
+
+	inventory[ 7 ] = "item_force_pull"
 	equipped[ 7 ] = true
+
+	inventory[ 8 ] = "item_force_push"
 	equipped[ 8 ] = true
+
+	inventory[ 9 ] = "item_force_replenish"
 	equipped[ 9 ] = true
+
+	inventory[ 10 ] = "item_force_sense"
 	equipped[ 10 ] = true
 
 	ply:lscsSyncInventory()
