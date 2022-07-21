@@ -122,7 +122,7 @@ LSCS:RegisterForce( force )
 local force = {}
 force.PrintName = "Sense"
 force.Author = "Blu-x92 / Luna"
-force.Description = "Augmented Vision. See through the lies of the Jedi."
+force.Description = "Augmented Vision. See through the lies of the Jedi and through walls"
 force.id = "sense"
 force.UnEquip = function( ply ) ply:SetNWBool( "_lscsForceSense", false ) end
 force.StartUse = function( ply )
@@ -155,7 +155,7 @@ LSCS:RegisterForce( force )
 local force = {}
 force.PrintName = "Heal"
 force.Author = "Blu-x92 / Luna"
-force.Description = "Regain Health"
+force.Description = "Heal yourself using the Force"
 force.id = "heal"
 force.StartUse = function( ply )
 	local Time = CurTime()
@@ -187,11 +187,59 @@ LSCS:RegisterForce( force )
 
 
 
+local force = {}
+force.PrintName = "Replenish"
+force.Author = "Blu-x92 / Luna"
+force.Description = "A Dark Side ability that regains Force from Health"
+force.id = "replenish"
+force.StartUse = function( ply )
+	local Time = CurTime()
+
+	local CanDo = (ply._lscsNextForce or 0) < Time
+
+	if not CanDo then return end
+
+	ply._lscsNextForce = Time + 2
+
+	local available = math.max( ply:Health() - 1, 0 )
+
+	local need = ply:lscsGetMaxForce() - ply:lscsGetForce()
+
+	if available > 1 then
+		if need > 0 then
+			local take = math.min( need, available, 50 )
+
+			ply:SetHealth( ply:Health() - take )
+			ply:lscsSetForce( math.min(ply:lscsGetForce() + take, ply:lscsGetMaxForce()) )
+
+			ply:EmitSound("lscs/force/replenish.mp3")
+
+			local effectdata = EffectData()
+				effectdata:SetOrigin( ply:GetPos() )
+				effectdata:SetEntity( ply )
+			util.Effect( "force_replenish", effectdata, true, true )
+		end
+	else
+		if need > 0 then
+			ply:EmitSound("lscs/force/replenish.mp3")
+
+			local d = DamageInfo()
+			d:SetDamage( 1 )
+			d:SetAttacker( ply )
+			d:SetDamageType( DMG_DROWN ) 
+			d:SetDamagePosition( ply:GetShootPos() )
+			ply:TakeDamageInfo( d )
+		end
+	end
+end
+LSCS:RegisterForce( force )
+
+
 
 local force = {}
-force.PrintName = "Block"
+force.PrintName = "Immunity"
 force.Author = "Blu-x92 / Luna"
-force.Description = "Incoming Force Power attacks are absorbed and regain Force Points. Also gives a permanent immunity against incoming Force Powers as long your own Force Points are above 50% even when this Power is not activated"
+force.Description = "Incoming Force Power attacks are absorbed and regain Force Points. Also gives a permanent immunity against incoming Force Powers as long your own Force Points are above 50% even when this Power is not activated. Only the weak minded don't learn this ability."
 force.id = "immunity"
 force.Equip = function( ply ) ply._lscsForceResistant = true end
 force.UnEquip = function( ply ) ply._lscsForceResistant = nil ply:GetNWBool( "_lscsForceProtect", false ) end
@@ -219,7 +267,6 @@ force.StartUse = function( ply )
 
 end
 LSCS:RegisterForce( force )
-
 
 
 

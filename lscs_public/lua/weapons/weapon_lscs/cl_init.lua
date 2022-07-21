@@ -183,17 +183,21 @@ end
 local circle = Material( "vgui/circle" )
 local size = 5
 
-function SWEP:DoDrawCrosshair( X, Y )
+function SWEP:DoDrawCrosshair( x, y )
 	local ply = LocalPlayer()
 
-	surface.SetMaterial( circle )
-	surface.SetDrawColor( 0, 0, 0, 255 )
-	surface.DrawTexturedRect( X - size * 0.5 + 1, Y - size * 0.5 + 1, size, size )
+	local pos = ply:lscsGetViewOrigin() + ply:EyeAngles():Forward() * 100 -- this method IS needed in case some other third person addon is overwriting the view
 
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.DrawTexturedRect( X - size * 0.5, Y - size * 0.5, size, size )
+	local scr = pos:ToScreen()
 
-	draw.NoTexture()
+	if scr.visible then
+		surface.SetMaterial( circle )
+		surface.SetDrawColor( 0, 0, 0, 255 )
+		surface.DrawTexturedRect( scr.x - size * 0.5 + 1, scr.y - size * 0.5 + 1, size, size )
+
+		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.DrawTexturedRect( scr.x - size * 0.5, scr.y - size * 0.5, size, size )
+	end
 
 	return true
 end
@@ -203,14 +207,9 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:CalcView( ply, pos, angles, fov )
+	ply._lscsCalcViewTime = CurTime() + 0.1 -- this is used to detect if its broken
 
-	local view = {}
-	view.origin = ply:lscsGetViewOrigin()
-	view.angles = ply:EyeAngles()
-	view.fov = fov
-	view.drawviewer = true
-
-	return view
+	return ply:lscsGetViewOrigin(), ply:EyeAngles(), fov
 end
 
 function SWEP:Reload()

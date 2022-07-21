@@ -335,7 +335,6 @@ function LSCS:BuildMainMenu( Frame )
 		surface.SetDrawColor( menu_dim )
 		surface.DrawRect( w - 132, 4, 128, 128 )
 
-		
 		surface.SetMaterial( ClickMat )
 		surface.SetDrawColor( menu_text )
 

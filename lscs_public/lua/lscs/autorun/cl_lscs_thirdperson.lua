@@ -1,15 +1,34 @@
-hook.Add( "CalcView", "!!!!!!!!!!!!simple_glowstickthirdperson",  function( ply, pos, angles, fov )
-	if ply:GetViewEntity() ~= ply then return end -- when a player uses the camera tool for example
+
+local function Validate( ply )
+	if not ply:Alive() or ply:GetViewEntity() ~= ply then return false end -- when a player uses the camera tool for example
 
 	local weapon = ply:GetActiveWeapon()
 
-	if IsValid( weapon ) and weapon.LSCS and weapon.CalcView then
+	if not IsValid( weapon ) or not weapon.LSCS then return false end -- not holding our lightsaber
 
-		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end -- why would someone do that???
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end -- use vehicle view in vehicles
 
-		-- sweps actually come with this exact CalcView function. So why do i do it like this? Just to piss you off with your thirdperson addon? Well nope its because garry's CalcView doesn't allow for DrawViewer = true... of course it doesn't because then it would have been useful
-		local view = weapon:CalcView( ply, pos, angles, fov )
+	return true
+end
 
-		return view
-	end
-end)
+-- this is the main camera. If all goes to plan this should do the job
+hook.Add( "CalcView", "!!!!!!!!!!!!simple_glowstickthirdperson",  function( ply, pos, angles, fov )
+	if not Validate( ply ) then return end
+
+	local view = {}
+	view.origin = ply:lscsGetViewOrigin()
+	view.angles = ply:EyeAngles()
+	view.fov = fov
+	view.drawviewer = true
+
+	return view
+end )
+
+-- this is used for when the CalcView hook somehow doesn't get called but the SWEP:CalcView function is. If the hook fails this will probably fail aswell tho
+hook.Add( "ShouldDrawLocalPlayer", "!!!!!!!!!!!!simple_glowstickthirdperson",  function( ply )
+	if (ply._lscsCalcViewTime or 0) < CurTime() then return end
+
+	if not Validate( ply ) then return end
+
+	return true
+end )
