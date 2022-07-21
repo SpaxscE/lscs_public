@@ -54,7 +54,7 @@ function SWEP:CalcTrail( HandID, BladeID, PosData, bladeObject, Mul )
 end
 
 local function OverClocked() -- if someone has host_timescale lower than default 1, chances are he wants to make a screenshot. Lets increase detail to maximum in this case for best looks.
-	return LSCS.TimeScale < 1
+	return LSCS.TimeScale < 0.9
 end
 
 function SWEP:DrawTrail( MyPos, MyDir, CurTime, LifeTime, Length, Positions, ColorStart, ColorEnd, DMGActive )
