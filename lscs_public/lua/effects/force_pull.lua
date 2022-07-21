@@ -13,7 +13,7 @@ function EFFECT:Init( data )
 
 	if not IsValid( self.Ent ) then self.Ready = true return end
 
-	self.Pos = self.Ent:GetAttachment( self.Ent:LookupAttachment("anim_attachment_lh") ).Pos
+	self.Pos = self.Ent:GetShootPos()
 	self.Dir = data:GetNormal()
 	self.mat3 = Material( "particle/smokesprites_000"..math.random(1,9) )
 
