@@ -3,21 +3,7 @@
 
 if CLIENT then return end
 
-hook.Add( "PlayerInitialSpawn", "auto_equip_on_join", function( ply )
-	ply:Give("item_saberhilt_katarn")
-	ply:Give("item_crystal_sapphire")
-	ply:Give("item_stance_yongli")
-
-	-- ply:Give("weapon_lscs") -- only needed if they dont have SWEP spawn permission from your admin mod.
-						-- If they have permission they will from now on always spawn with this lightsaber unless they unequip it.
-
-	-- If you give the items outside PlayerInitialSpawn you will need to call ply:lscsCraftSaber() to force the player to craft a lightsaber
-end )
-
--- if you need control over which hand its a little more complicated:
---[[
-
-hook.Add( "PlayerInitialSpawn", "auto_equip_on_join", function( ply )
+hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	local inventory = ply:lscsGetInventory()
 	local equipped = ply:lscsGetEquipped()
 
@@ -32,15 +18,9 @@ hook.Add( "PlayerInitialSpawn", "auto_equip_on_join", function( ply )
 	equipped[ 2 ] = true -- false would be left hand
 	equipped[ 3 ] = true -- a saber stance can only be right hand, and so do forcepowers
 
-	ply:lscsBuildPlayerInfo() -- networks all the data and syncs it with client
-
-	-- if you do all this outside of PlayerInitialSpawn AFTER the hook LSCS:OnPlayerFullySpawned is ran, you need to call ply:lscsSyncInventory() yourself.
-	-- In this example here it is not needed as PlayerInitialSpawn is called before the player is ready and therefore LSCS will automatically sync the inventory when the player is ready.
+	ply:lscsSyncInventory()
+	ply:lscsBuildPlayerInfo()
 
 	-- ply:Give("weapon_lscs") -- only needed if they dont have SWEP spawn permission from your admin mod.
-						-- If they have permission they will from now on always spawn with this lightsaber unless they unequip it.
-
-	-- If you give the items outside PlayerInitialSpawn you will need to call ply:lscsCraftSaber() to force the player to craft a lightsaber
+	ply:lscsCraftSaber()
 end )
-
-]]
