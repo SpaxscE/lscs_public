@@ -27,12 +27,6 @@ hook.Add( "PlayerInitialSpawn", "auto_equip_on_join", function( ply )
 	inventory[ 1 ] = "item_saberhilt_katarn"
 	inventory[ 2 ] = "item_crystal_sapphire"
 	inventory[ 3 ] = "item_stance_yongli"
-	--[[
-	alternative to above. However you have no control over what ID they end up being using ply:Give and it will physically spawn a entity that the player will pick up on touch so there is always a chance of it failing
-	ply:Give("item_saberhilt_katarn")
-	ply:Give("item_crystal_sapphire")
-	ply:Give("item_stance_yongli")
-	]]
 
 	equipped[ 1 ] = true -- false would be left hand
 	equipped[ 2 ] = true -- false would be left hand
