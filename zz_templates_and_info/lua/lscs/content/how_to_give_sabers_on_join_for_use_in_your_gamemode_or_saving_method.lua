@@ -10,8 +10,8 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	table.Empty( inventory ) -- clean the inventory, just in case
 	table.Empty( equipped ) -- clean the equipped list, just in case
 
-	inventory[ 1 ] = "item_saberhilt_katarn"
-	equipped[ 1 ] = true -- false would be left hand
+	inventory[ 1 ] = "item_saberhilt_katarn" -- put saberhilt in number 1 slot
+	equipped[ 1 ] = true -- equip number 1 slot,    false would be left hand
 
 	inventory[ 2 ] = "item_crystal_sapphire"
 	equipped[ 2 ] = true -- false would be left hand
@@ -40,9 +40,9 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	inventory[ 10 ] = "item_force_sense"
 	equipped[ 10 ] = true
 
-	ply:lscsSyncInventory()
-	ply:lscsBuildPlayerInfo()
+	ply:lscsSyncInventory() -- send inventory to player
+	ply:lscsBuildPlayerInfo() -- broadcast equipped stance information to everyone and make sure the menu reads correctly
 
 	-- ply:Give("weapon_lscs") -- only needed if they dont have SWEP spawn permission from your admin mod.
-	ply:lscsCraftSaber()
+	ply:lscsCraftSaber() -- give swep if allowed and set hilt and blade
 end )
