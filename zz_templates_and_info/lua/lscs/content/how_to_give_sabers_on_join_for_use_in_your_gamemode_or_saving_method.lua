@@ -16,4 +16,6 @@ hook.Add( "PlayerInitialSpawn", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	ply:lscsAddInventory( "item_force_sense", true )
 
 	-- ply:Give("weapon_lscs") -- only needed if they dont have SWEP spawn permission from your admin mod.
+
+	-- ply:lscsCraftSaber() -- if you are doing all the above stuff outside of PlayerInitialSpawn Hook you will have to call this function to force a lightsaber craft after the player is spawned.
 end )
