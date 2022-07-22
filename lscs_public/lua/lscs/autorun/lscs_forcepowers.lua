@@ -108,6 +108,13 @@ if SERVER then
 
 		local JUMP = ply:KeyDown( IN_JUMP )
 
+		if JUMP then
+			local wep = ply:GetActiveWeapon()
+			if IsValid( wep ) and wep.LSCS then
+				if wep:IsComboActive() then JUMP = false end
+			end
+		end
+
 		if JUMP ~= ply._lscsOldJump then
 			ply._lscsOldJump = JUMP
 			if JUMP then
