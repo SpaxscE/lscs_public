@@ -74,10 +74,10 @@ if SERVER then
 				if DeflectHack then
 					bullet.TracerName = nil -- remove the tracer when we are done to avoid conflicts
 				end
+			end
 
-				if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
-					oldCallback( att, tr, dmginfo )
-				end
+			if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
+				oldCallback( att, tr, dmginfo )
 			end
 		end
 
