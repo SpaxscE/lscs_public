@@ -55,19 +55,18 @@ end)
 
 
 ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the players inventory. Can be given a classname instead of a entity aswell. Only supports sents.
-						-- easier alternative would be to just give the entities directly. for example:  ply:Give("item_crystal_sapphire")  this will automatically equip the item to your right hand.
-				equip_to_hand = 
-					 	true -- equip to right hand
-						false -- equip to left hand
-					 	nil -- don't equip
+							equip_to_hand = 
+					 				true -- equip to right hand
+									false -- equip to left hand
+					 				nil -- don't equip
 
 
 
 ply:lscsEquipItem( index, equip_to_hand ) -- equip a item from inventory
-				equip_to_hand = 
-					 	true -- equip to right hand
-						false -- equip to left hand
-					 	nil -- unequip
+							equip_to_hand = 
+					 				true -- equip to right hand
+									false -- equip to left hand
+					 				nil -- don't equip
 
 
 ply:lscsSyncInventory() -- send a full sync to the client. Should never be needed.
