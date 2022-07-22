@@ -17,6 +17,20 @@ hilt.info = {
 			ang = Angle(8, 0, -10),
 		},
 	},
+	GetBladePos = function( ent ) 
+		local blades = {
+			[1] = {
+				pos = ent:LocalToWorld( Vector(0,0,0) ),
+				dir = ent:LocalToWorldAngles( Angle(0,0,0) ):Up(),
+			},
+		}
+
+		return blades
+	end,
+
+--[[
+-- or alternative method for sabers with attachments:
+
 	GetBladePos = function( ent ) -- GetBladePos allows you to modify where and how the blade is being rendered. By using a function you could in theory do all sort of crazy things without having to redo the model's attachments (for example: spinning helicopter sabers like the inquisitors have)
 		if not ent.BladeID1 then
 			ent.BladeID1 = ent:LookupAttachment( "primary_blade" )
@@ -45,5 +59,6 @@ hilt.info = {
 			return blades
 		end
 	end,
+]]
 }
 LSCS:RegisterHilt( hilt ) -- register it to the system. This will also register a new entity
