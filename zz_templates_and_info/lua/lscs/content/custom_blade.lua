@@ -22,6 +22,6 @@ blade.sounds = {
 	Attack3 = "saber_spin3", -- SWEP:DoAttackSound( 3, NUMBER_HAND) for NUMBER_HAND see comment above
 	Activate = "saber_turnon",
 	Disable = "saber_turnoff",
-	Idle =  "saber/saberhum4.wav",
+	Idle =  "lscs/saber/saberhum4.wav",
 }
 LSCS:RegisterBlade( blade ) -- register it to the system. This will also register a new entity
