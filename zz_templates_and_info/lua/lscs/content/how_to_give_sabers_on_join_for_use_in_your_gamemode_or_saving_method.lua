@@ -43,5 +43,6 @@ to clear the inventory you can just do:
 ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe_unequipped = true will only clear unequipped items from inventory. Server only
 
 
- (more info see useful_lua_functions.txt)
+ more functions and info see:
+ https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
 ]]
