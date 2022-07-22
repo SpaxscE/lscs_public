@@ -19,3 +19,29 @@ hook.Add( "PlayerInitialSpawn", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 
 	-- ply:lscsCraftSaber() -- if you are doing all the above stuff outside of PlayerInitialSpawn Hook you will have to call this function to force a lightsaber craft after the player is spawned.
 end )
+
+--[[
+ply:lscsAddInventory( class_or_entity, equip_to_hand )
+
+							equip_to_hand = 
+					 				true -- equip to right hand
+									false -- equip to left hand
+					 				nil -- don't equip
+
+
+
+to make your inventory save you would just read the inventory-table and the equipped table:
+
+inventory = ply:lscsGetInventory()
+equipped = ply:lscsGetEquipped()
+
+and save them in whatever way you want
+
+
+to clear the inventory you can just do:
+
+ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe_unequipped = true will only clear unequipped items from inventory. Server only
+
+
+ (more info see useful_lua_functions.txt)
+]]
