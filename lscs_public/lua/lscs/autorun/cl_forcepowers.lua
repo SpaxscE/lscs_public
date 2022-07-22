@@ -273,7 +273,7 @@ if game.SinglePlayer() then -- holy shit i hate gmod so much why dont these hook
 	}
 
 	local function InputPressed( key )
-		if IS_MOUSE_ENUM[ Key ] then
+		if IS_MOUSE_ENUM[ key ] then
 			return input.IsMouseDown( key ) 
 		else
 			return input.IsKeyDown( key ) 
