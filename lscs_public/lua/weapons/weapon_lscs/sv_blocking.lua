@@ -331,6 +331,44 @@ function SWEP:PingPongBullet( ply, pos, dmginfo, original_bullet )
 	dmginfo:SetDamageType( DMG_REMOVENORAGDOLL )
 end
 
+function SWEP:BlockDMGinfoBullet( dmginfo )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if not self:CanDeflect() then ply:lscsSetShouldBleed( true ) return end
+
+	if ply:lscsGetForce() <= 0 then
+		ply:lscsSetShouldBleed( true )
+		ply:lscsTakeForce() -- prevent regeneration while under fire
+
+		return
+	end
+
+	local att = dmginfo:GetAttacker()
+
+	if self:IsComboActive() then return end
+
+	if self:CanPlayDeflectAnim() then
+		ply:lscsPlayAnimation( "block"..math.random(1,3) )
+	end
+
+	ply:lscsTakeForce( math.Clamp(dmginfo:GetDamage() * LSCS.BulletForceDrainMul, LSCS.BulletForceDrainMin, LSCS.BulletForceDrainMax) )
+
+	ply:EmitSound( "saber_deflect_bullet" )
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( dmginfo:GetDamagePosition() )
+		effectdata:SetNormal( Vector(0,0,1) )
+	util.Effect( "saber_block", effectdata, true, true )
+
+	-- lets keep this method consistent
+	dmginfo:SetDamage( 0 )
+	dmginfo:SetDamageType( DMG_REMOVENORAGDOLL )
+
+	return true
+end
+
 -- callback function. This should maybe call a hook or something i dont know yet. Keeping it in in case the entire saber system will be reworked to support interrupting again
 function SWEP:OnBlocked( BLOCK )
 end

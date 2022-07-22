@@ -24,8 +24,6 @@ function LSCS:RegisterDeflectableTracer( tracername )
 end
 
 LSCS:RegisterDeflectableTracer( "laser_*" ) -- this should pretty much include all laser types, but you can add your own
-LSCS:RegisterDeflectableTracer( "ks_effect_sw_*" )
-LSCS:RegisterDeflectableTracer( "vjks_sw_effect_*" )
 LSCS:RegisterDeflectableTracer( "ar2tracer_custom" )
 
 function LSCS:AngleBetweenVectors( Vec1, Vec2 )

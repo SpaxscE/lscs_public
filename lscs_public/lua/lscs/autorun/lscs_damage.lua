@@ -50,6 +50,8 @@ if SERVER then
 	}
 
 	hook.Add( "EntityFireBullets", "!!!lscs_deflecting", function( entity, bullet )
+		if IsValid( entity ) and entity.IsVJBaseSNPC then return end -- for some reason VJBase npc's act different. Deflecting will never work with these. Let's let EntityTakeDamage handle this instead.
+
 		local oldCallback = bullet.Callback
 		bullet.Callback = function(att, tr, dmginfo)
 			local ply = tr.Entity
@@ -76,7 +78,6 @@ if SERVER then
 				end
 
 				if dmginfo:GetDamage() ~= 0 and dmginfo:GetDamageType() ~= DMG_REMOVENORAGDOLL then -- dirty but works
-
 					if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
 						oldCallback( att, tr, dmginfo )
 					end
@@ -93,7 +94,7 @@ if SERVER then
 	end)
 
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
-		if dmginfo:GetDamage() == 0 and dmginfo:GetDamageType() == DMG_REMOVENORAGDOLL then return true end
+		if dmginfo:GetDamage() == 0 and dmginfo:GetDamageType() == DMG_REMOVENORAGDOLL then return true end -- deflected bullet detected. Don't run block code.
 
 		if not ply:IsPlayer() then return end
 
@@ -105,7 +106,11 @@ if SERVER then
 
 		if not IsValid( wep ) or not wep.LSCS then return end
 
-		return wep:Block( dmginfo ) > LSCS_UNBLOCKED
+		if dmginfo:IsDamageType( DMG_BULLET ) then -- some npcs shoot "fake" bullets that just do entitytakedamage with a visual bullet effect
+			return wep:BlockDMGinfoBullet( dmginfo ) -- and these can not be deflected properly as they aint calling FireBullets. However we still treat them as bullets internally.
+		else
+			return wep:Block( dmginfo ) > LSCS_UNBLOCKED
+		end
 	end )
 
 	util.AddNetworkString( "lscs_saberdamage" )
