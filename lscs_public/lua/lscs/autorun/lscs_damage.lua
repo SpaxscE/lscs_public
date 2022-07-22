@@ -74,10 +74,18 @@ if SERVER then
 				if DeflectHack then
 					bullet.TracerName = nil -- remove the tracer when we are done to avoid conflicts
 				end
-			end
 
-			if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
-				oldCallback( att, tr, dmginfo )
+				if dmginfo:GetDamage() ~= 0 and dmginfo:GetDamageType() ~= DMG_REMOVENORAGDOLL then -- dirty but works
+
+					if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
+						oldCallback( att, tr, dmginfo )
+					end
+				end
+			else
+				-- just allow normal callback to run if not player
+				if oldCallback then -- engine weapons <sometimes> dont have a callback so this check is needed
+					oldCallback( att, tr, dmginfo )
+				end
 			end
 		end
 
