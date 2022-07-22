@@ -289,6 +289,7 @@ function SWEP:FinishAttack()
 	local ply = self:GetOwner()
 	if IsValid( ply ) then
 		ply:lscsClearTimedMove()
+		ply:Freeze( false )
 	end
 
 	self:SetBlockPos( Vector(0,0,0) )

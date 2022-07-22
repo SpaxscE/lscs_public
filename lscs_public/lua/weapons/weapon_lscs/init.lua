@@ -77,6 +77,7 @@ function SWEP:StopIdleSound()
 end
 
 function SWEP:OnRemove()
+	self:FinishCombo()
 	self:StopIdleSound()
 end
 
