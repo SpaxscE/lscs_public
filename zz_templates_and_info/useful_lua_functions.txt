@@ -62,7 +62,7 @@ ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the pl
 
 
 
-ply:lscsEquipItem( index, equip_to_hand ) -- equip a item from inventory
+ply:lscsEquipItem( index, equip_to_hand ) -- equip a item from inventory. Index is just the numerical id of the item in the inventory table
 							equip_to_hand = 
 					 				true -- equip to right hand
 									false -- equip to left hand
@@ -73,15 +73,15 @@ ply:lscsSyncInventory() -- send a full sync to the client. Should never be neede
 
 ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe_unequipped = true will only clear unequipped items from inventory
 
-ply:lscsRemoveItem( id ) -- just remove given id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
+ply:lscsRemoveItem( id ) -- just remove given numerical index id from inventory. This will also unequip automatically. Will only send a remove request to server when called on client
 
-stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber?
+stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber? This can be used to prevent crafting broken lightsabers
 
 ply:lscsSetForce( num ) -- set players force points
 
 ply:lscsSetMaxForce( num ) -- set players MAX force points
 
-ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and add a delay before regenerating can happen
+ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and add automatically adds a delay before regenerating can happen
 
 ply:lscsSendComboDataTo( other_ply ) -- this is used internally to send the combo data to other players. You should never need this.
 
@@ -125,7 +125,7 @@ ply:lscsClearEquipped( type, is_right_hand ) -- unequip all items of given type.
 
 ply:lscsClearTimedMove() -- clears the restricted movement
 
-ply:lscsSetTimedMove( ID, time_start, time_duration, vector_movement ) -- see combo files for how-to-use
+ply:lscsSetTimedMove( ID, time_start, time_duration, vector_movement ) -- see combo template for how-to-use
 
 ply:lscsSuppressFalldamage( time_seconds ) -- suppresses falldamage for given amount of seconds. Does nothing on client
 
