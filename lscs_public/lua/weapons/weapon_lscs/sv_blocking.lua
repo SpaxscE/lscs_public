@@ -178,7 +178,7 @@ function SWEP:Block( dmginfo )
 
 	if self:CanPlayDeflectAnim() then
 		if BLOCK_ANIM == BLOCKED_STANDARD then
-			ply:lscsPlayAnimation( "block"..math.random(1,3) )
+			ply:lscsPlayAnimation( "block"..math.random(1,3) ) -- TODO: allow this to be changed in combo file
 
 		elseif BLOCK_ANIM == BLOCKED_STAGGER then
 			ply:lscsPlayAnimation( table.Random( LSCS.ComboInterupt ) )
