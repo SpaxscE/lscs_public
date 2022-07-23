@@ -201,7 +201,11 @@ function SWEP:SetNextPrimaryAttack( time )
 end
 
 function SWEP:GetNextPrimaryAttack()
-	return math.max( (self.f_NextAttack or 0), self:GetNWNextAttack())
+	if game.SinglePlayer() then
+		return (self.f_NextAttack or 0) -- singleplayer IS a prediction error
+	else
+		return math.max( (self.f_NextAttack or 0), self:GetNWNextAttack()) -- first variable is for prediction, second variable for correcting when the server responds.
+	end
 end
 
 function SWEP:CanPrimaryAttack()

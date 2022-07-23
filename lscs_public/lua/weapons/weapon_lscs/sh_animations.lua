@@ -26,6 +26,13 @@ function SWEP:PlayAnimation( anim, start )
 
 	if not IsValid( ply ) then return end
 
+	if game.SinglePlayer() then
+
+		ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( anim ), start, true )
+
+		return
+	end
+
 	ply.s_vcd_anim = anim
 
 	if SERVER then
