@@ -271,7 +271,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	end
 
 	if self:CanPlayDeflectAnim() then
-		ply:lscsPlayAnimation( "block"..math.random(1,3) )
+		ply:lscsPlayAnimation( "block"..math.random(1,3) ) -- TODO: allow this to be changed in combo file
 	end
 
 	self:PingPongBullet( ply, trace.HitPos - BulletForward  * 50, dmginfo, bullet )

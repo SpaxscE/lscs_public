@@ -323,6 +323,7 @@ end
 
 LSCS:Reload()
 
+-- TODO: allow this to be changed in combo file
 LSCS.ComboInterupt = {
 	["____"] = "b_block_forward_riposte",
 	["-45-"] = "b_block_forward_riposte",
