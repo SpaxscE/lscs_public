@@ -224,10 +224,23 @@ function LSCS:RegisterBlade( data )
 	scripted_ents.Register( ENT, class )
 end
 
+local function FileIsEmpty( filename )
+	if file.Size( filename, "LUA" ) <= 1 then -- this is suspicous
+		local data = file.Read( filename, "LUA" )
+
+		if data and string.len( data ) <= 1 then -- confirm its empty
+			print("[LSCS] - refusing to load '"..filename.."'! File is Empty!" )
+
+			return true
+		end
+	end
+
+	return false
+end
+
 LSCS.Timeout = LSCS.Timeout or 0
 
 LSCS.Reload = function()
-
 	local Time = CurTime()
 	if LSCS.Timeout > Time then 
 		print("[LSCS] - refusing refresh ["..Time.."]")
@@ -266,6 +279,8 @@ LSCS.Reload = function()
 	-- combo files
 	COMBO = {} -- yeah this can cause conflicts if someone happens to have a global table with the same name somewhere in his gamemode. 
 	for _, filename in pairs( file.Find("lscs/combos/*.lua", "LUA") ) do
+		if FileIsEmpty( "lscs/combos/"..filename ) then continue end -- sometimes i feel like people just want to troll me. Maximum incompetence honestly.
+
 		if SERVER then
 			AddCSLuaFile("lscs/combos/"..filename)
 		end
@@ -314,6 +329,8 @@ LSCS.Reload = function()
 
 	-- content, such as hilts, blades, force powers
 	for _, filename in pairs( file.Find("lscs/content/*.lua", "LUA") ) do
+		if FileIsEmpty( "lscs/content/"..filename ) then continue end -- sometimes i feel like people just want to troll me. Maximum incompetence honestly.
+
 		if SERVER then
 			AddCSLuaFile("lscs/content/"..filename)
 		end
