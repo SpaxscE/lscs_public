@@ -21,6 +21,8 @@ hook.Add( "CalcView", "!!!!!!!!!!!!simple_glowstickthirdperson",  function( ply,
 	view.fov = fov
 	view.drawviewer = true
 
+	ply._lscsCalcViewTime = CurTime() + 0.1
+
 	return view
 end )
 
