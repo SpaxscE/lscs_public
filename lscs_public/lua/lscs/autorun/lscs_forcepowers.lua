@@ -181,7 +181,7 @@ if SERVER then
 		Sense( ply, TIME )
 	end
 
-	hook.Add( "StartCommand", "StartCommandExample", function( ply, cmd )
+	hook.Add( "StartCommand", "!!!!!!lscs_forcejumpforcer", function( ply, cmd )
 		if (ply._lscsForceJumpTime or 0) > CurTime() then
 			cmd:SetButtons( bit.bor( cmd:GetButtons(), IN_JUMP ) )
 		end
