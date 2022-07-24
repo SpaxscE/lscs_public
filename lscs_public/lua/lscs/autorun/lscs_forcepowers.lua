@@ -245,9 +245,10 @@ else
 
 	local circles = include("lscs/autorun/cl_circles.lua") -- i love this thing
 
-	local FP_BG = circles.New(CIRCLE_OUTLINED, 86, 0, 0, 22)
-	FP_BG:SetX( X )
-	FP_BG:SetY( Y )
+	-- removed for performance optimization
+	--local FP_BG = circles.New(CIRCLE_OUTLINED, 86, 0, 0, 22)
+	--FP_BG:SetX( X )
+	--FP_BG:SetY( Y )
 
 	local FP = circles.New(CIRCLE_OUTLINED, 85, 0, 0, 20)
 	FP:SetX( X )
@@ -256,6 +257,7 @@ else
 	local smAlpha = 0
 
 	local ForceIcon = Material( "lscs/ui/force_hud.png" )
+	local ForceBG = Material( "lscs/ui/hud_fp.png" ) -- added for performance optimization
 
 	hook.Add( "InitPostEntity", "!!!lscs_bullshit", function()
 		local ply = LocalPlayer()
@@ -304,18 +306,24 @@ else
 		surface.SetDrawColor( Color( 255, 255, 255, 255 * smAlpha ) )
 		surface.DrawTexturedRectRotated( X + 5, Y + 15, 128,128, 0 )
 
+		-- added for performance optimization
+		surface.SetMaterial( ForceBG )
+		surface.SetDrawColor( Color( 0, 0, 0, 200 * smAlpha ) )
+		surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
+
 		draw.NoTexture()
 
-		FP_BG:SetColor( Color(0, 0, 0, 200 * smAlpha) )
+		--FP_BG:SetColor( Color(0, 0, 0, 200 * smAlpha) ) -- removed for performance optimization
 		FP:SetColor( Color(0, 127, 255, 255 * smAlpha) )
 
 		-- the way im using circles is probably not ideal...  but fuck it, it looks so awesome.  This is probably the thing that will pop up in your profiler
 		local Offset = 150
 		for A = 0, 260 - segmentDist, segmentDist do
 			local Start = Offset + A
-			FP_BG:SetStartAngle( Start - 1 )
-			FP_BG:SetEndAngle( Start  + segmentLength + 1 )
-			FP_BG()
+			-- removed for performance optimization
+			--FP_BG:SetStartAngle( Start - 1 )
+			--FP_BG:SetEndAngle( Start  + segmentLength + 1 )
+			--FP_BG()
 
 			if A < segmentActiveValue then
 				FP:SetStartAngle( Start  )

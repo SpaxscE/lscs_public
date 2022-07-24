@@ -15,20 +15,22 @@ local circles = include("lscs/autorun/cl_circles.lua")
 local X = ScrW() - 110
 local Y = ScrH() - 100
 
-local BP_BG = circles.New(CIRCLE_OUTLINED, 126, 0, 0, 12)
-BP_BG:SetColor( Color(0, 0, 0, 200) )
-BP_BG:SetX( X )
-BP_BG:SetY( Y )
+-- removed for performance optimization
+--local BP_BG = circles.New(CIRCLE_OUTLINED, 126, 0, 0, 12)
+--BP_BG:SetColor( Color(0, 0, 0, 200) )
+--BP_BG:SetX( X )
+--BP_BG:SetY( Y )
 
 local BP = circles.New(CIRCLE_OUTLINED, 125, 0, 0, 10)
 BP:SetColor( Color(255, 0, 0, 255) )
 BP:SetX( X )
 BP:SetY( Y )
 
-local CH_BG = circles.New(CIRCLE_OUTLINED, 106, 0, 0, 12)
-CH_BG:SetColor( Color(0, 0, 0, 200) )
-CH_BG:SetX( X )
-CH_BG:SetY( Y )
+-- removed for performance optimization
+--local CH_BG = circles.New(CIRCLE_OUTLINED, 106, 0, 0, 12)
+--CH_BG:SetColor( Color(0, 0, 0, 200) )
+--CH_BG:SetX( X )
+--CH_BG:SetY( Y )
 
 local CH = circles.New(CIRCLE_OUTLINED, 105, 0, 0, 10)
 CH:SetColor( Color(255, 200, 0, 255) )
@@ -37,8 +39,6 @@ CH:SetY( Y )
 
 local mat_xhair = Material( "sprites/hud/v_crosshair1" )
 local mat_glow = Material( "sprites/light_glow02_add" )
-local mat_glow_combo = Material( "lscs/effects/lightsaber_core" )
-local mat_glow_combo_tip = Material( "lscs/effects/lightsaber_tip" )
 
 local COLOR_WHITE = Color( 255, 255, 255, 255 )
 local VECTOR_NULL = Vector(0,0,0)
@@ -48,6 +48,9 @@ local segmentSpace = 10
 
 local OldCombo
 local ComboIcon = Material("entities/item_stance_yongli.png")
+
+local advBG = Material( "lscs/ui/hud_adv.png" ) -- added for performance optimization
+local bpBG = Material( "lscs/ui/hud_bp.png" ) -- added for performance optimization
 
 function SWEP:DrawHUD()
 	local ply = LocalPlayer()
@@ -76,6 +79,20 @@ function SWEP:DrawHUD()
 	end
 	draw.SimpleText( combo.name, "LSCS_FONT", X - 170, Y + 80, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
+
+
+	-- added for performance optimization
+	surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+
+	surface.SetMaterial( advBG )
+	surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
+
+	if combo.AutoBlock then
+		surface.SetMaterial( bpBG )
+		surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
+	end
+
+
 	draw.NoTexture()
 
 	-- the way im using circles is probably not ideal...  but fuck it, it looks so awesome.  This is probably the thing that will pop up in your profiler
@@ -83,9 +100,10 @@ function SWEP:DrawHUD()
 	for A = 0, 170 - segmentDist, segmentDist do
 		local Start = Offset + A
 
-		CH_BG:SetStartAngle( Start - 1 )
-		CH_BG:SetEndAngle( Start  + segmentLength + 1 )
-		CH_BG()
+		-- removed for performance optimization
+		--CH_BG:SetStartAngle( Start - 1 )
+		--CH_BG:SetEndAngle( Start  + segmentLength + 1 )
+		--CH_BG()
 
 		if A < ActiveValueCH then
 			CH:SetStartAngle( Start  )
@@ -95,9 +113,10 @@ function SWEP:DrawHUD()
 
 		if not combo.AutoBlock then continue end
 
-		BP_BG:SetStartAngle( Start - 1 )
-		BP_BG:SetEndAngle( Start  + segmentLength + 1 )
-		BP_BG()
+		-- removed for performance optimization
+		--BP_BG:SetStartAngle( Start - 1 )
+		--BP_BG:SetEndAngle( Start  + segmentLength + 1 )
+		--BP_BG()
 
 		if A < ActiveValueBP then
 			BP:SetStartAngle( Start  )
