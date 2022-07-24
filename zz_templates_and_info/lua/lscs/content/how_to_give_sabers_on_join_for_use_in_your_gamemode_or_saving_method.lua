@@ -35,7 +35,7 @@ to make your inventory save you would just read the inventory-table and the equi
 inventory = ply:lscsGetInventory()
 equipped = ply:lscsGetEquipped()
 
-and save them in whatever way you want
+and save them in whatever way you want. To restore them use the PlayerInitialSpawn example above. This will ensure all internal hooks and functions are called.
 
 
 to clear the inventory you can just do:
