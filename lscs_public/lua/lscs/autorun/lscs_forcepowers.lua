@@ -265,6 +265,8 @@ else
 	end )
 
 	hook.Add( "HUDPaint", "!!!!lscs_ShowForceMana", function()
+		if LSCS:HUDShouldHide( LSCS_HUD_POINTS_FORCE ) then return end
+
 		local ply = LocalPlayer()
 
 		local Time = CurTime()

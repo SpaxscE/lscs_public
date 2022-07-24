@@ -72,22 +72,25 @@ function SWEP:DrawHUD()
 		end
 	end
 
-	if ComboIcon then
-		surface.SetMaterial( ComboIcon )
-		surface.SetDrawColor( COLOR_WHITE )
-		surface.DrawTexturedRectRotated( X - 170, Y + 5, 128,128, 0 )
+	if not LSCS:HUDShouldHide( LSCS_HUD_STANCE ) then
+		if ComboIcon then
+			surface.SetMaterial( ComboIcon )
+			surface.SetDrawColor( COLOR_WHITE )
+			surface.DrawTexturedRectRotated( X - 170, Y + 5, 128,128, 0 )
+		end
+		draw.SimpleText( combo.name, "LSCS_FONT", X - 170, Y + 80, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
-	draw.SimpleText( combo.name, "LSCS_FONT", X - 170, Y + 80, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-
 
 
 	-- added for performance optimization
 	surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
 
-	surface.SetMaterial( advBG )
-	surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
+	if not LSCS:HUDShouldHide( LSCS_HUD_POINTS_ADVANTAGE ) then
+		surface.SetMaterial( advBG )
+		surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
+	end
 
-	if combo.AutoBlock then
+	if combo.AutoBlock and not LSCS:HUDShouldHide( LSCS_HUD_POINTS_BLOCK ) then
 		surface.SetMaterial( bpBG )
 		surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
 	end
@@ -105,13 +108,13 @@ function SWEP:DrawHUD()
 		--CH_BG:SetEndAngle( Start  + segmentLength + 1 )
 		--CH_BG()
 
-		if A < ActiveValueCH then
+		if A < ActiveValueCH and not LSCS:HUDShouldHide( LSCS_HUD_POINTS_ADVANTAGE ) then
 			CH:SetStartAngle( Start  )
 			CH:SetEndAngle( Start  + segmentLength )
 			CH()
 		end
 
-		if not combo.AutoBlock then continue end
+		if not combo.AutoBlock or LSCS:HUDShouldHide( LSCS_HUD_POINTS_BLOCK ) then continue end
 
 		-- removed for performance optimization
 		--BP_BG:SetStartAngle( Start - 1 )

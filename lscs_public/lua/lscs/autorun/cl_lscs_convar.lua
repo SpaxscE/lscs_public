@@ -28,10 +28,21 @@ cvars.AddChangeCallback( "lscs_traildetail", function( convar, oldValue, newValu
 end)
 
 
+-- host timescale
 local cVarTimeScale = GetConVar( "host_timescale" )
 
 LSCS.TimeScale = cVarTimeScale and cVarTimeScale:GetFloat() or 1
 
 cvars.AddChangeCallback( "host_timescale", function( convar, oldValue, newValue ) 
 	LSCS.TimeScale = tonumber( newValue )
+end)
+
+
+-- hud should draw
+local cvarDrawHud = CreateConVar( "lscs_drawhud", 1, true, false)
+
+LSCS.DrawHud = cvarDrawHud and cvarDrawHud:GetBool() or false
+
+cvars.AddChangeCallback( "lscs_drawhud", function( convar, oldValue, newValue ) 
+	LSCS.DrawHud = tonumber( newValue ) ~=0
 end)

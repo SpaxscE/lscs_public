@@ -24,6 +24,24 @@ LSCS:RefreshMenu() -- refreshes the menu if open. Only works clientside. Needs t
 
 
 
+# CLIENT
+
+-- very similar to gmods HUDShouldDraw, however instead of strings it takes "enums"
+
+local hide = {
+	[LSCS_HUD_POINTS_FORCE] = true, -- disable force hud on bottom right
+	[LSCS_HUD_POINTS_BLOCK] = true, -- disable block points (red bars)
+	[LSCS_HUD_POINTS_ADVANTAGE] = true, -- disable block points draw (yellow bars)
+	[LSCS_HUD_STANCE] = true,	-- disable stance information
+}
+
+hook.Add( "LSCS:HUDShouldDraw", "ANY_HOOK_NAME_YOU_WANT", function( name )
+	if hide[ name ] then
+		return false
+	end
+end )
+
+
 
 
 # SERVER
@@ -134,4 +152,3 @@ is_suppressed = ply:lscsIsFalldamageSuppressed() -- returns if falldamage is dis
 shoot_pos = ply:lscsGetShootPos() -- returns "eyes" attachment pos or ply:GetShootPos() if no attachment is found
 
 view_pos = ply:lscsGetViewOrigin() -- returns the view camera position. EyeAngles in LSCS is just vanilla ply:EyeAngles()
-

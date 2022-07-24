@@ -1849,28 +1849,41 @@ function LSCS:BuildSettings( Frame )
 		surface.SetMaterial( gradient_mat )
 		surface.DrawTexturedRect( 0, 0, w, h )
 	end
-	local T = vgui.Create( "DPanel", PerfSettings )
+
+	local pLeft = vgui.Create( "DPanel", PerfSettings )
+	pLeft:SetSize( PanelSizeX * 0.5, 0 )
+	pLeft:DockMargin( 0, 0, 0, 0 )
+	pLeft:Dock( LEFT )
+	pLeft.Paint = function(self, w, h ) end
+
+	local pRight = vgui.Create( "DPanel", PerfSettings )
+	pRight:SetSize( PanelSizeX * 0.5, 0 )
+	pRight:DockMargin( 0, 0, 0, 0 )
+	pRight:Dock( LEFT )
+	pRight.Paint = function(self, w, h ) end
+
+	local T = vgui.Create( "DPanel", pLeft )
 	T:Dock( TOP )
 	T:DockMargin( 4, 4, 0, 0 )
 	T.Paint = function(self, w, h )
 		draw.SimpleText( "Performance", "LSCS_FONT_SMALL", 0, h * 0.5, menu_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
-	local DCheckbox = vgui.Create( "DCheckBoxLabel", PerfSettings )
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", pLeft )
 	DCheckbox:Dock( TOP )
 	DCheckbox:DockMargin( 4, 4, 0, 0 )
 	DCheckbox:SetText("Dynamic Light")	
 	DCheckbox:SetConVar("lscs_dynamiclight")
 	DCheckbox:SizeToContents()
 
-	local DCheckbox = vgui.Create( "DCheckBoxLabel", PerfSettings )
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", pLeft )
 	DCheckbox:Dock( TOP )
 	DCheckbox:DockMargin( 4, 4, 0, 0 )
 	DCheckbox:SetText("High Quality Impact Effects")	
 	DCheckbox:SetConVar("lscs_impacteffects")
 	DCheckbox:SizeToContents()
 
-	local DSlider = vgui.Create( "DNumSlider", PerfSettings )
+	local DSlider = vgui.Create( "DNumSlider", pLeft )
 	DSlider:Dock( TOP )
 	DSlider:DockMargin( 4, 4, 0, 0 )
 	DSlider:SetText( "Trail Effect Detail" )
@@ -1878,6 +1891,21 @@ function LSCS:BuildSettings( Frame )
 	DSlider:SetMax( 100 )
 	DSlider:SetDecimals( 0 )
 	DSlider:SetConVar( "lscs_traildetail" )	
+
+	local T = vgui.Create( "DPanel", pRight )
+	T:Dock( TOP )
+	T:DockMargin( 4, 4, 0, 0 )
+	T.Paint = function(self, w, h )
+		draw.SimpleText( "Hud", "LSCS_FONT_SMALL", 0, h * 0.5, menu_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	end
+
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", pRight )
+	DCheckbox:Dock( TOP )
+	DCheckbox:DockMargin( 4, 4, 0, 0 )
+	DCheckbox:SetText("Show HUD")	
+	DCheckbox:SetConVar("lscs_drawhud")
+	DCheckbox:SizeToContents()
+
 
 	local SVSettings = vgui.Create( "DPanel", Panel )
 	SVSettings:SetSize( 0, 302 )
