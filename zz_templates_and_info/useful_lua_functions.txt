@@ -31,7 +31,7 @@ LSCS:RefreshMenu() -- refreshes the menu if open. Only works clientside. Needs t
 local hide = {
 	[LSCS_HUD_POINTS_FORCE] = true, -- disable force hud on bottom right
 	[LSCS_HUD_POINTS_BLOCK] = true, -- disable block points (red bars)
-	[LSCS_HUD_POINTS_ADVANTAGE] = true, -- disable block points draw (yellow bars)
+	[LSCS_HUD_POINTS_ADVANTAGE] = true, -- disable advantage (yellow bars)
 	[LSCS_HUD_STANCE] = true,	-- disable stance information
 }
 
