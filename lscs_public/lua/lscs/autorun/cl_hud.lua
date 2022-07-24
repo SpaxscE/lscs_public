@@ -9,5 +9,7 @@ function LSCS:HUDShouldHide( LSCS_HUD )
 
 	if ShouldDraw == false then return true end
 
+	-- if ShouldDraw == true then return false end -- should the hook overpower client settings? i dont know.. If you have this edgecase please make a github issue and i will change this.
+
 	return not LSCS.DrawHud
 end
