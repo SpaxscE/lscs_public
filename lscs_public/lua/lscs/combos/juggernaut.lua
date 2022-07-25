@@ -35,7 +35,6 @@ COMBO.Attacks = {
 	},
 	["FRONT_DASH"] = {
 		AttackAnim = "h_left_t3",
-		AttackAnim = "h_left_t3",
 		BeginAttack = function( weapon, ply )  
 			weapon:DoAttackSound()
 
