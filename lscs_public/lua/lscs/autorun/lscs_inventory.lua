@@ -18,6 +18,8 @@ if SERVER then
 			index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
 		end
 
+		if hook.Run( "LSCS:PlayerInventory", self, item, index ) then return end
+
 		if self._lscsNetworkingReady then
 			net.Start( "lscs_inventory" )
 				net.WriteBool( true )

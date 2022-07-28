@@ -46,6 +46,13 @@ end )
 
 # SERVER
 
+-- only allow admins to pick up katarn saber hilt
+hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, index )
+	if not ply:IsAdmin() and item == "item_saberhilt_katarn" then
+		return true
+	end
+end )
+
 -- this is called when the player is fully loaded and ready
 hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	print("hello")
