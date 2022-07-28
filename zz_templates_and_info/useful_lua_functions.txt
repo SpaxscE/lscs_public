@@ -49,7 +49,7 @@ end )
 -- only allow admins to pick up katarn saber hilt
 hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, index )
 	if not ply:IsAdmin() and item == "item_saberhilt_katarn" then
-		return true
+		return true -- returning true will prevent picking up
 	end
 end )
 
