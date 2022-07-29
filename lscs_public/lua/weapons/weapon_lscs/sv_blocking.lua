@@ -236,6 +236,8 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 	if LSCS:AngleBetweenVectors( Forward, bullet.Dir ) < 60 then
 		ply:lscsSetShouldBleed( true )
 
+		dmginfo:SetDamageType( bit.bor( dmginfo:GetDamageType(), DMG_PREVENT_PHYSICS_FORCE, DMG_REMOVENORAGDOLL ) )
+
 		return
 	end
 
@@ -337,6 +339,15 @@ function SWEP:BlockDMGinfoBullet( dmginfo )
 	if not IsValid( ply ) then return end
 
 	if not self:CanDeflect() then ply:lscsSetShouldBleed( true ) return end
+
+	local Forward = ply:EyeAngles():Forward()
+	local BulletForward = dmginfo:GetDamageForce():GetNormalized()
+
+	if LSCS:AngleBetweenVectors( Forward, BulletForward ) < 60 then
+		ply:lscsSetShouldBleed( true )
+
+		return
+	end
 
 	if ply:lscsGetForce() <= 0 then
 		ply:lscsSetShouldBleed( true )

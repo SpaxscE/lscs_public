@@ -100,7 +100,10 @@ if SERVER then
 	end)
 
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
-		if dmginfo:GetDamage() == 0 and dmginfo:GetDamageType() == DMG_REMOVENORAGDOLL then return true end -- deflected bullet detected. Don't run block code.
+
+		if dmginfo:IsDamageType( DMG_PREVENT_PHYSICS_FORCE ) and dmginfo:IsDamageType( DMG_REMOVENORAGDOLL ) then return end -- failed bullet deflect detected. Don't run block code, but allow damage.
+
+		if dmginfo:GetDamage() == 0 and dmginfo:GetDamageType() == DMG_REMOVENORAGDOLL then return true end -- deflected bullet detected. Don't run block code, prevent damage.
 
 		if not ply:IsPlayer() then return end
 
