@@ -234,6 +234,8 @@ if SERVER then
 	end)
 
 	net.Receive( "lscs_sync", function( len, ply )
+		if ply._lscsNetworkingReady then return end -- only allow this to be called once. This will prevent them from doing malicious bullshit.
+
 		-- in case someone was spamming ply:Give while the player wasnt ready for networking
 		-- this will make sure the client's inventory is 100% in sync with the server
 		ply._lscsNetworkingReady = true
