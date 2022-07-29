@@ -10,7 +10,7 @@ best regards luna
 
 LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {}, Force = {},BulletTracerDeflectable = {} }
 
-LSCS.VERSION = 128
+LSCS.VERSION = 129
 LSCS.VERSION_GITHUB = 0
 LSCS.VERSION_TYPE = ".GIT"
 
