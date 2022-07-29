@@ -59,7 +59,13 @@ if SERVER then
 			if IsValid( ply ) and ply:IsPlayer() then
 				local wep = ply:GetActiveWeapon()
 
-				if not IsValid( wep ) or not wep.LSCS then return end
+				if not IsValid( wep ) or not wep.LSCS then
+					if oldCallback then
+						oldCallback( att, tr, dmginfo )
+					end
+
+					return
+				end
 
 				local DeflectHack = not bullet.TracerName and AmmoTypeDeflectable[ bullet.AmmoType ] -- if this is true its most likely the AR2 or the dropship container
 
