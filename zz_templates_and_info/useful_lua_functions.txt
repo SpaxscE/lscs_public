@@ -110,7 +110,7 @@ ply:lscsSetForce( num ) -- set players force points
 
 ply:lscsSetMaxForce( num ) -- set players MAX force points
 
-ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and add automatically adds a delay before regenerating can happen
+ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and automatically adds a delay before regenerating can happen
 
 ply:lscsSendComboDataTo( other_ply ) -- this is used internally to send the combo data to other players. You should never need this.
 
