@@ -46,11 +46,14 @@ end )
 
 # SERVER
 
--- only allow admins to pick up katarn saber hilt
+-- called when a player attempts to pick up an item
 hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, index )
+
+ 	--this example will allow admins only to pick up katarn saber hilt
 	if not ply:IsAdmin() and item == "item_saberhilt_katarn" then
 		return true -- returning true will prevent picking up
 	end
+
 end )
 
 -- this is called when the player is fully loaded and ready
@@ -77,6 +80,7 @@ end)
 -- called whenever a player unequips an item
 hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
 end)
+
 
 
 ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the players inventory. Can be given a classname instead of a entity aswell. Only supports sents.
