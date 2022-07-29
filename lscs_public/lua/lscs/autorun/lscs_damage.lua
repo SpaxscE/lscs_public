@@ -59,7 +59,7 @@ if SERVER then
 			if IsValid( ply ) and ply:IsPlayer() then
 				local wep = ply:GetActiveWeapon()
 
-				if not IsValid( wep ) or not wep.LSCS then
+				if not IsValid( wep ) or not wep.LSCS or dmginfo:GetDamage() == 0 then -- damage = 0... ArcCW... detected...
 					if oldCallback then
 						oldCallback( att, tr, dmginfo )
 					end
