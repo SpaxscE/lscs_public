@@ -71,7 +71,7 @@ if SERVER then
 		if isbool( hand ) then
 			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ) )
 		else
-			if WasEquipped then
+			if isbool( WasEquipped ) then
 				hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
 			end
 		end
