@@ -70,7 +70,7 @@ function SWEP:UpdateWorldModel( hand , hiltobject )
 
 	if hand == self.HAND_LEFT then
 		if IsValid( self.WorldModelCL[ self.HAND_LEFT ] ) then
-			self.WorldModelCL[ self.HAND_LEFT ] :Remove()
+			self.WorldModelCL[ self.HAND_LEFT ]:Remove()
 		end
 
 		if hiltobject then
