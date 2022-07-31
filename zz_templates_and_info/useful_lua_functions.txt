@@ -81,7 +81,9 @@ end)
 hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
 end)
 
-
+-- same as GM:EntityFireBullets, except by using this hook it wont conflict with LSCS. Get's called AFTER LSCS code is run
+hook.Add( "LSCS:EntityFireBullets", "ANY_HOOK_NAME_YOU_WANT", function( entity, bullet )
+end)
 
 ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the players inventory. Can be given a classname instead of a entity aswell. Only supports sents.
 							equip_to_hand = 
