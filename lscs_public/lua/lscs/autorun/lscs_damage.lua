@@ -58,13 +58,14 @@ if SERVER then
 
 			if isfunction( FireBulletsSG ) then
 				HookSG = FireBulletsSG
-				HookSG( entity, bullet )
+
+				return HookSG( entity, bullet )
 			else
 				HookSG = true
 			end
 		else
 			if HookSG ~= true then
-				HookSG( entity, bullet )
+				return HookSG( entity, bullet )
 			end
 		end
 	end)
@@ -117,7 +118,11 @@ if SERVER then
 			end
 		end
 
-		hook.Run( "LSCS:EntityFireBullets", entity, bullet ) -- this will allow other addons to still be able to hook into FireBullets while keeping LSCS deflecting intact
+		local ShouldFireBullet = hook.Run( "LSCS:EntityFireBullets", entity, bullet ) -- this will allow other addons to still be able to hook into FireBullets while keeping LSCS deflecting intact
+
+		if ShouldFireBullet == false then
+			return false
+		end
 
 		return true
 	end)
