@@ -49,8 +49,29 @@ if SERVER then
 		["AR2"] = true, -- AR2
 	}
 
+
+	-- fix conflict with CAP:Code  https://steamcommunity.com/sharedfiles/filedetails/?id=175394472
+	local HookSG = false
+	hook.Add( "LSCS:EntityFireBullets", "StarGate.CAP.Code.Fix", function( entity, bullet )
+		if HookSG == false then
+			local FireBulletsSG = hook.GetTable()["EntityFireBullets"]["StarGate.EntityFireBullets"]
+
+			if isfunction( FireBulletsSG ) then
+				HookSG = FireBulletsSG
+				HookSG( entity, bullet )
+			else
+				HookSG = true
+			end
+		else
+			if HookSG ~= true then
+				HookSG( entity, bullet )
+			end
+		end
+	end)
+
+
 	hook.Add( "EntityFireBullets", "!!!lscs_deflecting", function( entity, bullet )
-		if IsValid( entity ) and entity.IsVJBaseSNPC then return end -- for some reason VJBase npc's act different. Deflecting will never work with these. Let's let EntityTakeDamage handle this instead.
+		if IsValid( entity ) and entity.IsVJBaseSNPC then return end -- for some reason VJBase npc's act different and already break by doing nothing in this hook. So let's let EntityTakeDamage handle this instead. Don't return anything.
 
 		local oldCallback = bullet.Callback
 		bullet.Callback = function(att, tr, dmginfo)
@@ -96,8 +117,11 @@ if SERVER then
 			end
 		end
 
+		hook.Run( "LSCS:EntityFireBullets", entity, bullet ) -- this will allow other addons to still be able to hook into FireBullets while keeping LSCS deflecting intact
+
 		return true
 	end)
+
 
 	hook.Add( "EntityTakeDamage", "!!!lscs_block_damage", function( ply, dmginfo )
 
