@@ -162,7 +162,6 @@ if SERVER then
 
 	function LSCS:ApplyDamage( ply, victim, pos, dir )
 		local dmg = DamageInfo()
-		dmg:SetDamage( LSCS.SaberDamage )
 		dmg:SetAttacker( ply )
 		dmg:SetDamageForce( (victim:GetPos() - ply:GetPos()):GetNormalized() * 10000 )
 		dmg:SetDamagePosition( pos ) 
@@ -191,6 +190,8 @@ if SERVER then
 
 		if not IsValid( wep ) or not wep.LSCS then return end
 		if not wep:GetDMGActive() then return end
+
+		dmg:SetDamage( LSCS.SaberDamage * wep:GetCombo().DamageMul )
 
 		dmg:SetInflictor( wep )
 

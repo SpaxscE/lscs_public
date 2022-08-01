@@ -307,6 +307,7 @@ LSCS.Reload = function()
 			LeftSaberActive = (COMBO.LeftSaberActive == true),
 			MaxBlockPoints = COMBO.MaxBlockPoints,
 			BPDrainPerHit = COMBO.BPDrainPerHit,
+			DamageMul = (COMBO.DamageMultiplier or 1),
 			BlockDistanceNormal = COMBO.BlockDistanceNormal,
 			BlockDistancePerfect = COMBO.BlockDistancePerfect,
 		}

@@ -10,6 +10,7 @@ COMBO.LeftSaberActive = false
 
 COMBO.HoldType = "slam"
 
+COMBO.DamageMultiplier = 1.15
 COMBO.BPDrainPerHit = 50
 
 COMBO.Attacks = {
@@ -227,3 +228,4 @@ COMBO.Attacks = {
 		Duration = 0.4,
 	},
 }
+LSCS:Reload()

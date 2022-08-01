@@ -8,6 +8,8 @@ COMBO.AutoBlock = false -- false, because this style can only block when a perfe
 
 COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deactivated
 
+--COMBO.DamageMultiplier = 1 -- multiplies global server damage setting for this stance. Avoid using this. Only uncomment if you really need it.
+
 --COMBO.MaxBlockPoints = 100 -- use this to make op boss saber stances. Avoid using this. Only uncomment if you really need it.
 --COMBO.BPDrainPerHit = 25 -- how much bp damage this saber stance should be doing. Avoid using this. Only uncomment if you really need it.
 
