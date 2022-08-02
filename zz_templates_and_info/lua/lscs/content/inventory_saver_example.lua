@@ -109,6 +109,8 @@ end
 hook.Add( "LSCS:PlayerInventory", "!!!lscs_inventory_saver", function( ply, item, index )
 
 	-- no code is perfect without atleast one timer.Simple
+	-- its actually needed because this hook is called before the item is actually picked-up
+	-- ( its so this hook could be used to prevent item-picking up )
 
 	timer.Simple(0, function()
 		if not IsValid( ply ) then return end
