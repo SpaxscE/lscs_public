@@ -1,6 +1,6 @@
 -- for all the people who cant figure this out by themself...
 -- just a quick script that will save and restore your inventory
--- i strongly urge you to code your own system
+-- i strongly urge you to code your own system, as this is a very inefficient way of doing it.
 
 -- this file goes to: lua/lscs/content
 
