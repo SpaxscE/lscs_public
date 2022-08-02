@@ -14,6 +14,9 @@ local NumberToEquippedEntry = {
 	[-1] = nil, -- just for looks, doesnt actually do anything
 }
 
+
+-- dont actually save and read it like this in your own version as this can tank your server's performance if your inventory gets huge and multiple players are working with it. It's just so you have SOMETHING to work with.
+
 function meta:lscsWriteInventory()
 	local ID = self:AccountID()
 
@@ -115,20 +118,20 @@ hook.Add( "LSCS:PlayerInventory", "!!!lscs_inventory_saver", function( ply, item
 	timer.Simple(0, function()
 		if not IsValid( ply ) then return end
 
-		ply:lscsWriteInventory()
+		ply:lscsWriteInventory() -- ideally you would only add a single item in your saved .txt instead of rewriting it entirely
 	end )
 end )
 
 hook.Add( "LSCS:OnPlayerDroppedItem", "!!!lscs_inventory_saver", function( ply, item_entity )
-	ply:lscsWriteInventory()
+	ply:lscsWriteInventory() -- ideally you would just remove the dropped item from your saved .txt instead of rewriting said .txt
 end )
 
 hook.Add( "LSCS:OnPlayerEquippedItem", "!!!lscs_inventory_saver", function( ply, item )
-	ply:lscsWriteInventory()
+	ply:lscsWriteInventory() -- ideally you would just change the equipped state in your saved .txt instead of rewriting said it entirely
 end)
 
 hook.Add( "LSCS:OnPlayerUnEquippedItem", "!!!lscs_inventory_saver", function( ply, item )
-	ply:lscsWriteInventory()
+	ply:lscsWriteInventory() -- ideally you would just change the equipped state in your saved .txt instead of rewriting said it entirely
 end)
 
 hook.Add( "PlayerInitialSpawn", "!!!lscs_inventory_saver", function( ply )
