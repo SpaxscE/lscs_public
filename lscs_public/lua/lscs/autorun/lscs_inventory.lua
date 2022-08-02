@@ -208,7 +208,7 @@ if SERVER then
 				self:lscsCraftSaber()
 			end
 
-			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, _item )
+			hook.Run( "LSCS:OnPlayerUnEquippedItem", self, _item )
 		end
 
 		self:lscsRemoveItem( id )
