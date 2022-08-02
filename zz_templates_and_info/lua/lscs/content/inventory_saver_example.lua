@@ -135,10 +135,16 @@ hook.Add( "PlayerInitialSpawn", "!!!lscs_inventory_saver", function( ply )
 end )
 
 --[[
--- alternative
+-- alternative to playerinitialspawn hook above:
 hook.Add( "LSCS:OnPlayerFullySpawned", "!!!lscs_inventory_saver", function( ply )
 	-- ply:Give("weapon_lscs") -- shouldn't be needed
 	ply:lscsReadInventory()
 	ply:lscsCraftSaber()
 end )
 ]]
+
+-- more info about inventory saving:
+-- https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/blob/main/zz_templates_and_info/how_to_save_and_restore_inventory.lua
+
+ -- for more functions and info see:
+ -- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
