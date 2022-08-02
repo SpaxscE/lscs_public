@@ -120,15 +120,15 @@ hook.Add( "LSCS:PlayerInventory", "!!!lscs_inventory_saver", function( ply, item
 end )
 
 hook.Add( "LSCS:OnPlayerDroppedItem", "!!!lscs_inventory_saver", function( ply, item_entity )
-	ply:lscsWriteInventory() -- ideally you would just remove the dropped item from your saved .txt instead of rewriting said .txt entirely
+	ply:lscsWriteInventory() -- ideally you would only remove the dropped item from your saved .txt instead of rewriting said .txt entirely
 end )
 
 hook.Add( "LSCS:OnPlayerEquippedItem", "!!!lscs_inventory_saver", function( ply, item )
-	ply:lscsWriteInventory() -- ideally you would just change the equipped state in your saved .txt instead of rewriting said .txt entirely
+	ply:lscsWriteInventory() -- ideally you would only change the equipped state in your saved .txt of this single item instead of rewriting said .txt entirely
 end)
 
 hook.Add( "LSCS:OnPlayerUnEquippedItem", "!!!lscs_inventory_saver", function( ply, item )
-	ply:lscsWriteInventory() -- ideally you would just change the equipped state in your saved .txt instead of rewriting said .txt entirely
+	ply:lscsWriteInventory() -- ideally you would only change the equipped state in your saved .txt of this single item instead of rewriting said .txt entirely
 end)
 
 hook.Add( "PlayerInitialSpawn", "!!!lscs_inventory_saver", function( ply )
