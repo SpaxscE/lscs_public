@@ -14,9 +14,6 @@ local NumberToEquippedEntry = {
 	[-1] = nil, -- just for looks, doesnt actually do anything
 }
 
-
--- dont actually save and read it like this in your own version as this can tank your server's performance if your inventory gets huge and multiple players are working with it. It's just so you have SOMETHING to work with.
-
 function meta:lscsWriteInventory()
 	local ID = self:AccountID()
 
