@@ -2,6 +2,8 @@
 -- just a quick script that will save and restore your inventory
 -- i strongly urge you to code your own system
 
+-- this file goes to: lua/lscs/content
+
 if CLIENT then return end -- all this is serverside only.
 
 local meta = FindMetaTable( "Player" )

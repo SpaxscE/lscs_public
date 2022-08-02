@@ -1,6 +1,10 @@
 
 -- this will auto equip a blue lightsaber with yongli stance to the player. How you gonna do the saving... is up to you. I will not force a system down your throat. Suggestions for hooks do on GitHub
+ 
+ -- however, a working auto save and restore example can be found here:
+ -- https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
 
+ 
 if CLIENT then return end
 
 hook.Add( "PlayerInitialSpawn", "ANY_HOOK_NAME_YOU_WANT", function( ply )
@@ -45,4 +49,5 @@ ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe
 
  more functions and info see:
  https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
+
 ]]
