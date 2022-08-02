@@ -113,6 +113,8 @@ if SERVER then
 	end )
 
 	function meta:lscsSyncInventory()
+		if not self._lscsNetworkingReady then return end
+
 		local inv = self:lscsGetInventory()
 		local eq = self:lscsGetEquipped()
 
