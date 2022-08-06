@@ -2,11 +2,7 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
-ENT.PrintName = "test"
-ENT.Author = "me"
-ENT.Category = "test"
-
-ENT.Spawnable       = true
+ENT.Spawnable       = false
 ENT.AdminSpawnable  = false
 
 ENT.AutomaticFrameAdvance = true
