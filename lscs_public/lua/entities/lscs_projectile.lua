@@ -20,10 +20,8 @@ if SERVER then
 	function ENT:Initialize()
 		self:SetModel( "models/lscs/saber_throw.mdl" )
 
-		self:PhysicsInit( SOLID_VPHYSICS )
-		self:SetMoveType( MOVETYPE_VPHYSICS )
-		self:SetSolid( SOLID_VPHYSICS )
-
+		self:SetMoveType( MOVETYPE_NONE )
+		self:SetSolid( SOLID_NONE )
 		self:SetCollisionGroup( COLLISION_GROUP_NONE )
 
 		local SWEP = self:GetSWEP()
