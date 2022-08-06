@@ -172,7 +172,17 @@ if SERVER then
 			dmg:SetDamageType( bit.bor( DMG_CRUSH, DMG_SLASH ) )
 		end
 
+		local wep = ply:GetActiveWeapon()
+
+		if not IsValid( wep ) or not wep.LSCS then return end
+		if not wep:GetDMGActive() then return end
+
 		local startpos = ply:GetShootPos()
+		local projectile = wep:GetProjectile()
+
+		if IsValid( projectile ) then
+			startpos = projectile:GetPos()
+		end
 
 		local trace = util.TraceLine( {
 			start = startpos,
@@ -185,11 +195,6 @@ if SERVER then
 		-- HOW FAR do we trust our client's? ;), ideally this would check for actual blade location during time of detected hit or call lag compensation. TODO maybe?
 		-- Oh well, Since we have a defined time in which damage can happen and a defined range in which damage can be done this shouldn't be a huge problem. It is a small problem with PING as i have noticed but prediction and melee combat is always gay, like this entire lscs_damage.lua file
 		if (trace.HitPos - startpos):Length() > 100 then return end
-
-		local wep = ply:GetActiveWeapon()
-
-		if not IsValid( wep ) or not wep.LSCS then return end
-		if not wep:GetDMGActive() then return end
 
 		dmg:SetDamage( LSCS.SaberDamage * wep:GetCombo().DamageMul )
 

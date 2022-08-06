@@ -89,9 +89,7 @@ local BLOCKED_NOANIM = 3
 function SWEP:Block( dmginfo )
 	local BLOCK = LSCS_UNBLOCKED
 
-	if not self:GetActive() then return BLOCK end
-
-	if self:IsBrokenSaber() then return BLOCK end
+	if not self:GetActive() or self:IsBrokenSaber() or self:IsThrown() then return BLOCK end
 
 	local ply = self:GetOwner()
 
@@ -228,7 +226,7 @@ function SWEP:DeflectBullet( attacker, trace, dmginfo, bullet )
 
 	if not IsValid( ply ) then return end
 
-	if not self:CanDeflect() then ply:lscsSetShouldBleed( true ) return end
+	if not self:CanDeflect() or self:IsThrown() then ply:lscsSetShouldBleed( true ) return end
 
 	local Forward = ply:EyeAngles():Forward()
 	local BulletForward = bullet.Dir
@@ -338,7 +336,7 @@ function SWEP:BlockDMGinfoBullet( dmginfo )
 
 	if not IsValid( ply ) then return end
 
-	if not self:CanDeflect() then ply:lscsSetShouldBleed( true ) return end
+	if not self:CanDeflect() or self:IsThrown() then ply:lscsSetShouldBleed( true ) return end
 
 	local Forward = ply:EyeAngles():Forward()
 	local BulletForward = dmginfo:GetDamageForce():GetNormalized()

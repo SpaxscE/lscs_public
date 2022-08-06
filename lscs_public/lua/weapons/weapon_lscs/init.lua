@@ -17,6 +17,8 @@ function SWEP:Reload()
 	self.NextReload = CurTime() + 1
 
 	self:SetActive( not self:GetActive() )
+
+	if not self:GetActive() then self:SetDMGActive( false ) end -- instantly turn off damage when saber is disabled. Dont wait for blade to retract or combo to finish.
 end
 
 function SWEP:OnActiveChanged( oldActive, active )

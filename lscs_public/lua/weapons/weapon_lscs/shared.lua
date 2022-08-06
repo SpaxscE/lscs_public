@@ -81,10 +81,16 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "String",2, "BladeR")
 	self:NetworkVar( "String",3, "BladeL")
 
+	self:NetworkVar( "Entity",0, "Projectile" )
+
 	if SERVER then
 		self:SetStance( 1 )
 		self:SetBlockPoints( 999999 )
 	end
+end
+
+function SWEP:IsThrown()
+	return IsValid( self:GetProjectile() )
 end
 
 function SWEP:GetHiltData( hand )
@@ -184,7 +190,7 @@ function SWEP:SetDMGActive( active )
 end
 
 function SWEP:GetDMGActive()
-	if CLIENT then
+	if CLIENT and not self:IsThrown() then
 		if self:GetOwner() ~= LocalPlayer() then
 			return self:GetNWDMGActive()
 		else
@@ -222,6 +228,8 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	if self:IsThrown() then return end
+
 	self:SetStance( self:GetStance() + 1 )
 end
 

@@ -32,8 +32,13 @@ if SERVER then
 		if IsValid( weapon ) then
 			weapon:SetHiltR( HiltR or "" )
 			weapon:SetHiltL( HiltL or "" )
-			weapon:SetBladeR( BladeR or "" )
-			weapon:SetBladeL( BladeL or "" )
+
+			if HiltR and HiltR ~= "" then
+				weapon:SetBladeR( BladeR or "" )
+			end
+			if HiltL and HiltL ~= "" then
+				weapon:SetBladeL( BladeL or "" )
+			end
 		end
 
 		hook.Run( "LSCS:OnPlayerCraftedSaber", self, weapon )

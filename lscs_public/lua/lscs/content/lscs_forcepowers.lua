@@ -1,4 +1,57 @@
 
+
+local force = {}
+force.PrintName = "Throw"
+force.Author = "Blu-x92 / Luna"
+force.Description = "Throw your Lightsaber"
+force.id = "throw"
+force.StartUse = function( ply )
+	local SWEP = ply:GetWeapon( "weapon_lscs" )
+
+	if not IsValid( SWEP ) then return end
+	if SWEP:IsBrokenSaber() then return end
+
+	if (ply._lscsNextThrow or 0) > CurTime() then return end
+
+	ply._lscsNextThrow = CurTime() + 1
+
+	if IsValid( ply._lscsThrownSaber ) then
+		if not ply._lscsThrownSaber.Returning then
+			ply._lscsThrownSaber:ResetProgress()
+			ply._lscsThrownSaber.Returning = true
+		end
+	else
+		if ply:lscsGetForce() < 10 then return end
+
+		if ply:GetActiveWeapon() ~= SWEP then
+			ply:SelectWeapon( "weapon_lscs" )
+		end
+
+		LSCS:PlayVCDSequence( ply, "zombie_attack_02", 0.3 )
+
+		local proj = ents.Create("lscs_projectile")
+		proj:SetPos( ply:GetShootPos() - Vector(0,0,20) )
+		proj:SetSWEP( SWEP )
+		proj:Spawn()
+		proj:Activate()
+
+		ply:EmitSound("npc/zombie/claw_miss1.wav")
+
+		SWEP:SetHoldType( "magic" )
+
+		ply._lscsThrownSaber = proj
+	end
+end
+force.StopUse = function( ply )
+	if IsValid( ply._lscsThrownSaber ) then
+		ply._lscsThrownSaber:ResetProgress()
+		ply._lscsThrownSaber.Returning = true
+	end
+end
+
+LSCS:RegisterForce( force )
+
+
 local force = {}
 force.PrintName = "Jump"
 force.Author = "Blu-x92 / Luna"

@@ -100,7 +100,7 @@ function SWEP:ClearBladeModel()
 	end
 end
 
-function SWEP:DrawWorldModel()
+function SWEP:DrawWorldModel( flags )
 end
 
 function SWEP:DrawWorldModelUnequipped( ply )
@@ -119,13 +119,21 @@ function SWEP:DrawWorldModelUnequipped( ply )
 	end
 end
 
-function SWEP:DrawWorldModelTranslucent()
+function SWEP:DrawWorldModelTranslucent( flags, target )
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then
 		self:DrawWorldModelUnequipped( ply )
 
 		return
+	end
+
+	if self:IsThrown() then
+		if IsValid( target ) then
+			ply = target
+		else
+			return
+		end
 	end
 
 	local BladeID = 1
@@ -170,7 +178,9 @@ function SWEP:DrawWorldModelTranslucent()
 		for _, PosData in ipairs( Positions ) do
 			local BladeData = self:GetBladeData( handID )
 
-			if (handID == 2 and not COMBO.LeftSaberActive) then continue end
+			if not IsValid( target ) then
+				if (handID == 2 and not COMBO.LeftSaberActive) then continue end
+			end
 
 			if BladeData then
 				self:DrawBlade( handID, BladeID, PosData, BladeData, Mul, newAng )

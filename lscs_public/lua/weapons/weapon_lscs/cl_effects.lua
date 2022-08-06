@@ -234,6 +234,11 @@ end
 
 function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, min, max )
 	local start_pos = ply:GetShootPos()
+
+	if self:IsThrown() then
+		start_pos = self:GetProjectile():GetPos()
+	end
+
 	local aimDir = ply:GetAimVector()
 	local dmgActive = self:GetDMGActive()
 
