@@ -238,7 +238,7 @@ COMBO.Attacks = {
 		end,
 		FinishAttack = function( weapon, ply ) end,
 		Delay = 0,
-		Duration = 0.7,
+		Duration = 0.8,
 	},
 	["___D"] = {
 		AttackAnim = "pure_b_s2_t3",
