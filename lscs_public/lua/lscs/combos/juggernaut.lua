@@ -218,14 +218,16 @@ COMBO.Attacks = {
 		Duration = 0.6,
 	},
 	["W___"] = {
-		AttackAnim = "vanguard_r_s3_t3",
+		AttackAnim = "judge_b_s3_t1",
 		BeginAttack = function( weapon, ply )  
 			weapon:DoAttackSound()
+			if ply:OnGround() then
+				ply:SetVelocity( Angle(0,ply:EyeAngles().y,0):Forward() * 1000 )
+			end
 			ply:lscsSetTimedMove( 1, CurTime(), 0.9, Vector(0,0,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
 		Delay = 0.1,
-		Duration = 0.4,
+		Duration = 0.8,
 	},
 }
-LSCS:Reload()
