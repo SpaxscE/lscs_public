@@ -22,7 +22,7 @@ COMBO.Attacks = {
 			ply:SetVelocity( Vector(0,0,200) )
 			ply:lscsSuppressFalldamage( CurTime() + 5 )
 
-			timer.Simple( 0.5, function()
+			timer.Simple( 0.25, function()
 				if IsValid( weapon ) and IsValid( ply ) then
 					ply:SetVelocity( Vector(0,0,-1500) )
 				end

@@ -31,6 +31,8 @@ if SERVER then
 
 		self.SpawnTime = CurTime()
 		self.StartThink = true
+
+		self:DrawShadow( false )
 	end
 
 	function ENT:ResetProgress()
@@ -61,9 +63,16 @@ if SERVER then
 		local dir = sub:GetNormalized()
 		local dist = math.min( sub:Length(), 800 )
 
-		local TargetPos = start + dir * (dist * self:GetProgress() * 1.65)
+		local TargetPos = start + dir * (dist * self:GetProgress() * 1.7)
 
-		local Move = (TargetPos - self:GetPos()) * FT
+		local MoveSub = TargetPos - self:GetPos()
+
+		local MoveDist = math.min( MoveSub:Length() * 10, self:GetProgress() > 0.5 and 750 or 350 ) -- quick after throw, but slow on return
+		local MoveDir = MoveSub:GetNormalized()
+
+		local MoveSpeed = MoveDist * FT
+
+		local Move = MoveDir * MoveSpeed
 
 		self:SetPos( self:GetPos() + Move )
 
@@ -162,6 +171,10 @@ if SERVER then
 		self:SetPlaybackRate( playbackrate )
 		self:SetSequence( sequence )
 	end
+
+	function ENT:UpdateTransmitState() 
+		return TRANSMIT_ALWAYS
+	end
 else
 	function ENT:Initialize()
 		self.SND = CreateSound( self, "lscs/saber/saberspin_loop.wav" )
@@ -181,6 +194,8 @@ else
 		local SWEP = self:GetSWEP()
 
 		if not IsValid( SWEP ) then return end
+
+		self:SetupBones()
 
 		SWEP:DrawWorldModelTranslucent( nil, self )
 	end
