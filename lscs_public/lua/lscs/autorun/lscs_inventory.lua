@@ -6,7 +6,7 @@ if SERVER then
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
 
-	function meta:lscsAddInventory( class_or_entity, equip )
+	function meta:lscsAddInventory( class_or_entity, equip, hand )
 		local item = class_or_entity
 
 		if IsEntity( class_or_entity ) then
@@ -39,7 +39,14 @@ if SERVER then
 			end
 		end
 
-		self:lscsEquipItem( index, equip )
+		if equip then
+			if not isbool(hand) then
+				hand = false
+				print("lscsAddInventory 3rd arg not bool!")
+			end
+
+			self:lscsEquipItem( index, equip, hand or false )
+		end
 
 		if IsEntity( class_or_entity ) then
 			class_or_entity:Remove()
