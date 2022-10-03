@@ -321,7 +321,20 @@ force.StartUse = function( ply )
 end
 LSCS:RegisterForce( force )
 
-
+--[[
+local force = {}
+force.PrintName = "Lightning"
+force.Author = "Blu-x92 / Luna"
+force.Description = "Force Lightning"
+force.id = "lightning"
+force.Equip = function( ply ) end
+force.UnEquip = function( ply ) end
+force.StartUse = function( ply )
+end
+force.StopUse = function( ply )
+end
+LSCS:RegisterForce( force )
+]]
 
 if SERVER then
 	hook.Add( "LSCS:PlayerCanManipulate", "!!!lscs_forceblocking", function( ply, target_ent )

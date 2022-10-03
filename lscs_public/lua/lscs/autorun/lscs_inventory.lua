@@ -32,10 +32,13 @@ if SERVER then
 
 		if isbool( equip ) then -- this makes sure we can not equip two hilts or blades in one hand
 			local object = LSCS:ClassToItem( item )
-			local type = object.type
 
-			if type == "hilt" or type == "crystal" then
-				self:lscsClearEquipped( type, equip )
+			if object then
+				local type = object.type
+
+				if type == "hilt" or type == "crystal" then
+					self:lscsClearEquipped( type, equip )
+				end
 			end
 		end
 

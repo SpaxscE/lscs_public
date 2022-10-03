@@ -161,6 +161,13 @@ if SERVER then
 	}
 
 	function LSCS:ApplyDamage( ply, victim, pos, dir )
+		local plyID = ply:EntIndex()
+		local Time = CurTime()
+
+		if victim._lscsHitTimes then 
+			if victim._lscsHitTimes[ plyID ] > Time then return end
+		end
+
 		local dmg = DamageInfo()
 		dmg:SetAttacker( ply )
 		dmg:SetDamageForce( (victim:GetPos() - ply:GetPos()):GetNormalized() * 10000 )
@@ -195,6 +202,10 @@ if SERVER then
 		-- HOW FAR do we trust our client's? ;), ideally this would check for actual blade location during time of detected hit or call lag compensation. TODO maybe?
 		-- Oh well, Since we have a defined time in which damage can happen and a defined range in which damage can be done this shouldn't be a huge problem. It is a small problem with PING as i have noticed but prediction and melee combat is always gay, like this entire lscs_damage.lua file
 		if (trace.HitPos - startpos):Length() > 100 then return end
+
+		if not victim._lscsHitTimes then victim._lscsHitTimes = {} end
+
+		victim._lscsHitTimes[ plyID ] = Time + 0.15
 
 		dmg:SetDamage( LSCS.SaberDamage * wep:GetCombo().DamageMul )
 
@@ -240,7 +251,7 @@ if SERVER then
 		local pos = net.ReadVector()
 		local dir = net.ReadVector()
 
-		if not IsValid( victim ) then return end
+		if not IsValid( victim ) or ply == victim then return end
 
 		LSCS:ApplyDamage( ply, victim, pos, dir )
 	end)
