@@ -184,6 +184,9 @@ if SERVER then
 		} )
 
 		local ent = ents.Create( item )
+
+		if not IsValid( ent ) then self:lscsRemoveItem( id ) return end
+
 		ent:SetPos( tr.HitPos )
 		ent:SetAngles( Angle(90,self:EyeAngles().y,0) )
 

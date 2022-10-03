@@ -227,14 +227,16 @@ if SERVER then
 	end )
 
 	hook.Add( "LSCS:OnPlayerEquippedItem", "!!!!lscs_forcepower_equip_handler", function( ply, item )
-		if not IsValid( ply ) then return end
+		if not IsValid( ply ) or not item then return end
+
 		if item.type == "force" then
 			ProtectedCall( LSCS.Force[ item.id ].Equip( ply ) )
 		end
 	end)
 
 	hook.Add( "LSCS:OnPlayerUnEquippedItem", "!!!!lscs_forcepower_unequip_handler", function( ply, item )
-		if not IsValid( ply ) then return end
+		if not IsValid( ply ) or not item then return end
+
 		if item.type == "force" then
 			ProtectedCall( LSCS.Force[ item.id ].UnEquip( ply ) )
 		end

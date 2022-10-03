@@ -164,7 +164,7 @@ if SERVER then
 		local plyID = ply:EntIndex()
 		local Time = CurTime()
 
-		if victim._lscsHitTimes then 
+		if victim._lscsHitTimes then
 			local HitTime = victim._lscsHitTimes[ plyID ]
 
 			if HitTime then
@@ -179,7 +179,7 @@ if SERVER then
 		dmg:SetDamageType( DMG_ENERGYBEAM )
 
 		if slice[ victim:GetClass() ] then -- gay, because it plays metal slicing sound
-			victim:SetPos( victim:GetPos() + Vector(0,0,5) ) -- gay, because their ragdoll spawns 5 units lower than the npc is at causing ragdoll spazz...
+			victim:SetPos( victim:GetPos() + Vector(0,0,5) ) -- ragdoll spawns 5 units lower than the npc is at causing ragdoll spazz...
 			dmg:SetDamageType( bit.bor( DMG_CRUSH, DMG_SLASH ) )
 		end
 
@@ -203,9 +203,7 @@ if SERVER then
 			end
 		} )
 
-		-- HOW FAR do we trust our client's? ;), ideally this would check for actual blade location during time of detected hit or call lag compensation. TODO maybe?
-		-- Oh well, Since we have a defined time in which damage can happen and a defined range in which damage can be done this shouldn't be a huge problem. It is a small problem with PING as i have noticed but prediction and melee combat is always gay, like this entire lscs_damage.lua file
-		if (trace.HitPos - startpos):Length() > 100 then return end
+		if (trace.HitPos - startpos):Length() > 100 then return end -- protection against net abusers or 1000 ping players
 
 		if not victim._lscsHitTimes then victim._lscsHitTimes = {} end
 
@@ -228,7 +226,7 @@ if SERVER then
 			end
 		end
 
-		if victim:IsPlayer() or victim:IsNPC() or victim:IsNextBot() then -- or victim:IsGay() or lscs_damage.lua:IsGay() then
+		if victim:IsPlayer() or victim:IsNPC() or victim:IsNextBot() then
 			victim:EmitSound( "saber_hit" )
 		else
 			victim:EmitSound( "saber_lighthit" )
@@ -236,7 +234,6 @@ if SERVER then
 
 		victim:TakeDamageInfo( dmg )
 
-		-- net. vs internal EmitSound networking. Ready,Set, GO! Wohever reaches the client first wins
 		net.Start( "lscs_saberdamage" )
 			net.WriteVector( pos )
 			net.WriteVector( dir )

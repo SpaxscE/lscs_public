@@ -730,8 +730,8 @@ function LSCS:BuildInventory( Frame )
 				if isbool( eq ) then
 					surface.SetDrawColor( 255, 191, 0, 255 )
 					DrawFrame( w, h, 2, 2 )
-	
-					if Item.type == "hilt" or Item.type == "crystal" then
+
+					if Item and (Item.type == "hilt" or Item.type == "crystal") then
 						if eq == true then
 							surface.SetMaterial( icon_rhand )
 						else
@@ -1133,6 +1133,9 @@ function LSCS:BuildSaberMenu( Frame )
 				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
 
 				local item = LSCS:ClassToItem( v )
+
+				if not item then continue end
+
 				if item.type == "hilt" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
@@ -1173,6 +1176,9 @@ function LSCS:BuildSaberMenu( Frame )
 				if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
 
 				local item = LSCS:ClassToItem( v )
+
+				if not item then continue end
+
 				if item.type == "crystal" then
 					Num = Num + 1
 					self.menu:AddOption( item.name, function()
@@ -1472,6 +1478,9 @@ function LSCS:BuildStanceMenu( Frame )
 			if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
 
 			local item = LSCS:ClassToItem( v )
+
+			if not item then continue end
+
 			if item.type == "stance" then
 				Num = Num + 1
 				subMenu:AddOption( item.name, function()
@@ -1630,6 +1639,8 @@ function LSCS:BuildForceMenu( Frame )
 			if isbool( ply:lscsGetEquipped()[ k ] ) then continue end
 
 			local item = LSCS:ClassToItem( v )
+
+			if not item then continue end
 
 			if item.type == "force" then
 				Num = Num + 1
