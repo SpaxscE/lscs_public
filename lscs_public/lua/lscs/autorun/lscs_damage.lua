@@ -165,7 +165,11 @@ if SERVER then
 		local Time = CurTime()
 
 		if victim._lscsHitTimes then 
-			if victim._lscsHitTimes[ plyID ] > Time then return end
+			local HitTime = victim._lscsHitTimes[ plyID ]
+
+			if HitTime then
+				if HitTime > Time then return end
+			end
 		end
 
 		local dmg = DamageInfo()
