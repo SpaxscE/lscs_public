@@ -114,6 +114,10 @@ ply:lscsSetMaxForce( num ) -- set players MAX force points
 
 ply:lscsTakeForce( Amount ) -- take this 'Amount' of force and automatically adds a delay before regenerating can happen
 
+ply:lscsSetForceRegenAmount( num ) -- set amount of force regeneration per 0.1 seconds
+
+ply:lscsGetForceRegenAmount() -- returns how much force per 0.1 seconds regenerates for given player
+
 ply:lscsSendComboDataTo( other_ply ) -- this is used internally to send the combo data to other players. You should never need this.
 
 ply:lscsForceWalk( seconds ) -- will force the player to walk for given amount of seconds
@@ -121,7 +125,6 @@ ply:lscsForceWalk( seconds ) -- will force the player to walk for given amount o
 ply:lscsSetShouldBleed( bool_should_bleed ) -- enable disable bleeding. Probably does nothing as the saber will constantly call it.
 
 ply:lscsClearBlood() -- does exactly what it says. Workaround for a gmod bug where ply:RemoveAllDecals() doesnt do anything when called on SERVER
-
 
 
 

@@ -48,6 +48,21 @@ if SERVER then
 		return (HiltR and BladeR and HiltR ~= "" and BladeR ~= "") or (HiltL and BladeL and HiltL ~= "" and BladeL ~= "")
 	end
 
+	function meta:lscsSetForceRegenAmount( num )
+		if not num or not isnumber( num ) then
+
+			self._lscsForceRegenAmount = nil
+
+			return
+		end
+
+		self._lscsForceRegenAmount = num
+	end
+
+	function meta:lscsGetForceRegenAmount()
+		return self._lscsForceRegenAmount or 1
+	end
+
 	function meta:lscsSetForce( num )
 		self:SetNWFloat( "lscs_force_mana", num )
 	end

@@ -121,6 +121,10 @@ function LSCS:RegisterForce( data )
 		StopUse = (data.StopUse or fallback),
 	}
 
+	if data.OnClk then
+		hook.Add( "LSCS:PlayerForcePowerThink", id, data.OnClk )
+	end
+
 	if CLIENT then
 		LSCS.Force[ id ].cmd = CreateClientConVar( "lscs_key_force_"..id, KEY_NONE, true, true )
 		LSCS:RefreshKeys()

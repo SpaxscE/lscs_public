@@ -97,90 +97,6 @@ if SERVER then
 		end
 	end
 
-	local function Jump( ply, TIME )
-		if not ply._lscsAssistedJump then return end
-
-		if ply:OnGround() then
-			ply._lscsCanForceJump = true
-			ply._lscsPlayedJumpSound = false
-			ply._lscsJumpForceTaken = nil
-		end
-
-		local JUMP = ply:KeyDown( IN_JUMP )
-
-		if JUMP then
-			local wep = ply:GetActiveWeapon()
-			if IsValid( wep ) and wep.LSCS then
-				if wep:IsComboActive() then JUMP = false end
-			end
-		end
-
-		if JUMP ~= ply._lscsOldJump then
-			ply._lscsOldJump = JUMP
-			if JUMP then
-				ply._lscsJumpTime = TIME + 0.1
-			else
-				if not ply:OnGround() then
-					ply._lscsCanForceJump = false
-				end
-			end
-		end
-
-		if JUMP and ply:lscsGetForce() > 0 and (ply._lscsJumpForceTaken or 0) < 35 and ply._lscsCanForceJump and (ply._lscsJumpTime or 0) < TIME and not ply:OnGround() then
-			ply:lscsSuppressFalldamage( TIME + 5 )
-			ply:SetVelocity( Vector(0,0,100) + Angle(0,ply:EyeAngles().y,0):Forward() * 5 )
-			ply:lscsTakeForce( 2.5 )
-			ply._lscsJumpForceTaken = ply._lscsJumpForceTaken and ply._lscsJumpForceTaken + 2.5 or 0
-
-			if not ply._lscsPlayedJumpSound then
-				ply._lscsPlayedJumpSound = true
-
-				net.Start( "lscs_start_jump" )
-				net.Send( ply )
-
-				ply:EmitSound("lscs/force/jump.mp3")
-			end
-		end
-	end
-
-	local function Protect( ply, TIME )
-		if not ply:GetNWBool( "_lscsForceProtect", false ) then return end
-
-		local effectdata = EffectData()
-			effectdata:SetOrigin( ply:GetPos() )
-			effectdata:SetEntity( ply )
-		util.Effect( "force_block_active", effectdata, true, true )
-
-		ply:lscsTakeForce()
-
-		if (ply._lscsBlockTime or 0) < TIME then
-			ply:SetNWBool( "_lscsForceProtect", false )
-		end
-	end
-
-	local function Sense( ply, TIME )
-		if not ply:GetNWBool( "_lscsForceSense", false ) then return end
-
-		ply:lscsTakeForce()
-
-		if (ply._lscsSenseTime or 0) < TIME then
-			ply:SetNWBool( "_lscsForceSense", false )
-		end
-	end
-
-	function LSCS:PlayerForcePowerThink( ply, TIME )
-		if not ply:Alive() or ply:GetObserverMode() ~= OBS_MODE_NONE then
-			ply:SetNWBool( "_lscsForceSense", false )
-			ply:SetNWBool( "_lscsForceProtect", false )
-
-			return
-		end
-
-		Jump( ply, TIME )
-		Protect( ply, TIME )
-		Sense( ply, TIME )
-	end
-
 	hook.Add( "StartCommand", "!!!!!!lscs_forcejumpforcer", function( ply, cmd )
 		if (ply._lscsForceJumpTime or 0) > CurTime() then
 			cmd:SetButtons( bit.bor( cmd:GetButtons(), IN_JUMP ) )
@@ -196,11 +112,11 @@ if SERVER then
 		NEXT_THINK = TIME + 0.1 -- slow it down to be nice to the server. The HUD is specifically designed to mask this slow updating.
 
 		for _, ply in ipairs( player.GetAll() ) do
-			LSCS:PlayerForcePowerThink( ply, TIME )
+			hook.Run( "LSCS:PlayerForcePowerThink", ply, TIME )
 
 			if not ply:OnGround() or (ply._lscsNextForceRegen or 0) > TIME then continue end
 
-			ply:lscsSetForce( math.min(ply:lscsGetForce() + 1,ply:lscsGetMaxForce()) )
+			ply:lscsSetForce( math.min(ply:lscsGetForce() + ply:lscsGetForceRegenAmount(),ply:lscsGetMaxForce()) )
 		end
 	end )
 

@@ -4,6 +4,13 @@ force.Author = "YOU"
 force.Description = "force template"
 force.id = "myforcepower" -- lowercase only
 
+--[[
+-- adds a hook to Think with 0.1 second interval. Only uncomment if needed
+force.OnClk =  function( ply, TIME )
+	print(TIME)
+end
+]]
+
 force.Equip = function( ply )
 	print("i got equipped")
 end

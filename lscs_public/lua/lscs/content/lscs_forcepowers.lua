@@ -57,6 +57,51 @@ force.PrintName = "Jump"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Force Assisted Jump"
 force.id = "jump"
+force.OnClk =  function( ply, TIME )
+	if not ply._lscsAssistedJump then return end
+
+	if ply:OnGround() then
+		ply._lscsCanForceJump = true
+		ply._lscsPlayedJumpSound = false
+		ply._lscsJumpForceTaken = nil
+	end
+
+	local JUMP = ply:KeyDown( IN_JUMP )
+
+	if JUMP then
+		local wep = ply:GetActiveWeapon()
+		if IsValid( wep ) and wep.LSCS then
+			if wep:IsComboActive() then JUMP = false end
+		end
+	end
+
+	if JUMP ~= ply._lscsOldJump then
+		ply._lscsOldJump = JUMP
+		if JUMP then
+			ply._lscsJumpTime = TIME + 0.1
+		else
+			if not ply:OnGround() then
+				ply._lscsCanForceJump = false
+			end
+		end
+	end
+
+	if JUMP and ply:lscsGetForce() > 0 and (ply._lscsJumpForceTaken or 0) < 35 and ply._lscsCanForceJump and (ply._lscsJumpTime or 0) < TIME and not ply:OnGround() then
+		ply:lscsSuppressFalldamage( TIME + 5 )
+		ply:SetVelocity( Vector(0,0,100) + Angle(0,ply:EyeAngles().y,0):Forward() * 5 )
+		ply:lscsTakeForce( 2.5 )
+		ply._lscsJumpForceTaken = ply._lscsJumpForceTaken and ply._lscsJumpForceTaken + 2.5 or 0
+
+		if not ply._lscsPlayedJumpSound then
+			ply._lscsPlayedJumpSound = true
+
+			net.Start( "lscs_start_jump" )
+			net.Send( ply )
+
+			ply:EmitSound("lscs/force/jump.mp3")
+		end
+	end
+end
 force.Equip = function( ply ) ply._lscsAssistedJump = true end
 force.UnEquip = function( ply ) ply._lscsAssistedJump = false end
 force.StartUse = function( ply )
@@ -177,6 +222,15 @@ force.PrintName = "Sense"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Augmented Vision. See through the lies of the Jedi and through walls"
 force.id = "sense"
+force.OnClk =  function( ply, TIME )
+	if not ply:GetNWBool( "_lscsForceSense", false ) then return end
+
+	ply:lscsTakeForce()
+
+	if (ply._lscsSenseTime or 0) < TIME then
+		ply:SetNWBool( "_lscsForceSense", false )
+	end
+end
 force.UnEquip = function( ply ) ply:SetNWBool( "_lscsForceSense", false ) end
 force.StartUse = function( ply )
 	local Time = CurTime()
@@ -294,6 +348,20 @@ force.PrintName = "Immunity"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Incoming Force Power attacks are absorbed and regain Force Points. Also gives a permanent immunity against incoming Force Powers as long your own Force Points are above 50% even when this Power is not activated. Only the weak minded don't learn this ability."
 force.id = "immunity"
+force.OnClk =  function( ply, TIME )
+	if not ply:GetNWBool( "_lscsForceProtect", false ) then return end
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( ply:GetPos() )
+		effectdata:SetEntity( ply )
+	util.Effect( "force_block_active", effectdata, true, true )
+
+	ply:lscsTakeForce()
+
+	if (ply._lscsBlockTime or 0) < TIME then
+		ply:SetNWBool( "_lscsForceProtect", false )
+	end
+end
 force.Equip = function( ply ) ply._lscsForceResistant = true end
 force.UnEquip = function( ply ) ply._lscsForceResistant = nil ply:GetNWBool( "_lscsForceProtect", false ) end
 force.StartUse = function( ply )
