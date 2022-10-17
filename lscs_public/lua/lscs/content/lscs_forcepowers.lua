@@ -225,6 +225,11 @@ force.id = "sense"
 force.OnClk =  function( ply, TIME )
 	if not ply:GetNWBool( "_lscsForceSense", false ) then return end
 
+	if not ply:Alive() or ply:GetObserverMode() ~= OBS_MODE_NONE then
+		ply:SetNWBool( "_lscsForceSense", false )
+		return
+	end
+
 	ply:lscsTakeForce()
 
 	if (ply._lscsSenseTime or 0) < TIME then
@@ -351,6 +356,11 @@ force.id = "immunity"
 force.OnClk =  function( ply, TIME )
 	if not ply:GetNWBool( "_lscsForceProtect", false ) then return end
 
+	if not ply:Alive() or ply:GetObserverMode() ~= OBS_MODE_NONE then
+		ply:SetNWBool( "_lscsForceProtect", false )
+		return
+	end
+
 	local effectdata = EffectData()
 		effectdata:SetOrigin( ply:GetPos() )
 		effectdata:SetEntity( ply )
@@ -389,12 +399,15 @@ force.StartUse = function( ply )
 end
 LSCS:RegisterForce( force )
 
---[[
+
 local force = {}
 force.PrintName = "Lightning"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Force Lightning"
 force.id = "lightning"
+force.OnClk =  function( ply, TIME )
+	--LSCS:PlayVCDSequence( ply, "gesture_item_give", 0.65 )
+end
 force.Equip = function( ply ) end
 force.UnEquip = function( ply ) end
 force.StartUse = function( ply )
@@ -402,7 +415,7 @@ end
 force.StopUse = function( ply )
 end
 LSCS:RegisterForce( force )
-]]
+
 
 if SERVER then
 	hook.Add( "LSCS:PlayerCanManipulate", "!!!lscs_forceblocking", function( ply, target_ent )
