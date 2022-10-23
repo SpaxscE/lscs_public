@@ -406,15 +406,60 @@ force.Author = "Blu-x92 / Luna"
 force.Description = "Force Lightning"
 force.id = "lightning"
 force.OnClk =  function( ply, TIME )
-	--LSCS:PlayVCDSequence( ply, "gesture_item_give", 0.65 )
+	if not ply._lscsLightningTime then return end
+
+	ply:lscsTakeForce( 2 )
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( ply:GetPos() )
+		effectdata:SetEntity( ply )
+	util.Effect( "force_lightning", effectdata, true, true )
+
+	if ply._lscsLightningStartTime < TIME then
+		LSCS:PlayVCDSequence( ply, "gesture_item_give", 0.7 )
+	end
+
+	if ply._lscsLightningTime < TIME or ply:lscsGetForce() <= 0 then
+		ply._lscsLightningTime = nil
+		ply._lscsLightningStartTime = nil
+	end
 end
 force.Equip = function( ply ) end
 force.UnEquip = function( ply ) end
 force.StartUse = function( ply )
+	local Time = CurTime()
+
+	if (ply._lscsLightningTime or 0) > Time then
+		ply._lscsLightningTime = nil
+		ply._lscsLightningStartTime = nil
+
+		return
+	end
+
+	if ply:lscsGetForce() < 10 then return end
+
+	local CanDo = (ply._lscsNextForce or 0) < Time and (ply._lscsLightningTime or 0) < Time
+
+	if not CanDo then return end
+
+	ply._lscsNextForce = Time + 2
+
+	ply:EmitSound("lscs/force/lightning.mp3")
+
+	ply:lscsTakeForce( 5 )
+
+	if not ply._lscsLightningTime then
+		ply._lscsLightningTime = CurTime() + 3.5
+		ply._lscsLightningStartTime = CurTime() + 0.15
+
+		LSCS:PlayVCDSequence( ply, "gesture_signal_forward", 0.1 )
+	end
 end
 force.StopUse = function( ply )
+	ply._lscsLightningTime = nil
 end
 LSCS:RegisterForce( force )
+
 
 
 if SERVER then

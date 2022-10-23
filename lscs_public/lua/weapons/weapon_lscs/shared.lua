@@ -11,7 +11,7 @@ SWEP.Author			= "Blu-x92 / Luna"
 SWEP.ViewModel		= "models/weapons/c_arms.mdl"
 SWEP.WorldModel		= "models/lscs/weapons/katarn.mdl"
 
-SWEP.Spawnable		= false
+SWEP.Spawnable		= true
 SWEP.AdminOnly		= false
 
 SWEP.Primary.ClipSize		= -1
