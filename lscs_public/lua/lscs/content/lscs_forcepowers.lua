@@ -425,6 +425,8 @@ force.OnClk =  function( ply, TIME )
 		local ToTarget = Sub:GetNormalized()
 
 		if math.deg( math.acos( math.Clamp( AimVector:Dot( ToTarget ) ,-1,1) ) ) < 14 then
+			if util.TraceLine( {start = MyPos,endpos = victim:LocalToWorld( victim:OBBCenter() ),mask = MASK_SHOT,filter = ply,} ).Entity ~= victim then continue end
+
 			local Dist = Sub:Length()
 
 			if IsValid( victim ) and Dist < 700 then
@@ -456,7 +458,7 @@ force.OnClk =  function( ply, TIME )
 					end
 				end
 
-				local trace = util.TraceHull( {
+				local DMGtrace = util.TraceHull( {
 					start = MyPos,
 					endpos = MyPos + AimVector * 800,
 					filter = ply,
@@ -466,11 +468,11 @@ force.OnClk =  function( ply, TIME )
 					filter = function( ent ) return ent == victim end
 				} )
 
-				local DmgSub = TargetPos - trace.HitPos
-				local DmgPos = trace.HitPos + DmgSub:GetNormalized() * math.min(DmgSub:Length(),20) + VectorRand(-5,5)
+				local DmgSub = TargetPos - DMGtrace.HitPos
+				local DmgPos = DMGtrace.HitPos + DmgSub:GetNormalized() * math.min(DmgSub:Length(),20) + VectorRand(-5,5)
 
 				local dmginfo = DamageInfo()
-				dmginfo:SetDamage( 10 )
+				dmginfo:SetDamage( 5 )
 				dmginfo:SetAttacker( ply )
 				dmginfo:SetInflictor( ply ) 
 				dmginfo:SetDamageType( bit.bor( DMG_SHOCK, DMG_BULLET ) )
