@@ -321,11 +321,15 @@ if game.SinglePlayer() then -- holy shit i hate gmod so much why dont these hook
 	end )
 else
 	hook.Add( "PlayerButtonDown", "!!!!lscs_buttondownstuff", function( ply, button )
-		PlayerButtonDown( ply, button )
+		if IsFirstTimePredicted() then
+			PlayerButtonDown( ply, button )
+		end
 	end)
 
 	hook.Add( "PlayerButtonUp", "!!!!lscs_buttonupstuff", function( ply, button )
-		PlayerButtonUp( ply, button )
+		if IsFirstTimePredicted() then
+			PlayerButtonUp( ply, button )
+		end
 	end)
 end
 

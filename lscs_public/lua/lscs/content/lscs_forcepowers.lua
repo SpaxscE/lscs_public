@@ -415,11 +415,77 @@ force.OnClk =  function( ply, TIME )
 		effectdata:SetEntity( ply )
 	util.Effect( "force_lightning", effectdata, true, true )
 
+	local MyPos = ply:GetShootPos()
+	local AimVector = ply:GetAimVector()
+	local Force = AimVector * 100
+
+	for _, victim in pairs( ents.FindInSphere( MyPos, 700 ) ) do
+		local TargetPos = victim.GetShootPos and victim:GetShootPos() or victim:GetPos()
+		local Sub = TargetPos - MyPos
+		local ToTarget = Sub:GetNormalized()
+
+		if math.deg( math.acos( math.Clamp( AimVector:Dot( ToTarget ) ,-1,1) ) ) < 14 then
+			local Dist = Sub:Length()
+
+			if IsValid( victim ) and Dist < 700 then
+				if victim:IsPlayer() then
+					if hook.Run( "LSCS:PlayerCanManipulate", ply, victim, true ) then continue end
+				end
+
+				if victim:GetClass() == "prop_ragdoll" then
+					victim:Fire("StartRagdollBoogie")
+
+					if (victim._lscsBoogieTime or 0) < TIME then
+						victim._lscsBoogieTime = TIME + 6
+
+						for i = 1, 70 do
+							if math.random(1,5) == 1 then continue end
+
+							timer.Simple( i * 0.1, function()
+								if not IsValid( victim ) then return end
+
+								local effect = EffectData()
+								effect:SetEntity( victim )
+								effect:SetMagnitude(30)
+								effect:SetScale(30)
+								effect:SetRadius(30)
+								util.Effect("TeslaHitBoxes", effect)
+								victim:EmitSound("Weapon_StunStick.Activate")
+							end )
+						end
+					end
+				end
+
+				local trace = util.TraceHull( {
+					start = MyPos,
+					endpos = MyPos + AimVector * 800,
+					filter = ply,
+					mins = Vector( -20, -20, -20 ),
+					maxs = Vector( 20, 20, 20 ),
+					mask = MASK_SHOT_HULL,
+					filter = function( ent ) return ent == victim end
+				} )
+
+				local DmgSub = TargetPos - trace.HitPos
+				local DmgPos = trace.HitPos + DmgSub:GetNormalized() * math.min(DmgSub:Length(),20) + VectorRand(-5,5)
+
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( 10 )
+				dmginfo:SetAttacker( ply )
+				dmginfo:SetInflictor( ply ) 
+				dmginfo:SetDamageType( bit.bor( DMG_SHOCK, DMG_BULLET ) )
+				dmginfo:SetDamagePosition( DmgPos )
+				dmginfo:SetDamageForce( Force ) 
+				victim:TakeDamageInfo( dmginfo )
+			end
+		end
+	end
+
 	if ply._lscsLightningStartTime < TIME then
 		LSCS:PlayVCDSequence( ply, "gesture_item_give", 0.7 )
 	end
 
-	if ply._lscsLightningTime < TIME or ply:lscsGetForce() <= 0 then
+	if ply._lscsLightningTime < TIME or ply:lscsGetForce() <= 0 or not ply:Alive() or ply:GetObserverMode() ~= OBS_MODE_NONE then
 		ply._lscsLightningTime = nil
 		ply._lscsLightningStartTime = nil
 	end
@@ -461,9 +527,8 @@ end
 LSCS:RegisterForce( force )
 
 
-
 if SERVER then
-	hook.Add( "LSCS:PlayerCanManipulate", "!!!lscs_forceblocking", function( ply, target_ent )
+	hook.Add( "LSCS:PlayerCanManipulate", "!!!lscs_forceblocking", function( ply, target_ent, ignore_passive )
 		if not target_ent.IsPlayer or not target_ent:IsPlayer() then return end
 
 		if target_ent:GetNWBool( "_lscsForceProtect", false ) then
@@ -479,6 +544,8 @@ if SERVER then
 
 			return true
 		end
+
+		if ignore_passive then return end
 
 		if target_ent._lscsForceResistant and target_ent:lscsGetForce() > 50 then
 			LSCS:PlayVCDSequence( target_ent, "walk_magic" )

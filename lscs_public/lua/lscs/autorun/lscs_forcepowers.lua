@@ -122,6 +122,7 @@ if SERVER then
 
 	net.Receive( "lscs_force_use", function( len, ply )
 		if not IsValid( ply ) then return end
+		if not ply:Alive() then return end
 
 		local ID = net.ReadInt( 8 )
 		local Activate = net.ReadBool()
