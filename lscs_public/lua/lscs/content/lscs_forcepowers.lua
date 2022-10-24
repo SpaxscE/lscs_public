@@ -307,11 +307,9 @@ force.id = "replenish"
 force.StartUse = function( ply )
 	local Time = CurTime()
 
-	local CanDo = (ply._lscsNextForce or 0) < Time
+	if (ply._lscsNextForceReplenish or 0) > Time then return end
 
-	if not CanDo then return end
-
-	ply._lscsNextForce = Time + 2
+	ply._lscsNextForceReplenish = Time + 2
 
 	local available = math.max( ply:Health() - 1, 0 )
 
@@ -399,17 +397,7 @@ force.StartUse = function( ply )
 end
 LSCS:RegisterForce( force )
 
-
-local force = {}
-force.PrintName = "Lightning"
-force.Author = "Blu-x92 / Luna"
-force.Description = "Force Lightning"
-force.id = "lightning"
-force.OnClk =  function( ply, TIME )
-	if not ply._lscsLightningTime then return end
-
-	ply:lscsTakeForce( 2 )
-
+local function ForceFry( ply, TIME )
 	local effectdata = EffectData()
 		effectdata:SetOrigin( ply:GetPos() )
 		effectdata:SetEntity( ply )
@@ -482,6 +470,19 @@ force.OnClk =  function( ply, TIME )
 			end
 		end
 	end
+end
+
+local force = {}
+force.PrintName = "Lightning"
+force.Author = "Blu-x92 / Luna"
+force.Description = "Force Lightning"
+force.id = "lightning"
+force.OnClk =  function( ply, TIME )
+	if not ply._lscsLightningTime then return end
+
+	ply:lscsTakeForce( 2 )
+
+	ForceFry( ply, TIME )
 
 	if ply._lscsLightningStartTime < TIME then
 		LSCS:PlayVCDSequence( ply, "gesture_item_give", 0.7 )
@@ -515,6 +516,8 @@ force.StartUse = function( ply )
 	ply:EmitSound("lscs/force/lightning.mp3")
 
 	ply:lscsTakeForce( 5 )
+
+	ForceFry( ply, Time )
 
 	if not ply._lscsLightningTime then
 		ply._lscsLightningTime = CurTime() + 3.5
