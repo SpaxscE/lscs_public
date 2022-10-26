@@ -475,7 +475,7 @@ end
 local force = {}
 force.PrintName = "Lightning"
 force.Author = "Blu-x92 / Luna"
-force.Description = "Force Lightning"
+force.Description = "A Dark Side ability that fires Lightning Bolts out of your Hand"
 force.id = "lightning"
 force.OnClk =  function( ply, TIME )
 	if not ply._lscsLightningTime then return end
