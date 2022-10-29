@@ -194,7 +194,7 @@ if SERVER then
 		if IsValid( projectile ) then
 			startpos = projectile:GetPos()
 		else
-			--ply:LagCompensation( true ) -- needs testing @ salza
+			ply:LagCompensation( true )
 		end
 
 		local trace = util.TraceLine( {
@@ -205,7 +205,7 @@ if SERVER then
 			end
 		} )
 
-		--ply:LagCompensation( false )
+		ply:LagCompensation( false )
 
 		if (trace.HitPos - startpos):Length() > 100 then return end -- protection against net abusers or 1000 ping players
 
