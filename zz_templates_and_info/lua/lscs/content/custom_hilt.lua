@@ -3,6 +3,7 @@ local hilt = {}
 hilt.PrintName = "MyHilt" -- nice name in the menu
 hilt.Author = "Me" -- your name
 hilt.id = "myhiltid" -- always lower case
+--hilt.Spawnable = false  -- uncomment to unlist in q-menu
 hilt.mdl = "models/lscs/weapons/katarn.mdl" -- what model to use
 hilt.info = {
 	ParentData = { -- allows you to modify how the model is attached to the player. "RH" = Right Hand,  "LH" = Left Hand

@@ -138,7 +138,7 @@ function LSCS:RegisterForce( data )
 	ENT.Author = data.Author
 	ENT.Category = "[LSCS] - Force"
 
-	ENT.Spawnable       = true
+	ENT.Spawnable       = data.Spawnable ~= false
 	ENT.AdminSpawnable  = false
 
 	scripted_ents.Register( ENT, class )
@@ -168,8 +168,8 @@ function LSCS:RegisterHilt( data )
 	ENT.Author = data.Author
 	ENT.Category = "[LSCS] - Hilts"
 
-	ENT.Spawnable       = true
-	ENT.AdminSpawnable  = false
+	ENT.Spawnable = data.Spawnable ~= false
+	ENT.AdminSpawnable = false
 
 	ENT.MDL = data.mdl
 
@@ -220,7 +220,7 @@ function LSCS:RegisterBlade( data )
 	ENT.Author = data.Author
 	ENT.Category = "[LSCS] - Crystals"
 
-	ENT.Spawnable       = true
+	ENT.Spawnable       = data.Spawnable ~= false
 	ENT.AdminSpawnable  = false
 
 	ENT.ID = id

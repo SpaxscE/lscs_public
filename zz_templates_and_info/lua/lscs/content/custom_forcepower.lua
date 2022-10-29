@@ -3,6 +3,7 @@ force.PrintName = "Cool Force Power"
 force.Author = "YOU"
 force.Description = "force template"
 force.id = "myforcepower" -- lowercase only
+--force.Spawnable = false  -- uncomment to unlist in q-menu
 
 --[[
 -- adds a hook to Think with 0.1 second interval. Only uncomment if needed
