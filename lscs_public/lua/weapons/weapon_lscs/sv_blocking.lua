@@ -100,6 +100,8 @@ function SWEP:Block( dmginfo )
 		and not dmginfo:IsDamageType( DMG_SLASH )
 		and dmginfo:GetDamageType() ~= DMG_GENERIC then
 
+		self:DrainBP() -- prevent 0 bp regeneration
+
 		return BLOCK
 	end
 
@@ -125,6 +127,8 @@ function SWEP:Block( dmginfo )
 				BLOCK = LSCS_BLOCK
 				BLOCK_ANIM = BLOCKED_NOANIM
 			else
+				self:DrainBP() -- prevent 0 bp regeneration
+
 				return LSCS_UNBLOCKED
 			end
 		else
@@ -149,6 +153,8 @@ function SWEP:Block( dmginfo )
 						BLOCK = LSCS_BLOCK_NORMAL
 						BLOCK_ANIM = BLOCKED_STAGGER
 					else
+						self:DrainBP() -- prevent 0 bp regeneration
+
 						return LSCS_UNBLOCKED
 					end
 				end
@@ -161,6 +167,8 @@ function SWEP:Block( dmginfo )
 					BLOCK = LSCS_BLOCK
 					BLOCK_ANIM = BLOCKED_STAGGER
 				else
+					self:DrainBP() -- prevent 0 bp regeneration
+
 					return LSCS_UNBLOCKED
 				end
 			end
@@ -207,6 +215,8 @@ function SWEP:Block( dmginfo )
 		self:DrainBP( damage )
 	else
 		if BLOCK == LSCS_UNBLOCKED then
+			self:DrainBP() -- prevent 0 bp regeneration
+
 			return BLOCK
 		end
 
