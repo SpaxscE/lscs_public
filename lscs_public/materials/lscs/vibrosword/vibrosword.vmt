@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "lscs/vibrosword/vibrosword"
+	"$bumpmap" "lscs/vibrosword/vibrosword_normal"
+}

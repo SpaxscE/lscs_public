@@ -40,11 +40,21 @@ hilt.info = {
 }
 LSCS:RegisterHilt( hilt )
 
+
 -- modify previous hilt, only change what we need to change
 hilt.PrintName = "Nano Sword"
 hilt.Author = "Salza"
 hilt.id = "nanosword"
 hilt.mdl = "models/lscs/weapons/nanosword.mdl"
+LSCS:RegisterHilt( hilt )
+
+
+-- modify previous hilt, only change what we need to change
+hilt.PrintName = "Vibro Sword"
+hilt.Author = "Blu-x92 / Luna"
+hilt.Spawnable = false -- special case, not spawnable from menu
+hilt.id = "vibrosword"
+hilt.mdl = "models/lscs/weapons/vibrosword.mdl"
 LSCS:RegisterHilt( hilt )
 
 
