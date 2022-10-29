@@ -185,7 +185,7 @@ COMBO.Attacks = {
 		end,
 		FinishAttack = function( weapon, ply ) end,
 		Delay = 0.3,
-		Duration = 0.6,
+		Duration = 0.5,
 	},
 	["WA__"] = {
 		AttackAnim = "vanguard_h_s1_t1",
