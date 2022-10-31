@@ -447,7 +447,7 @@ function LSCS:BuildMainMenu( Frame )
 	B.DoClick = function( self )
 		BaseButtonClick( self )
 		timer.Simple( 0.5, function()
-			gui.OpenURL( "https://discord.gg/p7pzJcmVUq" )
+			gui.OpenURL( "https://discord.gg/ayFzAHvaTc" )
 		end )
 	end
 
