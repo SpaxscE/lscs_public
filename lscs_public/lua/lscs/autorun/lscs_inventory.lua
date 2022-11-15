@@ -214,6 +214,11 @@ if SERVER then
 				self:lscsCraftSaber()
 			end
 
+			if _item.type == "stance" then -- dropped a equipped stance
+				self:lscsRemoveItem( id )
+				self:lscsBuildPlayerInfo() -- sync stances
+			end
+
 			hook.Run( "LSCS:OnPlayerUnEquippedItem", self, _item )
 		end
 
