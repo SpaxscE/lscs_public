@@ -84,7 +84,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Projectile" )
 
 	if SERVER then
-		self:SetStance( 1 )
+		self:SetNWStance( 1 )
 		self:SetBlockPoints( 999999 )
 	end
 end
