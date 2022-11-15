@@ -23,8 +23,8 @@ function SWEP:SetupDataTables()
 		--self:SetHiltL("vibrosword") -- left hand hilt
 
 		self:SetBladeR("nanoparticles") -- which blade to use
-		self:SetBladeL("nanoparticles") --left hand blade
+		--self:SetBladeL("nanoparticles") --left hand blade
 
-		--self:SetStance("butterfly") -- assigns a stance override to this saber
+		--self:SetStance("butterfly") -- assigns a permanent stance to this saber only
 	end
 end
