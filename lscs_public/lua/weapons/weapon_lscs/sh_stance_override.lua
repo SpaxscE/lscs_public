@@ -12,23 +12,25 @@ function SWEP:GetStance()
 	return self:GetNWStance()
 end
 
-if SERVER then
-	util.AddNetworkString( "lscs_stance_override_networker" )
+function SWEP:SetLockedCombo( name )
+	local data = LSCS:GetStance( name )
 
-	function SWEP:SetLockedCombo( name )
-		local data = LSCS:GetStance( name )
+	if data then
+		self._lscsLockedCombo = name
 
-		if data then
-			self._lscsLockedCombo = name
-
+		if SERVER then
 			net.Start( "lscs_stance_override_networker" )
 				net.WriteEntity( self )
 				net.WriteString( name )
 			net.Broadcast()
-		else
-			self._lscsLockedCombo = nil
 		end
+	else
+		self._lscsLockedCombo = nil
 	end
+end
+
+if SERVER then
+	util.AddNetworkString( "lscs_stance_override_networker" )
 
 	function SWEP:GetLockedCombo()
 		return self._lscsLockedCombo or "default"
@@ -45,16 +47,6 @@ if SERVER then
 		net.Send( ply )
 	end )
 else
-	function SWEP:SetLockedCombo( name )
-		local data = LSCS:GetStance( name )
-
-		if data then
-			self._lscsLockedCombo = name
-		else
-			self._lscsLockedCombo = nil
-		end
-	end
-
 	function SWEP:GetLockedCombo()
 		if not self._lscsComboRequested then -- only request once ( for fresh connected players )
 			self._lscsComboRequested = true
