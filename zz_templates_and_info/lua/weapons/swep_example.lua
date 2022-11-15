@@ -6,8 +6,8 @@ SWEP.Base = "weapon_lscs"
 DEFINE_BASECLASS( "weapon_lscs" )
 
 SWEP.Category			= "[LSCS]"
-SWEP.PrintName		= "Vibro Sword"
-SWEP.Author			= "Blu-x92 / Luna"
+SWEP.PrintName		= "Saber Example"
+SWEP.Author			= "*you*"
 
 SWEP.Slot				= 0
 SWEP.SlotPos			= 3
