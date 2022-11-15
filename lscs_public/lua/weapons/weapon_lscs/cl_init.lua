@@ -2,6 +2,7 @@ include( "shared.lua" )
 include("sh_combo.lua")
 include("sh_animations.lua")
 include("sh_blockpoints.lua")
+include( "sh_stance_override.lua" )
 include("cl_worldmodel.lua")
 include("cl_effects.lua")
 

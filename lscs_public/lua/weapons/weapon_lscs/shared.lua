@@ -71,7 +71,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float",2, "Length" )
 	self:NetworkVar( "Float",3, "ComboHits" )
 
-	self:NetworkVar( "Int",0, "Stance" )
+	self:NetworkVar( "Int",0, "NWStance" )
 	self:NetworkVar( "Int",1, "BlockPoints" )
 
 	self:NetworkVar( "Vector",0, "BlockPos" )
@@ -230,7 +230,11 @@ end
 function SWEP:SecondaryAttack()
 	if self:IsThrown() then return end
 
-	self:SetStance( self:GetStance() + 1 )
+	local CurStance = self:GetNWStance()
+
+	if CurStance == -1 then return end
+
+	self:SetNWStance( CurStance + 1 )
 end
 
 function SWEP:DoAttackSound( N, hand )

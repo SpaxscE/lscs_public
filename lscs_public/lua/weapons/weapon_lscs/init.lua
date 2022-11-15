@@ -5,11 +5,13 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_combo.lua" )
 AddCSLuaFile( "sh_animations.lua" )
 AddCSLuaFile( "sh_blockpoints.lua" )
+AddCSLuaFile( "sh_stance_override.lua" )
 include( "shared.lua" )
 include("sh_combo.lua")
 include("sh_animations.lua")
 include("sv_blocking.lua")
 include("sh_blockpoints.lua")
+include( "sh_stance_override.lua" )
 
 function SWEP:Reload()
 	if (self.NextReload or 0) > CurTime() then return end

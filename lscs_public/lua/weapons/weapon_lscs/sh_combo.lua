@@ -31,16 +31,22 @@ function SWEP:CurComboUnblockable()
 end
 
 function SWEP:GetCombo()
+	local CurStance = self:GetNWStance()
+
+	if CurStance == -1 then
+		return LSCS:GetStance( self:GetLockedCombo() )
+	end
+
 	local ply = self:GetOwner()
 
 	if IsValid( ply ) then
 		local combo = ply:lscsGetCombo()
 
-		if self:GetStance() > #combo then
-			self:SetStance( 1 )
+		if CurStance > #combo then
+			self:SetNWStance( 1 )
 		end
 
-		return LSCS:GetStance( combo[ self:GetStance() ] )
+		return LSCS:GetStance( combo[ self:GetNWStance() ] )
 	else
 		return LSCS:GetStance( "default" )
 	end
