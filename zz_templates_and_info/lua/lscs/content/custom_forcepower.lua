@@ -33,7 +33,7 @@ force.StartUse = function( ply )
 end
 
 force.StopUse = function( ply )
-	-- only called when the direct-key bind is released. Never called when using the Selector since the Selector has no Stop-Key
+	-- called when the force power key is released
 end
 
 LSCS:RegisterForce( force )
