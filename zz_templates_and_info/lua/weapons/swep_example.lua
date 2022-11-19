@@ -28,3 +28,52 @@ function SWEP:SetupDataTables()
 		--self:SetStance("butterfly") -- assigns a permanent stance to this saber only
 	end
 end
+
+
+-- example on how to equip and unequip forcepowers in combination with preset sweps:
+--[[
+
+if CLIENT then return end -- code below, SERVERSIDE ONLY
+
+function SWEP:ForcePowersGive( ply ) -- give-forcepowers
+	ply:lscsWipeInventory() -- just clean up the entire inventory to make sure its empty. You could cache the inventory here, or add checks if they already have these ect. 
+
+	ply:lscsAddInventory( "item_force_jump", true ) -- give them force jump and equip it.
+
+	-- for more functions and info see:
+	-- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
+end
+
+function SWEP:ForcePowersRemove( ply ) -- remove-forcepowers function
+	ply:lscsWipeInventory() -- just wipe the entire inventory, you can do more complex things here like restoring the original equipped forcepowers ect
+end
+
+function SWEP:Equip( newOwner ) -- overwrite equip function
+	BaseClass.Equip( self, newOwner ) -- call original Equip function
+
+	if not IsValid( newOwner ) then return end
+
+	self:ForcePowersGive( newOwner ) -- call our custom ForcePower Give function if newOwner is valid
+end
+
+function SWEP:OnDrop() -- overwrite OnDrop function
+	BaseClass.OnDrop( self ) -- call original OnDrop function
+
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	self:ForcePowersRemove( ply )  -- call our custom ForcePower Remove function if ply is valid
+end
+
+function SWEP:OnRemove() -- overwrite OnRemove function
+	BaseClass.OnRemove( self ) -- call original Remove function
+
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	self:ForcePowersRemove( ply )  -- call our custom ForcePower Remove function if ply is valid
+end
+
+]]

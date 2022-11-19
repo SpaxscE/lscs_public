@@ -19,6 +19,5 @@ function SWEP:SetupDataTables()
 	if SERVER then
 		self:SetHiltR("nanosword")
 		self:SetBladeR("nanoparticles")
-		--self:SetStance("butterfly") -- assigns a stance override to this saber
 	end
 end
