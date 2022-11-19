@@ -135,7 +135,11 @@ local function CreateSelector()
 	LSCS.ForceSelector.Selector = ForceSelector
 end
 
+local ID_IN_USE
+
 local function Use( ID )
+	ID_IN_USE = ID
+
 	net.Start("lscs_force_use")
 		net.WriteInt( ID, 8 ) -- 127 equipped force powers are enough?
 		net.WriteBool( true )
@@ -143,6 +147,8 @@ local function Use( ID )
 end
 
 local function StopUse( ID )
+	ID_IN_USE = nil
+
 	net.Start("lscs_force_use")
 		net.WriteInt( ID, 8 )
 		net.WriteBool( false )
@@ -241,9 +247,14 @@ local function PlayerButtonDown( ply, button )
 end
 
 local function PlayerButtonUp( ply, button )
-	if button == LSCS.ForceSelector.KeyActivate:GetInt() then
+	local selector = LSCS.ForceSelector
+
+	if button == selector.KeyActivate:GetInt() then
 		MouseWheelScroller = false
 		FadeTimer = 0
+	end
+	if ID_IN_USE and button == selector.KeyUse:GetInt() then
+		StopUse( ID_IN_USE )
 	end
 
 	local Input = LSCS.KeyToForce[ button ]
@@ -355,6 +366,10 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 	if bind == "+attack" then
 		if pressed then
 			Use( Selected )
+		else
+			if ID_IN_USE then
+				StopUse( ID_IN_USE )
+			end
 		end
 
 		return true
