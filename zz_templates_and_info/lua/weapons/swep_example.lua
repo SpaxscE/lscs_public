@@ -25,7 +25,7 @@ function SWEP:SetupDataTables()
 		self:SetBladeR("nanoparticles") -- which blade to use
 		--self:SetBladeL("nanoparticles") --left hand blade
 
-		--self:SetStance("butterfly") -- assigns a permanent stance to this saber only
+		--self:SetStance("butterfly") -- assigns a permanent stance to this saber only. Ignoring what the player has in his inventory
 	end
 end
 
