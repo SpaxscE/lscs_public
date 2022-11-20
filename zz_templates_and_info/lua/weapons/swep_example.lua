@@ -38,9 +38,15 @@ if CLIENT then return end -- code below, SERVERSIDE ONLY
 function SWEP:ForcePowersGive( ply ) -- give-forcepowers
 	ply:lscsWipeInventory() -- just clean up the entire inventory to make sure its empty. You could cache the inventory here, or add checks if they already have these ect. 
 
+	-- give forcepowers:
 	ply:lscsAddInventory( "item_force_jump", true ) -- give them force jump and equip it.
 	ply:lscsAddInventory( "item_force_heal", true ) -- force heal and equip it
 	ply:lscsAddInventory( "item_force_immunity" ) -- this would give them force immunity but it wont equip it. Add ", true" to equip like the others
+
+	-- you can also give stances, BUT MAKE SURE LINE 28 IS COMMENTED OUT OR THIS WONT WORK:
+	ply:lscsAddInventory( "item_stance_yongli", true )
+	ply:lscsAddInventory( "item_stance_butterfly", true )
+	ply:lscsAddInventory( "item_stance_juggernaut", true )
 
 	-- for more functions and info see:
 	-- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
