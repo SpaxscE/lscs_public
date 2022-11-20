@@ -39,6 +39,8 @@ function SWEP:ForcePowersGive( ply ) -- give-forcepowers
 	ply:lscsWipeInventory() -- just clean up the entire inventory to make sure its empty. You could cache the inventory here, or add checks if they already have these ect. 
 
 	ply:lscsAddInventory( "item_force_jump", true ) -- give them force jump and equip it.
+	ply:lscsAddInventory( "item_force_heal", true ) -- force heal and equip it
+	ply:lscsAddInventory( "item_force_immunity" ) -- this would give them force immunity but it wont equip it. Add ", true" to equip like the others
 
 	-- for more functions and info see:
 	-- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
