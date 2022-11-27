@@ -35,7 +35,7 @@ function SWEP:OnActiveChanged( oldActive, active )
 			self.SaberHumSound1:Play()
 		end
 		if IdleSound2 ~= "" then
-			self.SaberHumSound2 = CreateSound(self, IdleSound2)
+			self.SaberHumSound2 = CreateSound(self:GetOwner(), IdleSound2)
 			self.SaberHumSound2:Play()
 		end
 	else
