@@ -8,7 +8,7 @@ COMBO.AutoBlock = true
 
 COMBO.LeftSaberActive = false
 
-COMBO.HoldType = "slam"
+COMBO.HoldType = "melee2"
 
 COMBO.DamageMultiplier = 1.15
 COMBO.BPDrainPerHit = 50

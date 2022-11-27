@@ -8,7 +8,7 @@ COMBO.AutoBlock = true
 
 COMBO.LeftSaberActive = false
 
-COMBO.HoldType = "melee2"
+COMBO.HoldType = "slam"
 
 COMBO.Attacks = {
 	["SLAM"] = {
