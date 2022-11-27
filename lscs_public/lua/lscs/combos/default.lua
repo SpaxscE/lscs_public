@@ -10,6 +10,8 @@ COMBO.LeftSaberActive = false
 
 COMBO.HoldType = "melee"
 
+COMBO.Spawnable = false 
+
 COMBO.Attacks = {}
 COMBO.Attacks["____"] = {
 	AttackAnim = "range_melee",
@@ -25,69 +27,27 @@ COMBO.Attacks["____"] = {
 }
 COMBO.Attacks["_A__"] = {
 	AttackAnim = "phalanx_b_left_t1",
+	AttackAnimStart = 0.2,
 
 	BeginAttack = function( weapon, ply )  
 		weapon:DoAttackSound()
 	end,
 	FinishAttack = function( weapon, ply )  
 	end,
-	Delay = 0.2,
-	Duration = 0.6,
+	Delay = 0.1,
+	Duration = 0.5,
 }
 COMBO.Attacks["___D"] = {
 	AttackAnim = "phalanx_b_right_t1",
+	AttackAnimStart = 0.2,
 
 	BeginAttack = function( weapon, ply )  
 		weapon:DoAttackSound()
 	end,
 	FinishAttack = function( weapon, ply )  
 	end,
-	Delay = 0.2,
-	Duration = 0.6,
-}
-COMBO.Attacks["WA__"] = {
-	AttackAnim = "phalanx_b_left_t1",
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.2,
-	Duration = 0.6,
-}
-COMBO.Attacks["W__D"] = {
-	AttackAnim = "phalanx_b_right_t1",
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.2,
-	Duration = 0.6,
-}
-COMBO.Attacks["_AS_"] = {
-	AttackAnim = "phalanx_b_left_t1",
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.2,
-	Duration = 0.7,
-}
-COMBO.Attacks["__SD"] = {
-	AttackAnim = "phalanx_b_right_t1",
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.2,
-	Duration = 0.7,
+	Delay = 0.1,
+	Duration = 0.5,
 }
 COMBO.Attacks["W_S_"] = {
 	AttackAnim = "vanguard_r_s3_t1",

@@ -324,7 +324,7 @@ LSCS.Reload = function()
 		ENT.Author = COMBO.Author
 		ENT.Category = "[LSCS] - Stances"
 
-		ENT.Spawnable       = true
+		ENT.Spawnable       = COMBO.Spawnable ~= false
 		ENT.AdminSpawnable  = false
 
 		scripted_ents.Register( ENT, class )
