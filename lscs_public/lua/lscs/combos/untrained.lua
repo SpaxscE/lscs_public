@@ -1,7 +1,7 @@
 COMBO.id = "untrained"
 COMBO.PrintName = "Untrained"
 COMBO.Author = "Luna"
-COMBO.Description = "Self-Taught Swordsman"
+COMBO.Description = "Self-Taught Swordsman. The Person using this Stance probably knows how to wield a Saber without hurting himself. However, he still not quite a Jedi yet."
 
 COMBO.DeflectBullets = false
 COMBO.AutoBlock = true
