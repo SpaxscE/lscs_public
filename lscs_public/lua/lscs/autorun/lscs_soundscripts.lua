@@ -1,5 +1,17 @@
 -- i just put them here so they arent always in my face
 
+for i = 1, 5 do
+	local SND =  {
+		name = "saber_idle"..i,
+		channel = CHAN_VOICE_BASE,
+		volume = 1,
+		level = 75,
+		pitch = 100,
+		sound = "lscs/saber/saberhum"..i..".wav",
+	}
+	sound.Add( SND )
+end
+
 sound.Add( {
 	name = "saber_hup",
 	channel = CHAN_STATIC,
