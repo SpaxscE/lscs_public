@@ -1,5 +1,5 @@
 COMBO.id = "default"
-COMBO.PrintName = "Untrained"
+COMBO.PrintName = "No-Stance"
 COMBO.Author = "Luna"
 COMBO.Description = "Everyone can swing a Lightsaber, but having a Lightsaber does not make you Jedi."
 
@@ -25,40 +25,4 @@ COMBO.Attacks["____"] = {
 	Delay = 0,
 	Duration = 0.25,
 }
-COMBO.Attacks["_A__"] = {
-	AttackAnim = "phalanx_b_left_t1",
-	AttackAnimStart = 0.2,
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.1,
-	Duration = 0.5,
-}
-COMBO.Attacks["___D"] = {
-	AttackAnim = "phalanx_b_right_t1",
-	AttackAnimStart = 0.2,
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-	end,
-	FinishAttack = function( weapon, ply )  
-	end,
-	Delay = 0.1,
-	Duration = 0.5,
-}
-COMBO.Attacks["W_S_"] = {
-	AttackAnim = "vanguard_r_s3_t1",
-
-	BeginAttack = function( weapon, ply )  
-		weapon:DoAttackSound()
-
-		ply:lscsSetTimedMove( 1, CurTime(), 0.2, Vector(600,0,0) )
-		ply:lscsSetTimedMove( 1, CurTime() + 0.2, 0.4, Vector(0,0,0) )
-	end,
-	FinishAttack = function( weapon, ply ) end,
-	Delay = 0.1,
-	Duration = 0.5,
-}
+LSCS:Reload()
