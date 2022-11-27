@@ -25,4 +25,3 @@ COMBO.Attacks["____"] = {
 	Delay = 0,
 	Duration = 0.25,
 }
-LSCS:Reload()
