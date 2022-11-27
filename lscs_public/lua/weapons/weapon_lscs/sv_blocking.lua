@@ -174,7 +174,13 @@ function SWEP:Block( dmginfo )
 			end
 		end
 	else
-		BLOCK = LSCS_BLOCK_NONSABER
+		if self:GetCombo().AutoBlock then
+			BLOCK = LSCS_BLOCK_NONSABER
+		else
+			self:DrainBP() -- prevent 0 bp regeneration
+
+			return LSCS_UNBLOCKED
+		end
 	end
 
 	if BLOCK == LSCS_BLOCK_NONSABER and self:GetBlockPoints() <= 0 then
