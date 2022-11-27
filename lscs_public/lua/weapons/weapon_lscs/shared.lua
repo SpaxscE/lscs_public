@@ -352,7 +352,7 @@ function SWEP:Think()
 
 			self:EmitSoundUnpredicted( self.CachedSounds[1].ActivateSound )
 
-			if self:GetCombo().LeftSaberActive then -- this is gay
+			if self:GetCombo().LeftSaberActive then
 				self:EmitSoundUnpredicted( self.CachedSounds[2].ActivateSound )
 			end
 		else
@@ -360,7 +360,7 @@ function SWEP:Think()
 
 			self:EmitSoundUnpredicted( self.CachedSounds[1].DisableSound )
 
-			if self:GetCombo().LeftSaberActive then -- this is gay
+			if self:GetCombo().LeftSaberActive then
 				self:EmitSoundUnpredicted( self.CachedSounds[2].DisableSound )
 			end
 		end
