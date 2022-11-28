@@ -103,13 +103,17 @@ if SERVER then
 		end
 	end )
 
+	local TICK_MIN = 1/14
 	local NEXT_THINK = 0
+
 	hook.Add( "Think", "!!!!lscs_unforgiveable_playerGetAll_loop_in_think_hook", function()
 		local TIME = CurTime()
 
-		if NEXT_THINK > TIME then return end
+		if FrameTime() <= TICK_MIN then -- below this tickrate we run risk skipping the correct timing...
+			if NEXT_THINK > TIME then return end
 
-		NEXT_THINK = TIME + 0.1 -- slow it down to be nice to the server. The HUD is specifically designed to mask this slow updating.
+			NEXT_THINK = TIME + 0.1 -- slow it down to be nice to the server. The HUD is specifically designed to mask this slow updating.
+		end
 
 		for _, ply in ipairs( player.GetAll() ) do
 			hook.Run( "LSCS:PlayerForcePowerThink", ply, TIME )
