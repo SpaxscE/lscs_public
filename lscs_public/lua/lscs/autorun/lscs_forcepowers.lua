@@ -140,7 +140,13 @@ if SERVER then
 
 		if not item then return end
 
+		if not ply._lscsUsedPowers then
+			ply._lscsUsedPowers = {}
+		end
+
 		if Activate then
+			ply._lscsUsedPowers[ ID ] = true
+
 			ProtectedCall( LSCS.Force[ item.id ].StartUse( ply ) )
 		else
 			ProtectedCall( LSCS.Force[ item.id ].StopUse( ply ) )
@@ -162,6 +168,26 @@ if SERVER then
 			ProtectedCall( LSCS.Force[ item.id ].UnEquip( ply ) )
 		end
 	end)
+
+	hook.Add( "PlayerDeath", "!!!!lscs_forcepower_playerdeath", function( ply )
+		if not ply._lscsUsedPowers then return end
+
+		local ForcePowers = ply:lscsGetForceAbilities()
+
+		net.Start("lscs_force_use")
+			net.WriteInt( table.Count( ply._lscsUsedPowers ), 9 )
+
+			for ID, _ in pairs( ply._lscsUsedPowers ) do
+
+				ProtectedCall( LSCS.Force[ ForcePowers[ ID ].item.id ].StopUse( ply ) )
+
+				net.WriteInt( ID, 8 )
+
+				ply._lscsUsedPowers[ ID ]= nil
+			end
+
+		net.Send( ply )
+	end )
 else
 	local X = ScrW() - 110
 	local Y = ScrH() - 100
