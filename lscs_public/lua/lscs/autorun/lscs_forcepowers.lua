@@ -149,7 +149,11 @@ if SERVER then
 
 			ProtectedCall( LSCS.Force[ item.id ].StartUse( ply ) )
 		else
-			ProtectedCall( LSCS.Force[ item.id ].StopUse( ply ) )
+			if ply._lscsUsedPowers[ ID ] then
+				ply._lscsUsedPowers[ ID ] = nil
+
+				ProtectedCall( LSCS.Force[ item.id ].StopUse( ply ) )
+			end
 		end
 	end )
 
