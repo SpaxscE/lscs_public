@@ -155,6 +155,12 @@ local function StopUse( ID )
 	net.SendToServer()
 end
 
+net.Receive( "lscs_force_use", function( len )
+	for i = 1, net.ReadInt( 9 ) do
+		StopUse( net.ReadInt( 8 ) )
+	end
+end )
+
 local NextNav = 0
 
 local function Prev( dont_set_time )
