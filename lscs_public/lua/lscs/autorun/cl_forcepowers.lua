@@ -350,8 +350,19 @@ else
 	end)
 end
 
+local LAST_USED_LMB
+
 hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, pressed )
-	if not MouseWheelScroller then return end
+	if not MouseWheelScroller then
+
+		if not LAST_USED_LMB then return end
+
+		if bind ~= "+attack" or pressed then return end
+
+		StopUse( LAST_USED_LMB )
+
+		return
+	end
 
 	local Time = CurTime()
 
@@ -371,11 +382,15 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 	end
 	if bind == "+attack" then
 		if pressed then
+			LAST_USED_LMB = Selected
+
 			Use( Selected )
 		else
-			if ID_IN_USE then
-				StopUse( ID_IN_USE )
+			if LAST_USED_LMB then
+				StopUse( LAST_USED_LMB )
 			end
+
+			LAST_USED_LMB = nil
 		end
 
 		return true
