@@ -73,7 +73,7 @@ force.OnClk =  function( ply, TIME )
 		ply._lscsJumpForceTaken = nil
 	end
 
-	local JUMP = ply:KeyDown( IN_JUMP )
+	local JUMP = ply:KeyDown( IN_JUMP ) and not ply:InVehicle()
 
 	if JUMP then
 		local wep = ply:GetActiveWeapon()
@@ -115,6 +115,8 @@ force.StartUse = function( ply )
 	if ply._lscsForceJumpTime then
 		ply._lscsForceJumpTime = nil
 	else
+		if ply:InVehicle() then return end
+
 		ply._lscsForceJumpTime = CurTime() + 2
 	end
 end
