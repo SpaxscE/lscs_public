@@ -56,6 +56,8 @@ local bpBG = Material( "lscs/ui/hud_bp.png" ) -- added for performance optimizat
 function SWEP:DrawHUD()
 	local ply = LocalPlayer()
 
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
+
 	local combo = self:GetCombo()
 
 	local segmentDist = segmentLength + segmentSpace

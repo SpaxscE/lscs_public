@@ -248,7 +248,13 @@ else
 		smAlpha = smAlpha + math.Clamp(tAlpha - smAlpha,-smRate * 3,smRate * 6)
 
 		if IsValid( wep ) and wep.LSCS then
-			smAlpha = 1
+			if ply:InVehicle() then
+				if ply:GetAllowWeaponsInVehicle() then
+					smAlpha = 1
+				end
+			else
+				smAlpha = 1
+			end
 		end
 
 		if smAlpha == 0 then return end

@@ -6,6 +6,8 @@ force.Author = "Blu-x92 / Luna"
 force.Description = "Throw your Lightsaber"
 force.id = "throw"
 force.StartUse = function( ply )
+	if ply:InVehicle() then return end
+
 	local CurSWEP = ply:GetActiveWeapon()
 	local SWEP = ply:GetWeapon( "weapon_lscs" )
 
