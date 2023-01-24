@@ -376,7 +376,7 @@ function LSCS:BuildMainMenu( Frame )
 	B.DoClick = function( self )
 		BaseButtonClick( self )
 		timer.Simple( 0.5, function()
-			gui.OpenURL( "https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM" )
+			gui.OpenURL( "https://github.com/Blu-x92/lscs_public" )
 		end )
 	end
 
