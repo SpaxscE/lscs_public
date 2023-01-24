@@ -1,5 +1,5 @@
 -- a fully working auto save and restore example can be found here:
--- https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
+-- https://github.com/Blu-x92/lscs_public/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
 
 
 
