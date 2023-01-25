@@ -10,7 +10,7 @@ best regards luna
 
 LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {}, Force = {},BulletTracerDeflectable = {} }
 
-LSCS.VERSION = 154
+LSCS.VERSION = 155
 LSCS.VERSION_GITHUB = 0
 LSCS.VERSION_TYPE = ".GIT"
 
@@ -19,7 +19,7 @@ function LSCS:GetVersion()
 end
 
 function LSCS:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/lscs_public/lua/autorun/lscs_best_regards_from_luna.lua", function(contents,size) 
+	http.Fetch("https://raw.githubusercontent.com/Blu-x92/lscs_public/main/lua/autorun/lscs_best_regards_from_luna.lua", function(contents,size) 
 		local Entry = string.match( contents, "LSCS.VERSION%s=%s%d+" )
 
 		if Entry then
