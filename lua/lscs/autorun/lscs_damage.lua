@@ -144,7 +144,7 @@ if SERVER then
 
 		if not IsValid( wep ) or not wep.LSCS then return end
 
-		if dmginfo:IsDamageType( DMG_BULLET ) then -- some npcs shoot "fake" bullets that just do entitytakedamage with a visual bullet effect
+		if dmginfo:IsDamageType( DMG_BULLET + DMG_AIRBOAT ) then -- some npcs shoot "fake" bullets that just do entitytakedamage with a visual bullet effect
 			return wep:BlockDMGinfoBullet( dmginfo ) -- and these can not be deflected properly as they aint calling FireBullets. However we still treat them as bullets internally.
 		else
 			return wep:Block( dmginfo ) > LSCS_UNBLOCKED
