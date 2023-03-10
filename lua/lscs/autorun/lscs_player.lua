@@ -110,6 +110,12 @@ if SERVER then
 		if not ply:lscsIsValid() then return end
 
 		ply:lscsCraftSaber( true )
+
+		local SWEP = ply:GetWeapon( "weapon_lscs" )
+
+		if not IsValid( SWEP ) then return end
+
+		SWEP:SetBlockPoints( 999999 )
 	end )
 else
 	net.Receive( "lscs_sync_combo_data", function( len )
