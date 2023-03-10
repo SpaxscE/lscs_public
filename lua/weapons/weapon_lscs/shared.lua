@@ -85,7 +85,6 @@ function SWEP:SetupDataTables()
 
 	if SERVER then
 		self:SetNWStance( 1 )
-		self:SetBlockPoints( 999999 )
 	end
 end
 

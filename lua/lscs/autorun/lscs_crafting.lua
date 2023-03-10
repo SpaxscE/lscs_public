@@ -9,7 +9,12 @@ if SERVER then
 		local BladeR, BladeL = self:lscsGetBlade()
 
 		-- allow updating but don't allow spawning if the gamemode forbids it
-		if not IsValid( self:GetWeapon( "weapon_lscs" ) ) then
+		local SWEP = self:GetWeapon( "weapon_lscs" )
+		local OldBP
+
+		if IsValid( SWEP ) then
+			OldBP = SWEP:GetBlockPoints()
+		else
 			if hook.Run( "PlayerGiveSWEP", self, "weapon_lscs", weapons.Get( "weapon_lscs" ) ) == false then
 				self:ChatPrint("[LSCS] - You don't have permission to spawn this SWEP.")
 
@@ -39,6 +44,8 @@ if SERVER then
 			if HiltL and HiltL ~= "" then
 				weapon:SetBladeL( BladeL or "" )
 			end
+
+			if OldBP then weapon:SetBlockPoints( OldBP ) end
 		end
 
 		hook.Run( "LSCS:OnPlayerCraftedSaber", self, weapon )
