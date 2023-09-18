@@ -220,21 +220,23 @@ end
 local function PlayerButtonDown( ply, button )
 	local selector = LSCS.ForceSelector
 
+	if not ply:InVehicle() then
 	-- this needs to be reworked at some point to the same method used as direct inputs
-	if button == selector.KeyActivate:GetInt() then
-		if #ply:lscsGetForceAbilities() == 0 then return end
+		if button == selector.KeyActivate:GetInt() then
+			if #ply:lscsGetForceAbilities() == 0 then return end
 
-		MouseWheelScroller = true
-		FadeTimer = CurTime() + 9999
-	end
-	if button == selector.KeyUse:GetInt() then
-		Use( Selected )
-	end
-	if button == selector.KeyNext:GetInt() then
-		Prev() -- inverted lmao
-	end
-	if button == selector.KeyPrev:GetInt() then
-		Next()
+			MouseWheelScroller = true
+			FadeTimer = CurTime() + 9999
+		end
+		if button == selector.KeyUse:GetInt() then
+			Use( Selected )
+		end
+		if button == selector.KeyNext:GetInt() then
+			Prev() -- inverted lmao
+		end
+		if button == selector.KeyPrev:GetInt() then
+			Next()
+		end
 	end
 
 	local Input = LSCS.KeyToForce[ button ]
@@ -363,6 +365,8 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 
 		return
 	end
+
+	if ply:InVehicle() then return end
 
 	local Time = CurTime()
 
