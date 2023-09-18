@@ -130,7 +130,9 @@ if SERVER then
 
 	net.Receive( "lscs_force_use", function( len, ply )
 		if not IsValid( ply ) then return end
-		if not ply:Alive() or ply:InVehicle() then return end
+		if not ply:Alive() then return end
+
+		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
 
 		local ID = net.ReadInt( 8 )
 		local Activate = net.ReadBool()
@@ -225,6 +227,8 @@ else
 		if LSCS:HUDShouldHide( LSCS_HUD_POINTS_FORCE ) then return end
 
 		local ply = LocalPlayer()
+
+		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
 
 		local Time = CurTime()
 

@@ -220,7 +220,11 @@ end
 local function PlayerButtonDown( ply, button )
 	local selector = LSCS.ForceSelector
 
-	if not ply:InVehicle() then
+	local InVehicle = ply:InVehicle()
+
+	local AllowForce = not InVehicle or (InVehicle and ply:GetAllowWeaponsInVehicle())
+
+	if AllowForce then
 	-- this needs to be reworked at some point to the same method used as direct inputs
 		if button == selector.KeyActivate:GetInt() then
 			if #ply:lscsGetForceAbilities() == 0 then return end
@@ -366,7 +370,7 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 		return
 	end
 
-	if ply:InVehicle() then return end
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
 
 	local Time = CurTime()
 
