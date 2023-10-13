@@ -468,7 +468,7 @@ function LSCS:BuildMainMenu( Frame )
 	B.DoClick = function( self )
 		BaseButtonClick( self )
 		timer.Simple( 0.5, function()
-			gui.OpenURL( "https://www.youtube.com/channel/UCflA9ujvDtzwHr91U4XXOvw" )
+			gui.OpenURL( "https://www.youtube.com/channel/UCoXuTyv69fGOUv7hZcAPHoQ" )
 		end )
 	end
 
