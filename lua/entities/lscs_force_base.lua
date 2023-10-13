@@ -19,6 +19,7 @@ if SERVER then
 		self:PlayAnimation("open")
 	end
 else
+	local HaloCount = 0
 	local HaloEnts = {}
 
 	function ENT:Think()
@@ -30,6 +31,8 @@ else
 	function ENT:Initialize()
 		self.smDist = CurTime() + 1
 		table.insert( HaloEnts, self )
+
+		HaloCount = table.Count( HaloEnts )
 	end
 
 	function ENT:DrawTranslucent()
@@ -65,11 +68,13 @@ else
 		for id, e in pairs( HaloEnts ) do
 			if e == self or not IsValid( e ) then HaloEnts[ id ] = nil end
 		end
+
+		HaloCount = table.Count( HaloEnts )
 	end
 
 	local haloColor = Color(0,127,255,255)
 	hook.Add( "PreDrawHalos", "lscs_holocron_halo", function()
-		if #HaloEnts == 0 then return end
+		if HaloCount == 0 then return end
 
 		halo.Add( HaloEnts, haloColor, 1, 1, math.Rand(0.8,1.2) )
 	end )
