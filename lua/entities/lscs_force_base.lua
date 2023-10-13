@@ -19,7 +19,7 @@ if SERVER then
 		self:PlayAnimation("open")
 	end
 else
-	local HoloEnts = {}
+	local HaloEnts = {}
 
 	function ENT:Think()
 		for ID = 1, self:GetBoneCount() do
@@ -29,7 +29,7 @@ else
 
 	function ENT:Initialize()
 		self.smDist = CurTime() + 1
-		table.insert( HoloEnts, self )
+		table.insert( HaloEnts, self )
 	end
 
 	function ENT:DrawTranslucent()
@@ -62,15 +62,15 @@ else
 	end
 
 	function ENT:OnRemove()
-		for id, e in pairs( HoloEnts ) do
-			if not IsValid( e ) then
-				HoloEnts[ id ] = nil
-			end
+		for id, e in pairs( HaloEnts ) do
+			if e == self or not IsValid( e ) then HaloEnts[ id ] = nil end
 		end
 	end
 
 	local haloColor = Color(0,127,255,255)
 	hook.Add( "PreDrawHalos", "lscs_holocron_halo", function()
-		halo.Add( HoloEnts, haloColor, 1, 1, math.Rand(0.8,1.2) )
+		if #HaloEnts == 0 then return end
+
+		halo.Add( HaloEnts, haloColor, 1, 1, math.Rand(0.8,1.2) )
 	end )
 end
