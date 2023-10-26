@@ -1,5 +1,5 @@
 -- dynamic light
-local cvarDynamicLight = CreateConVar( "lscs_dynamiclight", 1, true, false)
+local cvarDynamicLight = CreateClientConVar( "lscs_dynamiclight", 1, true, false)
 
 LSCS.DynamicLight = cvarDynamicLight and cvarDynamicLight:GetBool() or false
 
@@ -9,7 +9,7 @@ end)
 
 
 -- impact effects
-local cvarImpactEffects = CreateConVar( "lscs_impacteffects", 1, true, false)
+local cvarImpactEffects = CreateClientConVar( "lscs_impacteffects", 1, true, false)
 
 LSCS.ImpactEffects = cvarImpactEffects and cvarImpactEffects:GetBool() or false
 
@@ -19,7 +19,7 @@ end)
 
 
 -- trail detail
-local cvarSaberTrailDetail = CreateConVar( "lscs_traildetail", 100, true, false)
+local cvarSaberTrailDetail = CreateClientConVar( "lscs_traildetail", 100, true, false)
 
 LSCS.SaberTrailDetail  = cvarSaberTrailDetail and (cvarSaberTrailDetail:GetInt() / 100) or 1
 
@@ -39,7 +39,7 @@ end)
 
 
 -- hud should draw
-local cvarDrawHud = CreateConVar( "lscs_drawhud", 1, true, false)
+local cvarDrawHud = CreateClientConVar( "lscs_drawhud", 1, true, false)
 
 LSCS.DrawHud = cvarDrawHud and cvarDrawHud:GetBool() or false
 
