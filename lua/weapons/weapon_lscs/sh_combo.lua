@@ -90,7 +90,7 @@ function SWEP:HandleCombo()
 		if self.CurCombo.BeginTime <= Time then
 			self:BeginAttack()
 
-			ProtectedCall( self.CurCombo.BeginFunc( self, ply ) )
+			ProtectedCall( function() self.CurCombo.BeginFunc( self, ply ) end )
 
 			self.ComboStatus = 2
 		end
@@ -105,7 +105,7 @@ function SWEP:HandleCombo()
 	if self.ComboStatus == 3 then
 		if self.CurCombo.FinishTime <= Time then
 
-			ProtectedCall( self.CurCombo.FinishFunc( self, ply ) )
+			ProtectedCall( function() self.CurCombo.FinishFunc( self, ply ) end )
 			
 			self:FinishCombo()
 		end

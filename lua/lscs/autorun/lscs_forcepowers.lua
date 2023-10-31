@@ -153,12 +153,12 @@ if SERVER then
 		if Activate then
 			ply._lscsUsedPowers[ ID ] = true
 
-			ProtectedCall( LSCS.Force[ item.id ].StartUse( ply ) )
+			ProtectedCall( function() LSCS.Force[ item.id ].StartUse( ply ) end )
 		else
 			if ply._lscsUsedPowers[ ID ] then
 				ply._lscsUsedPowers[ ID ] = nil
 
-				ProtectedCall( LSCS.Force[ item.id ].StopUse( ply ) )
+				ProtectedCall( function() LSCS.Force[ item.id ].StopUse( ply ) end )
 			end
 		end
 	end )
@@ -167,7 +167,7 @@ if SERVER then
 		if not IsValid( ply ) or not item then return end
 
 		if item.type == "force" then
-			ProtectedCall( LSCS.Force[ item.id ].Equip( ply ) )
+			ProtectedCall( function() LSCS.Force[ item.id ].Equip( ply ) end )
 		end
 	end)
 
@@ -175,7 +175,7 @@ if SERVER then
 		if not IsValid( ply ) or not item then return end
 
 		if item.type == "force" then
-			ProtectedCall( LSCS.Force[ item.id ].UnEquip( ply ) )
+			ProtectedCall( function() LSCS.Force[ item.id ].UnEquip( ply ) end )
 		end
 	end)
 
@@ -189,7 +189,7 @@ if SERVER then
 
 			for ID, _ in pairs( ply._lscsUsedPowers ) do
 
-				ProtectedCall( LSCS.Force[ ForcePowers[ ID ].item.id ].StopUse( ply ) )
+				ProtectedCall( function() LSCS.Force[ ForcePowers[ ID ].item.id ].StopUse( ply ) end )
 
 				net.WriteInt( ID, 8 )
 
