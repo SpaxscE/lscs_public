@@ -202,7 +202,7 @@ else
 	local X = ScrW() - 110
 	local Y = ScrH() - 100
 
-	local circles = include("lscs/autorun/cl_circles.lua") -- i love this thing
+	local circles = include("includes/circles/circles.lua") -- i love this thing
 
 	-- removed for performance optimization
 	--local FP_BG = circles.New(CIRCLE_OUTLINED, 86, 0, 0, 22)

@@ -11,7 +11,7 @@ SWEP.SlotPos = 0
 
 language.Add( "lscsGlowstick", "Lightsaber" )
 
-local circles = include("lscs/autorun/cl_circles.lua")
+local circles = include("includes/circles/circles.lua")
 
 local X = ScrW() - 110
 local Y = ScrH() - 100
