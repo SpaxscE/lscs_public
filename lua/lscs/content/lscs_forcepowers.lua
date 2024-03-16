@@ -418,7 +418,7 @@ local function ForceFry( ply, TIME )
 	local AimVector = ply:GetAimVector()
 	local Force = AimVector * 100
 
-	for _, victim in pairs( ents.FindInSphere( MyPos, 700 ) ) do
+	for _, victim in pairs( ents.FindInSphere( MyPos, 1000 ) ) do
 		local TargetPos = victim.GetShootPos and victim:GetShootPos() or victim:GetPos()
 		local Sub = TargetPos - MyPos
 		local ToTarget = Sub:GetNormalized()
@@ -428,7 +428,7 @@ local function ForceFry( ply, TIME )
 
 			local Dist = Sub:Length()
 
-			if IsValid( victim ) and Dist < 700 then
+			if IsValid( victim ) and Dist < 1000 then
 				if victim:IsPlayer() then
 					if hook.Run( "LSCS:PlayerCanManipulate", ply, victim, true ) then continue end
 				end
@@ -459,7 +459,7 @@ local function ForceFry( ply, TIME )
 
 				local DMGtrace = util.TraceHull( {
 					start = MyPos,
-					endpos = MyPos + AimVector * 800,
+					endpos = MyPos + AimVector * 1000,
 					filter = ply,
 					mins = Vector( -20, -20, -20 ),
 					maxs = Vector( 20, 20, 20 ),
@@ -491,7 +491,7 @@ force.id = "lightning"
 force.OnClk =  function( ply, TIME )
 	if not ply._lscsLightningTime then return end
 
-	ply:lscsTakeForce( 2 )
+	ply:lscsTakeForce( 1 )
 
 	ForceFry( ply, TIME )
 
@@ -531,7 +531,7 @@ force.StartUse = function( ply )
 	ForceFry( ply, Time )
 
 	if not ply._lscsLightningTime then
-		ply._lscsLightningTime = CurTime() + 3.5
+		ply._lscsLightningTime = CurTime() + 5
 		ply._lscsLightningStartTime = CurTime() + 0.15
 
 		LSCS:PlayVCDSequence( ply, "gesture_signal_forward", 0.1 )

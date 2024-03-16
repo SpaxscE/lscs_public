@@ -56,7 +56,7 @@ function EFFECT:Render()
 
 
 			local Dir = ((self.TargetPos - StartPos):Angle() + Angle(X,Y,0)):Forward()
-			local EndPos = StartPos + Dir * math.random(200,600)
+			local EndPos = StartPos + Dir * math.random(600,1000)
 
 			local trace = util.TraceLine( { start = StartPos, endpos = EndPos, filter = self.Ent} )
 
