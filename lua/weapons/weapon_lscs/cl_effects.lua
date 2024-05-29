@@ -277,7 +277,10 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 
 		if dist > 0 then
 			local idx = 0
+
 			for i = 2, dist,2 do
+				idx = idx + 1
+
 				local trace = util.TraceHull( {
 					start = start_pos,
 					endpos = _pos + dir * i + aimDir * 5,
@@ -290,7 +293,9 @@ function SWEP:DoImpactEffects( HandID, BladeID, bHit, vPos, vDir, hitEnt, ply, m
 				debugoverlay.SweptBox( start_pos, _pos + dir * i + aimDir * 5, min, max, (start_pos -  (_pos + dir * i + aimDir * 5)):Angle(), 10, Color( 0, 100, 255 ) )
 
 				if trace.Hit and not IsValid( trace.Entity ) then
-					self:WallImpactEffects( trace.HitPos, trace.HitNormal, false )
+					if idx < 26 then
+						self:WallImpactEffects( trace.HitPos, trace.HitNormal, false )
+					end
 				end
 
 				if dmgActive then
