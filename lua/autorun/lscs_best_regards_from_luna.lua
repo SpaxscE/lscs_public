@@ -10,7 +10,7 @@ best regards luna
 
 LSCS = istable( LSCS ) and LSCS or { Hilt = {}, Blade = {}, Stance = {}, Force = {},BulletTracerDeflectable = {} }
 
-LSCS.VERSION = 168
+LSCS.VERSION = 169
 LSCS.VERSION_GITHUB = 0
 LSCS.VERSION_TYPE = ".GIT"
 
@@ -24,6 +24,8 @@ function LSCS:CheckUpdates()
 
 		if Entry then
 			LSCS.VERSION_GITHUB = tonumber( string.match( Entry , "%d+" ) ) or 0
+		else
+			LSCS.VERSION_GITHUB = 0
 		end
 
 		if LSCS.VERSION_GITHUB == 0 then
@@ -33,7 +35,12 @@ function LSCS:CheckUpdates()
 				print("[LSCS] is up to date, Version: "..LSCS:GetVersion())
 			else
 				print("[LSCS] a newer version is available! Version: "..LSCS.VERSION_GITHUB..", You have Version: "..LSCS:GetVersion())
-				print("[LSCS] get the latest version at https://github.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM")
+
+				if LSCS.VERSION_TYPE == ".GIT" then
+					print("[LSCS] get the latest version at https://github.com/SpaxscE/lscs_public")
+				else
+					print("[LSCS] restart your game/server to get the latest version!")
+				end
 
 				if CLIENT then 
 					timer.Simple(18, function() 
