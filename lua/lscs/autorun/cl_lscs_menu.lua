@@ -426,7 +426,7 @@ function LSCS:BuildMainMenu( Frame )
 	B.DoClick = function( self )
 		BaseButtonClick( self )
 		timer.Simple( 0.5, function()
-			gui.OpenURL( "https://steamcommunity.com/id/Blu-x92/myworkshopfiles/" )
+			gui.OpenURL( "https://steamcommunity.com/profiles/76561197995010235/myworkshopfiles/" )
 		end )
 	end
 
