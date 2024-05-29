@@ -489,7 +489,7 @@ function LSCS:BuildMainMenu( Frame )
 	B.DoClick = function( self )
 		BaseButtonClick( self )
 		timer.Simple( 0.5, function()
-			gui.OpenURL( "https://github.com/Blu-x92" )
+			gui.OpenURL( "https://github.com/SpaxscE" )
 		end )
 	end
 
