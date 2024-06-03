@@ -226,7 +226,12 @@ function SWEP:DoCombo()
 		end
 	end
 
-	self:PlayAnimation( ComboObj.AttackAnim, ComboObj.AttackAnimStart )
+	if istable(ComboObj.AttackAnim) then
+        	local randomAttack = ComboObj.AttackAnim[math.random(1, #ComboObj.AttackAnim)]
+        	self:PlayAnimation( randomAttack, ComboObj.AttackAnimStart )
+    	else
+        	self:PlayAnimation( ComboObj.AttackAnim, ComboObj.AttackAnimStart )
+    	end
 
 	local Time = CurTime() + ComboObj.Delay + ComboObj.Duration + 0.1
 	self:SetNextPrimaryAttack( Time )
