@@ -1,5 +1,5 @@
 -- a fully working auto save and restore example can be found here:
--- https://github.com/Blu-x92/lscs_public/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
+-- https://github.com/SpaxscE/lscs_public/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
 
 
 
@@ -48,6 +48,6 @@ ply:lscsWipeInventory( wipe_unequipped ) -- clears the entire inventory. If wipe
 
 
  more functions and info see:
- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
+ https://raw.githubusercontent.com/SpaxscE/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
 
 ]]

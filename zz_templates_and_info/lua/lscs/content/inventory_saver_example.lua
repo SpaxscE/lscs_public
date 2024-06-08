@@ -146,7 +146,7 @@ end )
 ]]
 
 -- more info about inventory saving:
--- https://github.com/Blu-x92/lscs_public/blob/main/zz_templates_and_info/how_to_save_and_restore_inventory.lua
+-- https://github.com/SpaxscE/lscs_public/blob/main/zz_templates_and_info/how_to_save_and_restore_inventory.lua
 
  -- for more functions and info see:
- -- https://raw.githubusercontent.com/Blu-x92/lscs_public/main/zz_templates_and_info/useful_lua_functions.txt
+ -- https://raw.githubusercontent.com/SpaxscE/lscs_public/main/zz_templates_and_info/useful_lua_functions.txt
