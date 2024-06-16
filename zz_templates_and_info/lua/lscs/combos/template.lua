@@ -17,6 +17,7 @@ COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deacti
 --COMBO.BlockDistancePerfect = 20 -- distance of crosshair to block pos until  a perfect block is detected with this stance. Avoid using this. Only uncomment if you really need it.
 
 --COMBO.Spawnable = false -- uncomment to hide in q-menu
+--COMBO.AdminOnly = true -- make this admin only on q-menu?
 
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
