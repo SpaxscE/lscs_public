@@ -2,8 +2,11 @@ local blade = {}
 blade.PrintName = "MyBlade" -- nice name in the menu
 blade.Author = "Me"
 blade.id = "mybladeid" -- internal ID. Always lower case.
+
+--blade.EntityBase = "lscs_crystal_base" -- change base entity?
 --blade.Spawnable = false  -- uncomment to unlist in q-menu
 --blade.AdminOnly = true -- make this admin only on q-menu?
+
 blade.color_blur = Color(0,65,255)
 blade.color_core = Color(255,255,255)
 --blade.mdl = "models/lscs/weapons/nanosword_bladefx.mdl" -- use a model as blade?

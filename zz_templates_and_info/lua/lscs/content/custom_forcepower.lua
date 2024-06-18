@@ -3,6 +3,8 @@ force.PrintName = "Cool Force Power"
 force.Author = "YOU"
 force.Description = "force template"
 force.id = "myforcepower" -- lowercase only
+
+--force.EntityBase = "lscs_force_base" -- change base entity?
 --force.Spawnable = false  -- uncomment to unlist in q-menu
 --force.AdminOnly = true -- make this admin only on q-menu?
 

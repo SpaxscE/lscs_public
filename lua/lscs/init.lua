@@ -133,7 +133,7 @@ function LSCS:RegisterForce( data )
 
 	local ENT = {}
 
-	ENT.Base = "lscs_force_base"
+	ENT.Base = data.EntityBase or "lscs_force_base"
 
 	ENT.PrintName = data.PrintName
 	ENT.Author = data.Author
@@ -163,7 +163,7 @@ function LSCS:RegisterHilt( data )
 
 	local ENT = {}
 
-	ENT.Base = "lscs_hilt_base"
+	ENT.Base = data.EntityBase or "lscs_hilt_base"
 
 	ENT.PrintName = data.PrintName
 	ENT.Author = data.Author
@@ -215,7 +215,7 @@ function LSCS:RegisterBlade( data )
 
 	local ENT = {}
 
-	ENT.Base = "lscs_crystal_base"
+	ENT.Base = data.EntityBase or "lscs_crystal_base"
 
 	ENT.PrintName = data.PrintName
 	ENT.Author = data.Author
@@ -319,7 +319,7 @@ LSCS.Reload = function()
 
 		local ENT = {}
 
-		ENT.Base = "lscs_stance_base"
+		ENT.Base = COMBO.EntityBase or "lscs_stance_base"
 
 		ENT.PrintName = COMBO.PrintName
 		ENT.Author = COMBO.Author
