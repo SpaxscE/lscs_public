@@ -167,13 +167,14 @@ COMBO.Attacks = {
 	},
 	["W__D"] = {
 		AttackAnim = "combo4",
+		AttackAnimStart = 0.1,
 		BeginAttack = function( weapon, ply )  
 			weapon:DoAttackSound()
-			ply:lscsSetTimedMove( 1, CurTime(), 0.4, Vector(1,1,0) )
+			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(25,25,0) )
 		end,
 		FinishAttack = function( weapon, ply ) end,
-		Delay = 0.2,
-		Duration = 0.6,
+		Delay = 0,
+		Duration = 0.3,
 	},
 	["WA__"] = {
 		AttackAnim = "combo3",
@@ -219,3 +220,4 @@ COMBO.Attacks = {
 		Duration = 0.8,
 	},
 }
+LSCS:Reload()
