@@ -340,7 +340,7 @@ function SWEP:DoBladeTrace( HandID, BladeID, pos, dir, length, width )
 	local max = Vector( width, width, width )
 	local min = -max
 
-	ply:LagCompensation( true )
+	ply:LagCompensation( true ) --TODO: test if this makes a difference 
 
 	local trace = util.TraceHull( {
 		start = pos,
