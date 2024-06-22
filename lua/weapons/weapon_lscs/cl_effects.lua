@@ -215,6 +215,8 @@ function SWEP:DrawBlade( HandID, BladeID, PosData, bladeObject, Mul, HiltAngles 
 		return
 	end
 
+	--TODO: call a render function in the blade here & allow returning false to prevent original rendering
+
 	render.SetMaterial( bladeObject.material_glow )
 	render.DrawSprite( pos, w32, w32, color_blur )
 
@@ -338,6 +340,8 @@ function SWEP:DoBladeTrace( HandID, BladeID, pos, dir, length, width )
 	local max = Vector( width, width, width )
 	local min = -max
 
+	ply:LagCompensation( true )
+
 	local trace = util.TraceHull( {
 		start = pos,
 		endpos = pos + dir * length,
@@ -346,6 +350,8 @@ function SWEP:DoBladeTrace( HandID, BladeID, pos, dir, length, width )
 		mask = MASK_SHOT_HULL,
 		filter =  {self, ply}
 	} )
+
+	ply:LagCompensation( false )
 
 	if trace.Hit and trace.Fraction == 1 then
 		trace.Fraction = 0
