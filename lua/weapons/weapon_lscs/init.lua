@@ -13,6 +13,22 @@ include("sv_blocking.lua")
 include("sh_blockpoints.lua")
 include( "sh_stance_override.lua" )
 
+function SWEP:ResetHoldType()
+	local Active = self:GetActive()
+
+	if Active then
+		local Combo = self:GetCombo()
+
+		if istable( Combo ) and Combo.HoldType then
+			self:SetHoldType( Combo.HoldType )
+		else
+			self:SetHoldType( "normal" )
+		end
+	else
+		self:SetHoldType( "normal" )
+	end
+end
+
 function SWEP:Reload()
 	if (self.NextReload or 0) > CurTime() then return end
 

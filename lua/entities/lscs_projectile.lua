@@ -152,14 +152,7 @@ if SERVER then
 		SWEP:SetProjectile( NULL )
 		SWEP:SetDMGActive( false )
 		SWEP:SetNextPrimaryAttack( CurTime() )
-
-		local Active = SWEP:GetActive()
-
-		if Active then
-			SWEP:SetHoldType( SWEP:GetCombo().HoldType )
-		else
-			SWEP:SetHoldType( "normal" )
-		end
+		SWEP:ResetHoldType()
 	end
 
 	function ENT:PlayAnimation( animation, playbackrate )
