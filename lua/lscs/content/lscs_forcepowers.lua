@@ -18,7 +18,7 @@ force.StartUse = function( ply )
 	end
 
 	if not IsValid( SWEP ) then return end
-	if SWEP:IsBrokenSaber() then return end
+	if SWEP:IsBrokenSaber() or SWEP:IsThrown() then return end
 
 	if (ply._lscsNextThrow or 0) > CurTime() then return end
 
