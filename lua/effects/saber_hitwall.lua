@@ -34,16 +34,16 @@ function EFFECT:Init( data )
 	
 	local emitter = ParticleEmitter( Pos, false )
 
-	if LSCS.ImpactEffects then
-		local trace = util.TraceLine( {
-			start = Pos + Dir * 5,
-			endpos = Pos - Dir * 5,
-			filter = function( ent ) 
-				if ent.GetOwningEnt then return false end
-				return true
-			end
-		} )
+	local trace = util.TraceLine( {
+		start = Pos + Dir * 5,
+		endpos = Pos - Dir * 5,
+		filter = function( ent ) 
+			if ent.GetOwningEnt then return false end
+			return true
+		end
+	} )
 
+	if LSCS.ImpactEffects then
 		if trace.Hit and not trace.HitNonWorld then
 			self.RenderGlow = {
 				Pos = trace.HitPos,
@@ -55,6 +55,8 @@ function EFFECT:Init( data )
 			util.DecalEx( DecalMat, trace.Entity, trace.HitPos + trace.HitNormal, trace.HitNormal, Color(255,255,255,255), math.Rand(0.3,0.6), math.Rand(0.3,0.6) )
 		end
 	end
+
+	if not trace.Hit then return end
 
 	local particle = emitter:Add( Materials[ math.random(1,table.Count( Materials )) ], Pos )
 	
