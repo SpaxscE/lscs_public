@@ -22,7 +22,7 @@ hilt.info = {
 			ang = Angle(8, 0, -10),
 		},
 	},
-	GetBladePos = function( ent ) -- GetBladePos allows you to modify where and how the blade is being rendered. By using a function you could in theory do all sort of crazy things without having to redo the model's attachments (for example: spinning helicopter sabers like the inquisitors have)
+	GetBladePos = function( ent, swep, ply ) -- GetBladePos allows you to modify where and how the blade is being rendered. By using a function you could in theory do all sort of crazy things without having to redo the model's attachments (for example: spinning helicopter sabers like the inquisitors have)
 		if not ent.BladeID1 then
 			ent.BladeID1 = ent:LookupAttachment( "primary_blade" )
 		end

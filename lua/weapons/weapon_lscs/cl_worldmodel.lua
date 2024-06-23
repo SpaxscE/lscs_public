@@ -169,7 +169,7 @@ function SWEP:DrawWorldModelTranslucent( flags, target )
 
 		if Mul <= 0 then continue end
 
-		local Positions = hiltObject.info.GetBladePos( WorldModel )
+		local Positions = hiltObject.info.GetBladePos( WorldModel, self, ply )
 
 		if not Positions then continue end
 

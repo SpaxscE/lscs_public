@@ -20,7 +20,7 @@ hilt.info = {
 			ang = Angle(8, 0, -10),
 		},
 	},
-	GetBladePos = function( ent )
+	GetBladePos = function( ent, swep, ply )
 		if not ent.BladeID then
 			ent.BladeID = ent:LookupAttachment( "primary_blade" )
 		end
@@ -77,7 +77,7 @@ hilt.info = {
 			ang = Angle(8, 0, -10),
 		},
 	},
-	GetBladePos = function( ent )
+	GetBladePos = function( ent, swep, ply )
 		if not ent.BladeID1 then
 			ent.BladeID1 = ent:LookupAttachment( "primary_blade" )
 		end
