@@ -220,4 +220,3 @@ COMBO.Attacks = {
 		Duration = 0.8,
 	},
 }
-LSCS:Reload()
