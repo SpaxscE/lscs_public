@@ -247,13 +247,16 @@ LSCS.Timeout = LSCS.Timeout or 0
 
 LSCS.Reload = function()
 	local Time = CurTime()
+
 	if LSCS.Timeout > Time then 
 		print("[LSCS] - refusing refresh ["..Time.."]")
+
 		return
-	else
-		print("[LSCS] - initialized ["..Time.."]")
 	end
-	LSCS.Timeout = CurTime() + 1
+
+	LSCS.Timeout = Time + 1
+
+	local StartTime = SysTime()
 
 	for _, filename in pairs( file.Find("lscs/autorun/*.lua", "LUA") ) do
 		if string.StartWith( filename, "sv_") then -- sv_ prefix only load serverside
@@ -342,6 +345,8 @@ LSCS.Reload = function()
 		end
 		include("lscs/content/"..filename)
 	end
+
+	print("[LSCS] - initialized ["..math.Round((SysTime() - StartTime) * 1000,2).."ms]")
 end
 
 LSCS:Reload()
