@@ -1,6 +1,6 @@
 
-
 local force = {}
+-- todo: force.IconOverride
 force.PrintName = "Throw"
 force.Author = "Blu-x92 / Luna"
 force.Description = "Throw your Lightsaber"

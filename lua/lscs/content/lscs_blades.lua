@@ -3,6 +3,7 @@
 	v v v Blade v v v
 ]]
 local blade = {}
+-- todo: blade.IconOverride
 blade.PrintName = "Sapphire"
 blade.Author = "Blu-x92 / Luna"
 blade.id = "sapphire"
