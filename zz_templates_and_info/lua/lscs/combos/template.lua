@@ -20,6 +20,8 @@ COMBO.LeftSaberActive = false -- if this combo is selected, left saber is deacti
 --COMBO.Spawnable = false -- uncomment to hide in q-menu
 --COMBO.AdminOnly = true -- make this admin only on q-menu?
 
+--COMBO.IconOverride = "lscs/ui/noicon.png" -- custom icon path
+
 COMBO.HoldType = "melee"  -- just like any other weapon. If you have wos installed you can just use their holdtype editor to add custom holdtypes.
 
 COMBO.Attacks = {}

@@ -7,6 +7,7 @@ hilt.id = "myhiltid" -- always lower case
 --hilt.EntityBase = "lscs_hilt_base" -- change base entity?
 --hilt.Spawnable = false  -- uncomment to unlist in q-menu
 --hilt.AdminOnly = true -- make this admin only on q-menu?
+--hilt.IconOverride = "lscs/ui/noicon.png" -- custom icon path
 
 hilt.mdl = "models/lscs/weapons/katarn.mdl" -- what model to use
 hilt.info = {

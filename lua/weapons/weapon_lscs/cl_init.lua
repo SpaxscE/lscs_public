@@ -67,12 +67,7 @@ function SWEP:DrawHUD()
 	if combo ~= OldCombo then
 		OldCombo = combo
 
-		local mat = "entities/"..combo.class..".png"
-		if file.Exists( "materials/"..mat, "GAME" ) then
-			ComboIcon = Material( mat )
-		else
-			ComboIcon = nil
-		end
+		ComboIcon = self:GetCombo().icon
 	end
 
 	if not LSCS:HUDShouldHide( LSCS_HUD_STANCE ) then

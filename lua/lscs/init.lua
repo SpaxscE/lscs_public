@@ -101,6 +101,14 @@ function LSCS:ClassToItem( class )
 	return false
 end
 
+local function CreateIconMaterial( class, override )
+	local filepath = isstring( override ) and override or "entities/"..class..".png"
+
+	if file.Exists( "materials/"..filepath, "GAME" ) then return Material( filepath ) end
+
+	return Material( "debug/debugwireframe" )
+end
+
 function LSCS:RegisterForce( data )
 	if not data.id then return end
 
@@ -113,6 +121,7 @@ function LSCS:RegisterForce( data )
 		name = data.PrintName,
 		description = data.Description,
 		author = data.Author,
+		icon = CreateIconMaterial( class, data.IconOverride ),
 		type = "force",
 		Type = "Force",
 		class = class,
@@ -139,8 +148,10 @@ function LSCS:RegisterForce( data )
 	ENT.Author = data.Author
 	ENT.Category = "[LSCS] - Force"
 
-	ENT.Spawnable       = data.Spawnable ~= false
-	ENT.AdminOnly  = data.AdminOnly == true
+	ENT.Spawnable = data.Spawnable ~= false
+	ENT.AdminOnly = data.AdminOnly == true
+
+	ENT.IconOverride = data.IconOverride
 
 	scripted_ents.Register( ENT, class )
 end
@@ -154,6 +165,7 @@ function LSCS:RegisterHilt( data )
 	LSCS.Hilt[ id ] = {
 		id = id,
 		name = data.PrintName,
+		icon = CreateIconMaterial( class, data.IconOverride ),
 		type = "hilt",
 		Type = "Hilt",
 		class = class,
@@ -172,6 +184,8 @@ function LSCS:RegisterHilt( data )
 	ENT.Spawnable = data.Spawnable ~= false
 	ENT.AdminOnly  = data.AdminOnly == true
 
+	ENT.IconOverride = data.IconOverride
+
 	ENT.MDL = data.mdl
 
 	scripted_ents.Register( ENT, class )
@@ -186,6 +200,7 @@ function LSCS:RegisterBlade( data )
 	LSCS.Blade[ id ] = {
 		id = id,
 		name = data.PrintName,
+		icon = CreateIconMaterial( class, data.IconOverride ),
 		type = "crystal",
 		Type = "Crystal",
 		class = class,
@@ -223,6 +238,8 @@ function LSCS:RegisterBlade( data )
 
 	ENT.Spawnable       = data.Spawnable ~= false
 	ENT.AdminOnly  = data.AdminOnly == true
+
+	ENT.IconOverride = data.IconOverride
 
 	ENT.ID = id
 
@@ -305,6 +322,7 @@ LSCS.Reload = function()
 			name = COMBO.PrintName,
 			description = COMBO.Description,
 			author = COMBO.Author,
+			icon = CreateIconMaterial( class, COMBO.IconOverride ),
 			type = "stance",
 			Type = "Stance",
 			class = class,
@@ -330,6 +348,10 @@ LSCS.Reload = function()
 
 		ENT.Spawnable       = COMBO.Spawnable ~= false
 		ENT.AdminOnly  = COMBO.AdminOnly == true
+
+		if isstring( COMBO.IconOverride ) then
+			ENT.IconOverride = COMBO.IconOverride
+		end
 
 		scripted_ents.Register( ENT, class )
 

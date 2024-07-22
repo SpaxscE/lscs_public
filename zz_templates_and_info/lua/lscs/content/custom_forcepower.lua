@@ -7,6 +7,7 @@ force.id = "myforcepower" -- lowercase only
 --force.EntityBase = "lscs_force_base" -- change base entity?
 --force.Spawnable = false  -- uncomment to unlist in q-menu
 --force.AdminOnly = true -- make this admin only on q-menu?
+--force.IconOverride = "lscs/ui/noicon.png" -- custom icon path
 
 --[[
 -- adds a hook to Think with 0.1 second interval. Only uncomment if needed

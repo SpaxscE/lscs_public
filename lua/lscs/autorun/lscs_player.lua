@@ -242,7 +242,7 @@ function meta:lscsBuildPlayerInfo()
 			local data = {}
 			data.inventoryID = index
 			data.item = object
-			if CLIENT then data.icon = Material("entities/"..object.class..".png") end
+			if CLIENT then data.icon = object.icon end
 
 			table.insert( forcepowers, data )
 			continue

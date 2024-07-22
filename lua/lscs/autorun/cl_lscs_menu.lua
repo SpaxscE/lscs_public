@@ -665,15 +665,6 @@ function LSCS:BuildInventory( Frame )
 		DButton:SetPos( X, Y )
 		DButton:SetSize( 128, 128 )
 
-		DButton.SetMaterial = function( self, mat ) 
-			if file.Exists( "materials/"..mat, "GAME" ) then
-				self.Mat = Material( mat )
-			else
-				self.Mat = Material( "debug/debugwireframe" )
-			end
-		end
-		DButton.GetMaterial = function( self ) return self.Mat end
-
 		DButton.SetID = function( self, id ) self.ID = id end
 		DButton.GetID = function( self ) return self.ID end
 
@@ -682,7 +673,6 @@ function LSCS:BuildInventory( Frame )
 
 		DButton:SetItem( class )
 		DButton:SetID( index )
-		DButton:SetMaterial( "entities/"..class..".png" )
 
 		DButton.Paint = function(self, w, h )
 			if not self:IsEnabled() then
@@ -692,7 +682,7 @@ function LSCS:BuildInventory( Frame )
 				return
 			end
 
-			surface.SetMaterial( self:GetMaterial() )
+			surface.SetMaterial( self:GetItem().icon )
 			surface.SetDrawColor( 255,255,255,255 )
 			surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
 
@@ -865,15 +855,7 @@ end
 
 local CrafterButtonPaint = function(self, w, h )
 	if self.Item then
-		if not self.Mat then
-			if file.Exists( "materials/entities/"..self.Item.class..".png", "GAME" ) then
-				self.Mat = Material( "entities/"..self.Item.class..".png" )
-			else
-				self.Mat = Material( "debug/debugwireframe" )
-			end
-		end
-
-		surface.SetMaterial( self.Mat )
+		surface.SetMaterial( self.Item.icon )
 		surface.SetDrawColor( 255, 255, 255 ,255 )
 		surface.DrawTexturedRect( 2, h * 0.5 - w * 0.5 - 2, w - 4, w - 4 )
 

@@ -3,7 +3,6 @@
 	v v v Hilt v v v
 ]]
 local hilt = {}
--- todo: hilt.IconOverride
 hilt.PrintName = "Katarn"
 hilt.Author = "Blu-x92 / Luna"
 hilt.id = "katarn"
