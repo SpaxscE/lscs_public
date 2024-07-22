@@ -349,9 +349,7 @@ LSCS.Reload = function()
 		ENT.Spawnable       = COMBO.Spawnable ~= false
 		ENT.AdminOnly  = COMBO.AdminOnly == true
 
-		if isstring( COMBO.IconOverride ) then
-			ENT.IconOverride = COMBO.IconOverride
-		end
+		ENT.IconOverride = COMBO.IconOverride
 
 		scripted_ents.Register( ENT, class )
 
