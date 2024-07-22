@@ -106,6 +106,8 @@ local function CreateIconMaterial( class, override )
 
 	if file.Exists( "materials/"..filepath, "GAME" ) then return Material( filepath ) end
 
+	if file.Exists( "materials/lscs/ui/noicon.png", "GAME" ) then return Material( "lscs/ui/noicon.png" ) end
+
 	return Material( "debug/debugwireframe" )
 end
 
