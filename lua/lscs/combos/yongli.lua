@@ -167,7 +167,7 @@ COMBO.Attacks = {
 	},
 	["W__D"] = {
 		AttackAnim = "combo4",
-		AttackAnimStart = 0.1,
+		AttackAnimStart = 0.075,
 		BeginAttack = function( weapon, ply )  
 			weapon:DoAttackSound()
 			ply:lscsSetTimedMove( 1, CurTime(), 0.3, Vector(25,25,0) )
