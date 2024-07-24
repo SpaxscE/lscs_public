@@ -49,7 +49,7 @@ function SWEP:ForcePowersGive( ply ) -- give-forcepowers
 	ply:lscsAddInventory( "item_stance_juggernaut", true )
 
 	-- for more functions and info see:
-	-- https://raw.githubusercontent.com/Blu-x92/LUNA_SWORD_COMBAT_SYSTEM/main/zz_templates_and_info/useful_lua_functions.txt
+	-- https://raw.githubusercontent.com/SpaxscE/lscs_public/main/zz_templates_and_info/useful_lua_functions.txt
 end
 
 function SWEP:ForcePowersRemove( ply ) -- remove-forcepowers function
