@@ -74,7 +74,7 @@ hook.Add( "LSCS:OnPlayerCraftedSaber", "ANY_HOOK_NAME_YOU_WANT", function( ply, 
 end )
 
 -- called whenever a player equips an item
-hook.Add( "LSCS:OnPlayerEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
+hook.Add( "LSCS:OnPlayerEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item, hand )
 end)
 
 -- called whenever a player unequips an item
