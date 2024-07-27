@@ -62,7 +62,7 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 end )
 
 -- when a player drops an item from the inventory it calls this hook. 
-hook.Add( "LSCS:OnPlayerDroppedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item_entity )
+hook.Add( "LSCS:OnPlayerDroppedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item_entity, inventory_id )
 
 	item_entity:Remove() -- lets just remove it in this example
 
