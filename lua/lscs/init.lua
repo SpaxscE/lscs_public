@@ -83,7 +83,7 @@ function LSCS:ClassToItem( class )
 
 	local words = string.Explode( "_", class )
 	local type = words[ 2 ]
-	local id = words[ 3 ]
+	local id = table.concat(words, "_", 3)
 
 	if type == "saberhilt" then
 		return LSCS.Hilt[ id ]
