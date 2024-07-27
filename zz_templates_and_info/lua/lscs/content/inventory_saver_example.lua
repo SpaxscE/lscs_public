@@ -106,17 +106,10 @@ function meta:lscsReadInventory()
 	end
 end
 
-hook.Add( "LSCS:PlayerInventory", "!!!lscs_inventory_saver", function( ply, item, index )
+hook.Add( "LSCS:PostPlayerInventory", "!!!lscs_inventory_saver", function( ply, item, index )
+	if not IsValid( ply ) then return end
 
-	-- no code is perfect without atleast one timer.Simple
-	-- its actually needed because this hook is called before the item is actually picked-up
-	-- ( its so this hook could be used to prevent item-picking up )
-
-	timer.Simple(0, function()
-		if not IsValid( ply ) then return end
-
-		ply:lscsWriteInventory() -- ideally you would only add a single item in your saved .txt instead of rewriting it entirely
-	end )
+	ply:lscsWriteInventory() -- ideally you would only add a single item in your saved .txt instead of rewriting it entirely
 end )
 
 hook.Add( "LSCS:OnPlayerDroppedItem", "!!!lscs_inventory_saver", function( ply, item_entity )

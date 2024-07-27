@@ -47,6 +47,8 @@ if SERVER then
 		if IsEntity( class_or_entity ) then
 			class_or_entity:Remove()
 		end
+
+		hook.Run( "LSCS:PostPlayerInventory", self, item, index )
 	end
 
 	function meta:lscsEquipItem( index, hand )

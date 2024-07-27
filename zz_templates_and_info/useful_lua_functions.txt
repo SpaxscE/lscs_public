@@ -56,6 +56,10 @@ hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, inde
 
 end )
 
+-- called after the player has picked up an item
+hook.Add( "LSCS:PostPlayerInventory", "any_name_you_want", function( ply, item, index )
+end )
+
 -- this is called when the player is fully loaded and ready
 hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 	print("hello")
