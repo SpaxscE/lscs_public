@@ -111,7 +111,7 @@ if SERVER then
 		ply:lscsBuildPlayerInfo()
 
 		if equip == 0 or equip == 1 then
-			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ), equip )
+			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ), equip == 1 )
 		else
 			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
 		end
