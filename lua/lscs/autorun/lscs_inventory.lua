@@ -224,7 +224,7 @@ if SERVER then
 
 		self:lscsRemoveItem( id )
 
-		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent )
+		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent, id )
 	end
 
 	function meta:lscsRemoveItem( id )
