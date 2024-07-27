@@ -72,7 +72,7 @@ if SERVER then
 		self:lscsBuildPlayerInfo()
 
 		if isbool( hand ) then
-			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ) )
+			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ), hand )
 		else
 			if isbool( WasEquipped ) then
 				hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
@@ -109,7 +109,7 @@ if SERVER then
 		ply:lscsBuildPlayerInfo()
 
 		if equip == 0 or equip == 1 then
-			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
+			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ), equip )
 		else
 			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
 		end
