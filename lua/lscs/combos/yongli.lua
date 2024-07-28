@@ -174,7 +174,7 @@ COMBO.Attacks = {
 		end,
 		FinishAttack = function( weapon, ply ) end,
 		Delay = 0,
-		Duration = 0.3,
+		Duration = 0.35,
 	},
 	["WA__"] = {
 		AttackAnim = "combo3",
