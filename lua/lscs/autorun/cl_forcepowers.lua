@@ -408,4 +408,5 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 end )
 
 hook.Add( "LSCS:PlayerCanForce", "lscs_canforce", function( ply, power )
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
 end)
