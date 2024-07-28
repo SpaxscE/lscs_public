@@ -6,19 +6,23 @@ if SERVER then
 	util.AddNetworkString( "lscs_sync" )
 	util.AddNetworkString( "lscs_equip" )
 
-	function meta:lscsAddInventory( class_or_entity, equip )
+	function meta:lscsAddInventory( class_or_entity, equip, index )
 		local item = class_or_entity
 
 		if IsEntity( class_or_entity ) then
 			item = class_or_entity:GetClass()
 		end
 
-		local index = 1 -- start at 1
-		for _,_ in ipairs( self:lscsGetInventory() ) do
-			index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
+		if not index then
+			index = 1 -- start at 1
+			for _,_ in ipairs( self:lscsGetInventory() ) do
+				index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
+			end
 		end
 
 		if hook.Run( "LSCS:PlayerInventory", self, item, index ) then return end
+
+		if self:lscsGetInventory()[ index ] then returz`wn end
 
 		if self._lscsNetworkingReady then
 			net.Start( "lscs_inventory" )
