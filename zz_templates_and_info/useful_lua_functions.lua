@@ -1,7 +1,11 @@
+if true then return end
+
 ALL ADDITIONAL LSCS SCRIPTS SHOULD GO INTO lua/lscs/content TO MAKE SURE THEY ARE LOADED AFTER THE BASESCRIPT IS LOADED. CONTENT IS ALWAYS SHARED
 
 
-# base stuff
+--[[---------------------
+	GENERAL STUFF
+--]]---------------------
 
 
 LSCS:RegisterDeflectableTracer( "tracer_" ) -- MUST BE CALLED SHARED.
@@ -23,8 +27,9 @@ LSCS:OpenMenu() -- opens the menu, only works clientside. Menu can be opened usi
 LSCS:RefreshMenu() -- refreshes the menu if open. Only works clientside. Needs to be called everytime something is removed, added or equipped/unequipped
 
 
-
-# CLIENT
+--[[---------------------
+	CLIENT
+--]]---------------------
 
 -- very similar to gmods HUDShouldDraw, however instead of strings it takes "enums"
 
@@ -44,10 +49,12 @@ end )
 
 
 
-# SERVER
+--[[---------------------
+	SERVER
+--]]---------------------
 
 -- called when a player attempts to pick up an item
-hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, index )
+hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, classname, index )
 
  	--this example will allow admins only to pick up katarn saber hilt
 	if not ply:IsAdmin() and item == "item_saberhilt_katarn" then
@@ -57,7 +64,7 @@ hook.Add( "LSCS:PlayerInventory", "any_name_you_want", function( ply, item, inde
 end )
 
 -- called after the player has picked up an item
-hook.Add( "LSCS:PostPlayerInventory", "any_name_you_want", function( ply, item, index )
+hook.Add( "LSCS:PostPlayerInventory", "any_name_you_want", function( ply, classname, index )
 end )
 
 -- this is called when the player is fully loaded and ready
@@ -136,7 +143,9 @@ ply:lscsClearBlood() -- does exactly what it says. Workaround for a gmod bug whe
 
 
 
-# SHARED
+--[[---------------------
+	SHARED
+--]]---------------------
 
 ply:lscsCraftSaber() -- craft's a lightsaber out of the equipped items. When called on client will only send a crafting request.
 			--This only works if the player has permission to spawn SWEP's. If they don't have permission you need to call ply:Give("weapon_lscs") first
