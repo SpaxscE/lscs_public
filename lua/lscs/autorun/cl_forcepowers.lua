@@ -222,26 +222,26 @@ local function PlayerButtonDown( ply, button )
 
 	local InVehicle = ply:InVehicle()
 
-	local AllowForce = not InVehicle or (InVehicle and ply:GetAllowWeaponsInVehicle())
+	local AllowForce = hook.Run( "LSCS:PlayerCanForce", ply, nil )
+	if AllowForce == false then return end
 
-	if AllowForce then
 	-- this needs to be reworked at some point to the same method used as direct inputs
-		if button == selector.KeyActivate:GetInt() then
-			if #ply:lscsGetForceAbilities() == 0 then return end
+	if button == selector.KeyActivate:GetInt() then
+		if #ply:lscsGetForceAbilities() == 0 then return end
 
-			MouseWheelScroller = true
-			FadeTimer = CurTime() + 9999
-		end
-		if button == selector.KeyUse:GetInt() then
-			Use( Selected )
-		end
-		if button == selector.KeyNext:GetInt() then
-			Prev() -- inverted lmao
-		end
-		if button == selector.KeyPrev:GetInt() then
-			Next()
-		end
+		MouseWheelScroller = true
+		FadeTimer = CurTime() + 9999
 	end
+	if button == selector.KeyUse:GetInt() then
+		Use( Selected )
+	end
+	if button == selector.KeyNext:GetInt() then
+		Prev() -- inverted lmao
+	end
+	if button == selector.KeyPrev:GetInt() then
+		Next()
+	end
+
 
 	local Input = LSCS.KeyToForce[ button ]
 
@@ -252,6 +252,7 @@ local function PlayerButtonDown( ply, button )
 	for _, name in pairs( Input ) do
 		for ID, power in pairs( ForcePowers ) do
 			if power.item.id == name then
+				if hook.Run( "LSCS:PlayerCanForce", ply, power ) == false then continue end
 				Use( ID )
 			end
 		end
@@ -278,6 +279,7 @@ local function PlayerButtonUp( ply, button )
 	for _, name in pairs( Input ) do
 		for ID, power in pairs( ForcePowers ) do
 			if power.item.id == name then
+				if hook.Run( "LSCS:PlayerCanForce", ply, power ) == false then continue end
 				StopUse( ID )
 			end
 		end
@@ -404,3 +406,6 @@ hook.Add( "PlayerBindPress", "!!!!_lscs_playerbindpress", function( ply, bind, p
 		return true
 	end
 end )
+
+hook.Add( "LSCS:PlayerCanForce", "lscs_canforce", function( ply, power )
+end)
