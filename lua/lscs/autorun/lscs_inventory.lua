@@ -22,7 +22,7 @@ if SERVER then
 
 		if hook.Run( "LSCS:PlayerInventory", self, item, index ) then return end
 
-		if self:lscsGetInventory()[ index ] then returz`wn end
+		if self:lscsGetInventory()[ index ] then return end
 
 		if self._lscsNetworkingReady then
 			net.Start( "lscs_inventory" )
