@@ -130,7 +130,7 @@ stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in t
 
 bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers, available on client aswell
 
-ply:lscsSetForceAllowed( bool_allow ) -- allow/disallow force usage for this player
+ply:lscsSetForceAllowed( bool_allow ) -- allow/disallow force usage for this player. This will also hide the force selector hud
 
 ply:lscsGetForce() -- returns players current force points, available on client aswell
 
