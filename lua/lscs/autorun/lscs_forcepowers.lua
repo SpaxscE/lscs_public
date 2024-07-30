@@ -132,7 +132,8 @@ if SERVER then
 		if not IsValid( ply ) then return end
 		if not ply:Alive() then return end
 
-		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
+		local AllowForce = hook.Run( "LSCS:PlayerCanForce", ply, nil )
+		if AllowForce == false then return end
 
 		local ID = net.ReadInt( 8 )
 		local Activate = net.ReadBool()
@@ -141,6 +142,9 @@ if SERVER then
 		local selectedF = ForcePowers[ ID ]
 
 		if not selectedF then return end
+
+		local AllowForce = hook.Run( "LSCS:PlayerCanForce", ply, selectedF )
+		if AllowForce == false then return end
 
 		local item = selectedF.item
 
@@ -324,3 +328,8 @@ else
 		ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_GRENADE, ply:LookupSequence( seq ), start, true )
 	end )
 end
+
+
+hook.Add( "LSCS:PlayerCanForce", "lscs_canforce", function( ply, power )
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
+end)
