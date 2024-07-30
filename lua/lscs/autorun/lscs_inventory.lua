@@ -78,10 +78,10 @@ if SERVER then
 		self:lscsBuildPlayerInfo()
 
 		if isbool( hand ) then
-			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ), hand )
+			hook.Run( "LSCS:OnPlayerEquippedItem", self, LSCS:ClassToItem( class ), hand, index )
 		else
 			if isbool( WasEquipped ) then
-				hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
+				hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ), index )
 			end
 		end
 	end
@@ -115,9 +115,9 @@ if SERVER then
 		ply:lscsBuildPlayerInfo()
 
 		if equip == 0 or equip == 1 then
-			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ), equip == 1 )
+			hook.Run( "LSCS:OnPlayerEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ), equip == 1, index )
 		else
-			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, LSCS:ClassToItem( inventory[ index ] ) )
+			hook.Run( "LSCS:OnPlayerUnEquippedItem", ply, LSCS:ClassToItem( inventory[ index ], index ) )
 		end
 	end )
 
@@ -230,7 +230,7 @@ if SERVER then
 
 		self:lscsRemoveItem( id )
 
-		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent, id )
+		hook.Run( "LSCS:OnPlayerDroppedItem", self, ent, id, item )
 	end
 
 	function meta:lscsRemoveItem( id )
