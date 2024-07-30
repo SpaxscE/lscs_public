@@ -171,6 +171,9 @@ local function Prev( dont_set_time )
 	NextNav = Time + 0.01
 
 	local ply = LocalPlayer()
+
+	if not IsValid( ply ) or not ply:lscsGetForceAllowed() then return end
+
 	local ForcePowers = ply:lscsGetForceAbilities()
 
 	if #ForcePowers == 0 then return end
@@ -198,6 +201,9 @@ local function Next( dont_set_time )
 	NextNav = Time + 0.01
 
 	local ply = LocalPlayer()
+
+	if not IsValid( ply ) or not ply:lscsGetForceAllowed() then return end
+
 	local ForcePowers = ply:lscsGetForceAbilities()
 
 	if #ForcePowers == 0 then return end
