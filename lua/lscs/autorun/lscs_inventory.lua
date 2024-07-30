@@ -13,16 +13,16 @@ if SERVER then
 			item = class_or_entity:GetClass()
 		end
 
-		if not index then
+		if not isnumber( index ) then
 			index = 1 -- start at 1
 			for _,_ in ipairs( self:lscsGetInventory() ) do
 				index = index + 1 -- lets find an empty slot. Thanks to ipairs nature it will automatically stop at an empty slot
 			end
 		end
 
-		if hook.Run( "LSCS:PlayerInventory", self, item, index ) then return end
+		if self:lscsGetInventory()[ index ] then print( "[LSCS] - Refusing to add Item to inventory! Index: "..index.." already in use for player "..self:GetName().."!" ) return end
 
-		if self:lscsGetInventory()[ index ] then return end
+		if hook.Run( "LSCS:PlayerInventory", self, item, index ) then return end
 
 		if self._lscsNetworkingReady then
 			net.Start( "lscs_inventory" )
