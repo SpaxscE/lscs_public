@@ -165,8 +165,6 @@ ply:lscsCraftSaber() -- craft's a lightsaber out of the equipped items. When cal
 
 ply:lscsDropItem( id ) -- drop given id from inventory as physical object on the floor. This will also unequip automatically. Will only send a drop request to server when called on client
 
-bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers
-
 item = ply:lscsGetInventoryItem( id ) -- convenience function. Does the same as LSCS:ClassToItem( ply:lscsGetInventory()[ id ] )
 					-- returns the item behind given id in the inventory. NOTE: On client this is only synced to LocalPlayer()
 

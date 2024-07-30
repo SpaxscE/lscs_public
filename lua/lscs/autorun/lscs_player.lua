@@ -1,9 +1,5 @@
 local meta = FindMetaTable( "Player" )
 
-function meta:lscsGetForceAllowed()
-	return self:lscsGetForce() * self:lscsGetMaxForce() * self:lscsGetForceRegenAmount() > 0
-end
-
 function meta:lscsGetForce()
 	return self:GetNWFloat( "lscs_force_mana", self:lscsGetMaxForce() ) -- gay
 end
@@ -65,6 +61,10 @@ if SERVER then
 
 	function meta:lscsGetForceRegenAmount()
 		return self._lscsForceRegenAmount or 1
+	end
+
+	function meta:lscsGetForceAllowed()
+		return self:lscsGetForce() * self:lscsGetMaxForce() * self:lscsGetForceRegenAmount() > 0
 	end
 
 	function meta:lscsSetForceAllowed( allow )
