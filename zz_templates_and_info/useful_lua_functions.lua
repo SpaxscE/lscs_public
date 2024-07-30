@@ -119,6 +119,10 @@ ply:lscsRemoveItem( id ) -- just remove given numerical index id from inventory.
 
 stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber? This can be used to prevent crafting broken lightsabers
 
+bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers
+
+ply:lscsSetForceAllowed( bool_allow ) -- allow/disallow force usage for this player
+
 ply:lscsGetForce() -- returns players current force points
 
 ply:lscsSetForce( num ) -- set players force points
@@ -151,6 +155,8 @@ ply:lscsCraftSaber() -- craft's a lightsaber out of the equipped items. When cal
 			--This only works if the player has permission to spawn SWEP's. If they don't have permission you need to call ply:Give("weapon_lscs") first
 
 ply:lscsDropItem( id ) -- drop given id from inventory as physical object on the floor. This will also unequip automatically. Will only send a drop request to server when called on client
+
+bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers
 
 item = ply:lscsGetInventoryItem( id ) -- convenience function. Does the same as LSCS:ClassToItem( ply:lscsGetInventory()[ id ] )
 					-- returns the item behind given id in the inventory. NOTE: On client this is only synced to LocalPlayer()
