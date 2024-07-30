@@ -128,15 +128,15 @@ ply:lscsRemoveItem( id ) -- just remove given numerical index id from inventory.
 
 stuff_valid = ply:lscsIsValid() -- the items they have equipped, could they in theory successfully craft a working lightsaber? This can be used to prevent crafting broken lightsabers
 
-bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers
+bool_force_allowed = ply:lscsGetForceAllowed() -- returns whenever or not the player is allowed to use force powers, available on client aswell
 
 ply:lscsSetForceAllowed( bool_allow ) -- allow/disallow force usage for this player
 
-ply:lscsGetForce() -- returns players current force points
+ply:lscsGetForce() -- returns players current force points, available on client aswell
 
 ply:lscsSetForce( num ) -- set players force points
 
-ply:lscsGetMaxForce() -- returns players MAX amount of force points
+ply:lscsGetMaxForce() -- returns players MAX amount of force points, available on client aswell
 
 ply:lscsSetMaxForce( num ) -- set players MAX force points
 
