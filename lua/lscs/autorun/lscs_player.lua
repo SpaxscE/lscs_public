@@ -68,6 +68,8 @@ if SERVER then
 	end
 
 	function meta:lscsSetForceAllowed( allow )
+		self:SetNWBool( "lscs_force_allow_useage", allow )
+
 		if allow then
 			if self._lscsOldForceRegen then
 				self:lscsSetForceRegenAmount( self._lscsOldForceRegen )
@@ -151,6 +153,10 @@ if SERVER then
 		SWEP:SetBlockPoints( 999999 )
 	end )
 else
+	function meta:lscsGetForceAllowed()
+		return self:GetNWBool( "lscs_force_allow_useage", true )
+	end
+
 	net.Receive( "lscs_sync_combo_data", function( len )
 		local ply = net.ReadEntity()
 
