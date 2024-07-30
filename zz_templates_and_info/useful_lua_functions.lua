@@ -96,6 +96,15 @@ end)
 hook.Add( "LSCS:EntityFireBullets", "ANY_HOOK_NAME_YOU_WANT", function( entity, bullet )
 end)
 
+-- called when a player tries to start using a force power
+hook.Add( "LSCS:OnPlayerForceUse", "ANY_HOOK_NAME_YOU_WANT", function( ply, id, item )
+
+	-- disallow saber throw useage example
+	if id == "throw" then
+		return false
+	end
+end)
+
 ply:lscsAddInventory( class_or_entity, equip_to_hand ) -- add a entity to the players inventory. Can be given a classname instead of a entity aswell. Only supports sents.
 							equip_to_hand = 
 					 				true -- equip to right hand
