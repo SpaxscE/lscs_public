@@ -151,6 +151,8 @@ if SERVER then
 		end
 
 		if Activate then
+			if not ply:lscsGetForceAllowed() then return end
+
 			ply._lscsUsedPowers[ ID ] = true
 
 			ProtectedCall( function() LSCS.Force[ item.id ].StartUse( ply ) end )
