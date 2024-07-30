@@ -49,7 +49,7 @@ if SERVER then
 	end
 
 	function meta:lscsSetForceRegenAmount( num )
-		if not num or not isnumber( num ) then
+		if not num or not isnumber( num ) or num == 1 then
 
 			self._lscsForceRegenAmount = nil
 
@@ -64,7 +64,7 @@ if SERVER then
 	end
 
 	function meta:lscsGetForceAllowed()
-		return self:lscsGetForce() * self:lscsGetMaxForce() * self:lscsGetForceRegenAmount() > 0
+		return self:lscsGetMaxForce() * self:lscsGetForceRegenAmount() > 0
 	end
 
 	function meta:lscsSetForceAllowed( allow )
