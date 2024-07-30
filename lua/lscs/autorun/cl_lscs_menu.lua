@@ -91,6 +91,7 @@ local icon_rhand = Material("lscs/ui/hand_r.png")
 
 local icon_load_version = Material("gui/html/refresh")
 
+local icon_missing = Material( "lscs/ui/noicon.png" )
 local icon_invert = Material( "lscs/ui/logo_invert.png")
 local icon_steam = Material("lscs/ui/steam.png")
 local icon_youtube = Material("lscs/ui/youtube.png")
@@ -675,6 +676,8 @@ function LSCS:BuildInventory( Frame )
 		DButton:SetID( index )
 
 		DButton.Paint = function(self, w, h )
+			local InventoryItem = self:GetItem()
+
 			if not self:IsEnabled() then
 				local Col = menu_dim
 				surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
@@ -682,7 +685,7 @@ function LSCS:BuildInventory( Frame )
 				return
 			end
 
-			surface.SetMaterial( self:GetItem().icon )
+			surface.SetMaterial( InventoryItem and InventoryItem.icon or icon_missing )
 			surface.SetDrawColor( 255,255,255,255 )
 			surface.DrawTexturedRect( 2, 2, w - 4, h - 4 )
 
