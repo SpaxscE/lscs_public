@@ -73,7 +73,7 @@ hook.Add( "LSCS:OnPlayerFullySpawned", "ANY_HOOK_NAME_YOU_WANT", function( ply )
 end )
 
 -- when a player drops an item from the inventory it calls this hook. 
-hook.Add( "LSCS:OnPlayerDroppedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item_entity, inventory_id )
+hook.Add( "LSCS:OnPlayerDroppedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item_entity, inventory_id, classname )
 
 	item_entity:Remove() -- lets just remove it in this example
 
@@ -85,11 +85,11 @@ hook.Add( "LSCS:OnPlayerCraftedSaber", "ANY_HOOK_NAME_YOU_WANT", function( ply, 
 end )
 
 -- called whenever a player equips an item
-hook.Add( "LSCS:OnPlayerEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item, is_right_hand )
+hook.Add( "LSCS:OnPlayerEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item, is_right_hand, inventory_id )
 end)
 
 -- called whenever a player unequips an item
-hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item )
+hook.Add( "LSCS:OnPlayerUnEquippedItem", "ANY_HOOK_NAME_YOU_WANT", function( ply, item, inventory_id )
 end)
 
 -- same as GM:EntityFireBullets, except by using this hook it wont conflict with LSCS. Get's called AFTER LSCS code is run
