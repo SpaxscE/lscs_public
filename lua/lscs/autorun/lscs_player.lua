@@ -83,15 +83,17 @@ if SERVER then
 				self:lscsSetForce( self._lscsOldForce )
 				self._lscsOldForce = nil
 			end
-		else
-			self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
-			self._lscsOldForceMax = self:lscsGetMaxForce()
-			self._lscsOldForce = self:lscsGetForce()
 
-			self:lscsSetForce( 0 )
-			self:lscsSetMaxForce( 0 )
-			self:lscsSetForceRegenAmount( 0 )
+			return
 		end
+
+		self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
+		self._lscsOldForceMax = self:lscsGetMaxForce()
+		self._lscsOldForce = self:lscsGetForce()
+
+		self:lscsSetForce( 0 )
+		self:lscsSetMaxForce( 0 )
+		self:lscsSetForceRegenAmount( 0 )
 	end
 
 	function meta:lscsSetForce( num )
