@@ -303,7 +303,7 @@ else
 		end
 	end)
 
-	-- for some reason ply:RemoveAllDecals() doesnt work on players when called serverside... bug? It's gay because every line lscs_damage.lua is gay
+	-- fix gmod bug https://github.com/Facepunch/garrysmod-issues/issues/5946
 	net.Receive( "lscs_clearblood", function( len )
 		local ply = net.ReadEntity()
 		if not IsValid( ply ) then return end
