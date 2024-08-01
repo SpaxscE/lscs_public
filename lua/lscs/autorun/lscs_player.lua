@@ -89,9 +89,17 @@ if SERVER then
 			return
 		end
 
-		self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
-		self._lscsOldForceMax = self:lscsGetMaxForce()
-		self._lscsOldForce = self:lscsGetForce()
+		if not self._lscsOldForceRegen then
+			self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
+		end
+
+		if not self._lscsOldForceMax then
+			self._lscsOldForceMax = self:lscsGetMaxForce()
+		end
+
+		if not self._lscsOldForce then
+			self._lscsOldForce = self:lscsGetForce()
+		end
 
 		self:lscsSetForce( 0 )
 		self:lscsSetMaxForce( 0 )
