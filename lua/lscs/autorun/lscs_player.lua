@@ -49,6 +49,13 @@ if SERVER then
 	end
 
 	function meta:lscsSetForceRegenAmount( num )
+
+		if not self:lscsGetForceAllowed() then
+			self._lscsOldForceRegen = num
+
+			return
+		end
+
 		if not num or not isnumber( num ) or num == 1 then
 
 			self._lscsForceRegenAmount = nil
@@ -111,6 +118,12 @@ if SERVER then
 	end
 
 	function meta:lscsSetMaxForce( num )
+		if not self:lscsGetForceAllowed() then
+			self._lscsOldForceMax = num
+
+			return
+		end
+
 		self:SetNWFloat( "lscs_force_mana_max", num )
 	end
 
