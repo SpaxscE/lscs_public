@@ -87,15 +87,14 @@ if SERVER then
 			end
 
 			return
+		else
+			self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
+			self._lscsOldForceMax = self:lscsGetMaxForce()
+			self._lscsOldForce = self:lscsGetForce()
+			self:lscsSetForce( 0 )
+			self:lscsSetMaxForce( 0 )
+			self:lscsSetForceRegenAmount( 0 )
 		end
-
-		self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
-		self._lscsOldForceMax = self:lscsGetMaxForce()
-		self._lscsOldForce = self:lscsGetForce()
-
-		self:lscsSetForce( 0 )
-		self:lscsSetMaxForce( 0 )
-		self:lscsSetForceRegenAmount( 0 )
 	end
 
 	function meta:lscsSetForce( num )
