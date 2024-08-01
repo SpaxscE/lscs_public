@@ -49,7 +49,6 @@ if SERVER then
 	end
 
 	function meta:lscsSetForceRegenAmount( num )
-
 		if self._lscsOldForceRegen then
 			self._lscsOldForceRegen = num
 
@@ -79,40 +78,43 @@ if SERVER then
 
 		if allow then
 			if self._lscsOldForceRegen then
-				self:lscsSetForceRegenAmount( self._lscsOldForceRegen )
+				local OldForceRegen = self._lscsOldForceRegen
 				self._lscsOldForceRegen = nil
+				self:lscsSetForceRegenAmount( OldForceRegen )
 			end
 
 			if self._lscsOldForceMax then
-				self:lscsSetMaxForce( self._lscsOldForceMax )
+				local OldForceMax = self._lscsOldForceMax
 				self._lscsOldForceMax = nil
+				self:lscsSetMaxForce( OldForceMax )
 			end
 
 			if self._lscsOldForce then
-				self:lscsSetForce( self._lscsOldForce )
+				local OldForce = self._lscsOldForce
 				self._lscsOldForce = nil
+				self:lscsSetForce( OldForce )
 			end
+
+			self._oldlscsForceAllowed = allow
 
 			return
 		end
 
-		if not self._lscsOldForceRegen then
-			self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
+		if self._oldlscsForceAllowed == false then return end
 
-			self:lscsSetForceRegenAmount( 0 )
-		end
+		self._oldlscsForceAllowed = false
 
-		if not self._lscsOldForceMax then
-			self._lscsOldForceMax = self:lscsGetMaxForce()
-
-			self:lscsSetMaxForce( 0 )
-		end
-
-		if not self._lscsOldForce then
-			self._lscsOldForce = self:lscsGetForce()
-		end
+		local OldForceRegen = self:lscsGetForceRegenAmount()
+		local OldForceMax = self:lscsGetMaxForce()
+		local OldForce = self:lscsGetForce()
 
 		self:lscsSetForce( 0 )
+		self:lscsSetMaxForce( 0 )
+		self:lscsSetForceRegenAmount( 0 )
+
+		self._lscsOldForceRegen = OldForceRegen
+		self._lscsOldForceMax = OldForceMax
+		self._lscsOldForce = OldForce
 	end
 
 	function meta:lscsSetForce( num )
