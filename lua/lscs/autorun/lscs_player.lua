@@ -50,7 +50,7 @@ if SERVER then
 
 	function meta:lscsSetForceRegenAmount( num )
 
-		if not self:lscsGetForceAllowed() then
+		if self._lscsOldForceRegen then
 			self._lscsOldForceRegen = num
 
 			return
@@ -98,10 +98,14 @@ if SERVER then
 
 		if not self._lscsOldForceRegen then
 			self._lscsOldForceRegen = self:lscsGetForceRegenAmount()
+
+			self:lscsSetForceRegenAmount( 0 )
 		end
 
 		if not self._lscsOldForceMax then
 			self._lscsOldForceMax = self:lscsGetMaxForce()
+
+			self:lscsSetMaxForce( 0 )
 		end
 
 		if not self._lscsOldForce then
@@ -109,8 +113,6 @@ if SERVER then
 		end
 
 		self:lscsSetForce( 0 )
-		self:lscsSetMaxForce( 0 )
-		self:lscsSetForceRegenAmount( 0 )
 	end
 
 	function meta:lscsSetForce( num )
@@ -118,7 +120,7 @@ if SERVER then
 	end
 
 	function meta:lscsSetMaxForce( num )
-		if not self:lscsGetForceAllowed() then
+		if self._lscsOldForceMax then
 			self._lscsOldForceMax = num
 
 			return
