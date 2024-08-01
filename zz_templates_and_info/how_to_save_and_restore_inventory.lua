@@ -1,5 +1,5 @@
 -- a fully working auto save and restore example can be found here:
--- https://github.com/SpaxscE/lscs_public/blob/main/zz_templates_and_info/lua/lscs/content/inventory_saver_example.lua
+-- https://github.com/SpaxscE/lscs_inventory_saver_example
 
 
 
