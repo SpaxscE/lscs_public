@@ -64,6 +64,7 @@ if SERVER then
 	end
 
 	function meta:lscsGetForceAllowed()
+		if self:GetNWBool( "lscs_force_allow_useage" ) == false then return false end
 		return self:lscsGetMaxForce() * self:lscsGetForceRegenAmount() > 0
 	end
 
