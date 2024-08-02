@@ -232,7 +232,7 @@ local function PlayerButtonDown( ply, button )
 
 	if AllowForce then
 	-- this needs to be reworked at some point to the same method used as direct inputs
-		if button == selector.KeyActivate:GetInt() then
+		if button == selector.KeyActivate:GetInt() and ply:lscsGetForceAllowed() then
 			if #ply:lscsGetForceAbilities() == 0 then return end
 
 			MouseWheelScroller = true
