@@ -166,7 +166,7 @@ if SERVER then
 
 			for id, class in pairs( self:lscsGetInventory() ) do
 				if isbool( eq[ id ] ) then
-					hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ) )
+					hook.Run( "LSCS:OnPlayerUnEquippedItem", self, LSCS:ClassToItem( class ), id )
 				end
 			end
 
@@ -225,7 +225,7 @@ if SERVER then
 				self:lscsBuildPlayerInfo() -- sync stances
 			end
 
-			hook.Run( "LSCS:OnPlayerUnEquippedItem", self, _item )
+			hook.Run( "LSCS:OnPlayerUnEquippedItem", self, _item, id )
 		end
 
 		self:lscsRemoveItem( id )
