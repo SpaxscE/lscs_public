@@ -227,7 +227,7 @@ function SWEP:DoCombo()
 	end
 
 	if istable(ComboObj.AttackAnim) then
-        	local randomAttack = ComboObj.AttackAnim[math.random(1, #ComboObj.AttackAnim)]
+        	local randomAttack = ComboObj.AttackAnim[math.Round(util.SharedRandom("randomAnimations", 1, #ComboObj.AttackAnim))]
         	self:PlayAnimation( randomAttack, ComboObj.AttackAnimStart )
     	else
         	self:PlayAnimation( ComboObj.AttackAnim, ComboObj.AttackAnimStart )
