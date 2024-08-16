@@ -116,6 +116,8 @@ if SERVER then
 		end
 
 		for _, ply in ipairs( player.GetAll() ) do
+			if not ply:lscsGetForceAllowed() then continue end
+
 			hook.Run( "LSCS:PlayerForcePowerThink", ply, TIME )
 
 			if (ply._lscsNextForceRegen or 0) > TIME then continue end
@@ -124,7 +126,12 @@ if SERVER then
 				if not ply:OnGround() and ply:GetMoveType() ~= MOVETYPE_NOCLIP then continue end
 			end
 
-			ply:lscsSetForce( math.min(ply:lscsGetForce() + ply:lscsGetForceRegenAmount(),ply:lscsGetMaxForce()) )
+			local OldValue = ply:lscsGetForce()
+			local NewValue = math.min(OldValue + ply:lscsGetForceRegenAmount(),ply:lscsGetMaxForce())
+
+			if NewValue == OldValue then continue end
+
+			ply:lscsSetForce( NewValue )
 		end
 	end )
 
