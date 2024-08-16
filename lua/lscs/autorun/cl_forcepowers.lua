@@ -156,9 +156,7 @@ local function StopUse( ID )
 end
 
 net.Receive( "lscs_force_use", function( len )
-	for i = 1, net.ReadInt( 9 ) do
-		StopUse( net.ReadInt( 8 ) )
-	end
+	ID_IN_USE = nil
 end )
 
 local NextNav = 0

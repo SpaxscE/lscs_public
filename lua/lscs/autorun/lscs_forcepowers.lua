@@ -195,18 +195,12 @@ if SERVER then
 
 		local ForcePowers = ply:lscsGetForceAbilities()
 
+		for ID, _ in pairs( ply._lscsUsedPowers ) do
+			ProtectedCall( function() LSCS.Force[ ForcePowers[ ID ].item.id ].StopUse( ply ) end )
+			ply._lscsUsedPowers[ ID ]= nil
+		end
+
 		net.Start("lscs_force_use")
-			net.WriteInt( table.Count( ply._lscsUsedPowers ), 9 )
-
-			for ID, _ in pairs( ply._lscsUsedPowers ) do
-
-				ProtectedCall( function() LSCS.Force[ ForcePowers[ ID ].item.id ].StopUse( ply ) end )
-
-				net.WriteInt( ID, 8 )
-
-				ply._lscsUsedPowers[ ID ]= nil
-			end
-
 		net.Send( ply )
 	end )
 else
