@@ -70,6 +70,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float",1, "NWGestureTime" )
 	self:NetworkVar( "Float",2, "Length" )
 	self:NetworkVar( "Float",3, "ComboHits" )
+	self:NetworkVar( "Float",4, "BlockPointNotifyTime" )
 
 	self:NetworkVar( "Int",0, "NWStance" )
 	self:NetworkVar( "Int",1, "BlockPoints" )

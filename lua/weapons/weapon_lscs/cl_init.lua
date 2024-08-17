@@ -60,9 +60,15 @@ function SWEP:DrawHUD()
 
 	local combo = self:GetCombo()
 
+	local T = CurTime()
+	local notifyTime = self:GetBlockPointNotifyTime()
+
 	local segmentDist = segmentLength + segmentSpace
+
+	local BlockPoints = self:GetBlockPoints()
+
 	local ActiveValueCH = 160 * self:GetComboHits()
-	local ActiveValueBP = (160 /  self:GetMaxBlockPoints()) * self:GetBlockPoints()
+	local ActiveValueBP = (160 /  self:GetMaxBlockPoints()) * BlockPoints
 
 	if combo ~= OldCombo then
 		OldCombo = combo
@@ -89,6 +95,12 @@ function SWEP:DrawHUD()
 	end
 
 	if combo.AutoBlock and not LSCS:HUDShouldHide( LSCS_HUD_POINTS_BLOCK ) then
+		if notifyTime > T and BlockPoints <= 1 then
+			local Mul = math.abs( math.cos( T * 7.5 ) )
+
+			surface.SetDrawColor( Color( 255 * Mul, 0, 0, 200 + 55 * Mul ) )
+		end
+
 		surface.SetMaterial( bpBG )
 		surface.DrawTexturedRect( X - 146, Y - 156, 256,256, 0 )
 	end

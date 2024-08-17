@@ -226,6 +226,14 @@ function SWEP:DoCombo()
 		end
 	end
 
+	local T = CurTime()
+
+	if self:GetBlockPoints() <= 1 and (self:GetNextPrimaryAttack() + 2) > T then
+		self:SetBlockPointNotifyTime( T + 2 )
+
+		return
+	end
+
 	if istable(ComboObj.AttackAnim) then
         	local randomAttack = ComboObj.AttackAnim[math.Round(util.SharedRandom("randomAnimations", 1, #ComboObj.AttackAnim))]
         	self:PlayAnimation( randomAttack, ComboObj.AttackAnimStart )
@@ -233,7 +241,7 @@ function SWEP:DoCombo()
         	self:PlayAnimation( ComboObj.AttackAnim, ComboObj.AttackAnimStart )
     	end
 
-	local Time = CurTime() + ComboObj.Delay + ComboObj.Duration + 0.1
+	local Time = T + ComboObj.Delay + ComboObj.Duration + 0.1
 	self:SetNextPrimaryAttack( Time )
 	self:SetGestureTime( Time )
 
