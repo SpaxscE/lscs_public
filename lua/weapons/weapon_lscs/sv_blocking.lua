@@ -16,6 +16,8 @@ function SWEP:CanDeflect()
 		return false
 	end
 
+	if hook.Run("LSCS:PreventDeflect", self) then return false end
+
 	return (self._nextDeflect or 0) < CurTime()
 end
 
