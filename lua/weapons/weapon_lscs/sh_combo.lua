@@ -230,7 +230,7 @@ function SWEP:DoCombo()
 
 	local IsBlockable = isstring( LSCS.ComboInterupt[ ATTACK_DIR ] )
 
-	if not IsBlockable and self:GetBlockPoints() <= 1 and (self:GetNextPrimaryAttack() + 2) > T then
+	if not IsBlockable and self:GetBlockPoints() <= 1 then
 		self:SetBlockPointNotifyTime( T + 2 )
 
 		self:DrainBP( 1 )
