@@ -228,8 +228,12 @@ function SWEP:DoCombo()
 
 	local T = CurTime()
 
-	if self:GetBlockPoints() <= 1 and (self:GetNextPrimaryAttack() + 2) > T then
+	local IsBlockable = isstring( LSCS.ComboInterupt[ ATTACK_DIR ] )
+
+	if not IsBlockable and self:GetBlockPoints() <= 1 and (self:GetNextPrimaryAttack() + 2) > T then
 		self:SetBlockPointNotifyTime( T + 2 )
+
+		self:DrainBP( 1 )
 
 		return
 	end
@@ -247,7 +251,7 @@ function SWEP:DoCombo()
 
 	self.LastAttack = ATTACK_DIR
 
-	if isstring( LSCS.ComboInterupt[ ATTACK_DIR ] ) then
+	if IsBlockable then
 		self:SetAnimHasCancelAnim( false )
 	else
 		self:SetAnimHasCancelAnim( true )
