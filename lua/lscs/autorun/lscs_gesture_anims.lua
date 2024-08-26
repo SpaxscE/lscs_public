@@ -66,13 +66,13 @@ else
 					ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, true )
 				end
 			else
-				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ),start, true )
+				ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( seq ), start, true )
 			end
 		else
 			local seqid = ply:LookupSequence( seq )
 
 			ply.__sm_lscsVCD = CurTime() + 0.5
-			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_VCD, seqid,0, false )
+			ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_VCD, seqid,0, true )
 		end
 	end )
 end
