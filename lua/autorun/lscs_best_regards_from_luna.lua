@@ -59,6 +59,14 @@ if SERVER then
 	resource.AddWorkshop( "2837856621" )
 end
 
+if CLIENT then
+	list.Set( "ContentCategoryIcons", "[LSCS]", "icon16/lscs.png" )
+	list.Set( "ContentCategoryIcons", "[LSCS] - Hilts", "icon16/lscs.png" )
+	list.Set( "ContentCategoryIcons", "[LSCS] - Force", "icon16/lscs.png" )
+	list.Set( "ContentCategoryIcons", "[LSCS] - Crystals", "icon16/lscs.png" )
+	list.Set( "ContentCategoryIcons", "[LSCS] - Stances", "icon16/lscs.png" )
+end
+
 hook.Add( "InitPostEntity", "!!!lscscheckupdates", function()
 	timer.Simple(20, function() LSCS:CheckUpdates() end)
 end )
